@@ -1146,7 +1146,7 @@ class TestMediation:
         assert expected == pytest.approx(power_results, abs=1e-05)
 
         n_results = \
-        power_tests.wp_mediation_test(n=None, power=0.9, a=0.5, b=0.5, var_x=1, var_y=1, var_m=1, alpha=0.05)["n"]
+            power_tests.wp_mediation_test(n=None, power=0.9, a=0.5, b=0.5, var_x=1, var_y=1, var_m=1, alpha=0.05)["n"]
         # wp.mediation(n = NULL, power = 0.9, a = 0.5, b = 0.5, varx = 1, vary = 1, varm = 1, alpha = 0.05)
         # Power for simple mediation
         #
@@ -1157,7 +1157,8 @@ class TestMediation:
         expected = 88
         assert expected == n_results
 
-        a_results = power_tests.wp_mediation_test(n=100, power=0.9, a=None, b=0.5, var_x=1, var_y=1, var_m=1, alpha=0.05)["a"]
+        a_results = \
+            power_tests.wp_mediation_test(n=100, power=0.9, a=None, b=0.5, var_x=1, var_y=1, var_m=1, alpha=0.05)["a"]
         # wp.mediation(n = 100, power = 0.9, a = NULL, b = 0.5, varx = 1, vary = 1, varm = 1, alpha = 0.05)
         # Power for simple mediation
         #
@@ -1166,4 +1167,384 @@ class TestMediation:
         #
         # URL: http://psychstat.org/mediation
         expected = 0.7335197
-        assert expected == pytest.approx(a_results, abs=1e-05)
+        assert expected == pytest.approx(a_results, abs=1e-03)
+
+        b_results = \
+            power_tests.wp_mediation_test(n=150, power=0.8, a=0.5, b=None, var_x=1, var_y=1, var_m=1, alpha=0.05)["b"]
+        # wp.mediation(n = 150, power = 0.8, a = 0.5, b = NULL, varx = 1, vary = 1, varm = 1, alpha = 0.05)
+        # Power for simple mediation
+        #
+        #       n power   a          b varx varm vary alpha
+        #     150   0.8 0.5 -0.2876635    1    1    1  0.05
+        #
+        # URL: http://psychstat.org/mediation
+        expected = -0.2876635
+        assert expected == pytest.approx(b_results, abs=1e-04)
+
+        alpha_results = \
+            power_tests.wp_mediation_test(n=200, power=0.8, a=0.5, b=-0.2, var_x=1, var_y=1, var_m=1, alpha=None)[
+                "alpha"]
+        # wp.mediation(n = 200, power = 0.80, a = 0.5, b = -0.2, varx = 1, vary = 1, varm = 1, alpha = NULL)
+        # Power for simple mediation
+        #
+        #       n power   a    b varx varm vary     alpha
+        #     200   0.8 0.5 -0.2    1    1    1 0.1323648
+        #
+        # URL: http://psychstat.org/mediation
+        expected = 0.1323648
+        assert expected == pytest.approx(alpha_results, abs=1e-04)
+
+        var_y_results = \
+            power_tests.wp_mediation_test(n=150, power=0.8, a=0.3, b=-0.2876635, var_x=1, var_y=None, var_m=1,
+                                          alpha=0.05)[
+                "var_y"]
+        # wp.mediation(n = 150, power = 0.80, a = 0.5, b = -0.2876635, varx = 1, vary = NULL, varm = 1, alpha = 0.05)
+        # Power for simple mediation
+        #
+        #       n power   a          b varx varm      vary alpha
+        #     150   0.8 0.3 -0.2876635    1    1 0.6777307  0.05
+        #
+        # URL: http://psychstat.org/mediation
+        expected = 0.6777307
+        assert expected == pytest.approx(var_y_results, abs=1e-03)
+
+
+class TestCorrelation:
+    @staticmethod
+    def test_correlation_results() -> None:
+        power_results = power_tests.wp_correlation_test(n=50, r=0.3, power=None, alpha=0.05, alternative="two-sided")[
+            "power"]
+        # wp.correlation(n=50, r=0.3, alternative="two.sided")
+        # Power for correlation
+        #
+        #        n   r alpha     power
+        #       50 0.3  0.05 0.5728731
+        # URL: http://psychstat.org/correlation
+        expected = 0.5728731
+        assert power_results == pytest.approx(expected, abs=1e-05)
+
+        n_results = power_tests.wp_correlation_test(n=None, r=0.3, power=0.8, alpha=0.05, alternative="greater")["n"]
+        # wp.correlation(n=NULL, r=0.3, power=0.8, alternative="greater")
+        # Power for correlation
+        #
+        #              n   r alpha power
+        #       66.55538 0.3  0.05   0.8
+        #
+        # URL: http://psychstat.org/correlation
+        expected = 67
+        assert n_results == expected
+
+        r_results = power_tests.wp_correlation_test(n=200, r=None, power=0.8, alpha=0.10, alternative="less")[
+            "effect_size"]
+        # wp.correlation(n=200, r=NULL, power=0.8, alternative="less")
+        # Power for correlation
+        #
+        #       n          r alpha power
+        #     200 -0.1497613  0.05   0.8
+        #
+        # URL: http://psychstat.org/correlation
+        expected = -0.1497613
+        assert r_results == pytest.approx(expected, abs=1e-05)
+
+        alpha_results = power_tests.wp_correlation_test(n=200, r=0.1, power=0.8, alternative="two-sided", alpha=None)[
+            "alpha"]
+        # wp.correlation(n=200, r=0.1, power=0.8, alternative="greater", alpha=NULL)
+        # Power for correlation
+        #
+        #       n   r     alpha power
+        #     200 0.1 0.5221974   0.8
+        #
+        # URL: http://psychstat.org/correlation
+        expected = 0.5221974
+        assert alpha_results == pytest.approx(expected, abs=1e-05)
+
+
+# RANDOMIZED TRIALS
+class TestMRT2Arm:
+    @staticmethod
+    def test_mrt2arm_results() -> None:
+        power_main_results = \
+            power_tests.wp_mrt2arm_test(n=45, f=0.5, J=20, tau11=0.5, sg2=1.25, power=None, alpha=0.05)["power"]
+        # wp.mrt2arm(n = 45, f = 0.5, J = 20, tau11 = 0.5, sg2 = 1.25, alpha = 0.05, power = NULL)
+        # Power analysis for Multileve model Multisite randomized trials with 2 arms
+        #
+        #        J  n   f tau11  sg2     power alpha
+        #       20 45 0.5   0.5 1.25 0.8583253  0.05
+        #
+        # NOTE: n is the number of subjects per cluster
+        # URL: http://psychstat.org/mrt2arm
+        expected = 0.8583253
+        assert power_main_results == pytest.approx(expected, abs=1e-05)
+
+        power_variance_results = \
+            power_tests.wp_mrt2arm_test(n=45, f=0.5, J=20, tau11=0.5, sg2=1.25, alpha=0.05, power=None,
+                                        test_type="variance")["power"]
+        # wp.mrt2arm(n = 45, f = 0.5, J = 20, tau11 = 0.5, sg2 = 1.25, alpha = 0.05, power = NULL, type = "variance")
+        # Power analysis for Multileve model Multisite randomized trials with 2 arms
+        #
+        #        J  n   f tau11  sg2     power alpha
+        #       20 45 0.5   0.5 1.25 0.9987823  0.05
+        #
+        # NOTE: n is the number of subjects per cluster
+        # URL: http://psychstat.org/mrt2arm
+        expected = 0.9987823
+        assert power_variance_results == pytest.approx(expected, abs=1e-05)
+
+        power_site_results = \
+            power_tests.wp_mrt2arm_test(n=5, J=20, tau00=2.5, sg2=1.25, alpha=0.05, power=None, test_type="site")[
+                "power"]
+        # wp.mrt2arm(n = 5, J = 20, tau00 = 2.5, sg2 = 1.25, alpha = 0.05, power = NULL, type = "site")
+        # Multisite randomized trials with 2 arms
+        #
+        #      J n tau00  sg2     power alpha
+        #     20 5   2.5 1.25 0.9999719  0.05
+        #
+        # NOTE: n is the number of subjects per cluster
+        # URL: http://psychstat.org/mrt2arm
+        expected = 0.9999719
+        assert power_site_results == pytest.approx(expected, abs=1e-05)
+
+        n_results = power_tests.wp_mrt2arm_test(n=None, f=0.5, J=20, tau11=0.5, sg2=1.25, alpha=0.05, power=0.8,
+                                                alternative='one-sided')["n"]
+        # wp.mrt2arm(n = NULL, f = 0.5, J =20, tau11 = 0.5, sg2 = 1.25, alpha = 0.05, power = 0.8, alternative = 'one.sided')
+        # Multisite randomized trials with 2 arms
+        #
+        #      J       n   f tau11  sg2 power alpha
+        #     20 11.3919 0.5   0.5 1.25   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster
+        # URL: http://psychstat.org/mrt2arm
+        expected = 12
+        assert n_results == expected
+
+        J_results = power_tests.wp_mrt2arm_test(n=10, J=None, f=0.5, tau11=2.5, sg2=1.25, alpha=0.05, power=0.8)["J"]
+        # wp.mrt2arm(n = 10, J = NULL, f = 0.5, tau11 = 2.5, sg2 = 1.25, alpha = 0.05, power = 0.8)
+        # Multisite randomized trials with 2 arms
+        #
+        #           J  n   f tau11  sg2 power alpha
+        #     77.2918 10 0.5   2.5 1.25   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster
+        # URL: http://psychstat.org/mrt2arm
+        expected = 78
+        assert J_results == expected
+
+        f_results = \
+            power_tests.wp_mrt2arm_test(n=200, J=30, f=None, tau00=1.5, tau11=1.5, sg2=1.25, alpha=0.05, power=0.8)[
+                "effect_size"]
+        # wp.mrt2arm(n=200, J=30, f=NULL, tau00=1.5, tau11=1.5, sg2=1.25, alpha=0.05, power=0.8)
+        # Multisite randomized trials with 2 arms
+        #
+        #      J   n         f tau00 tau11  sg2 power alpha
+        #     30 200 0.5845826   1.5   1.5 1.25   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster
+        # URL: http://psychstat.org/mrt2arm
+        expected = 0.5845826
+        assert f_results == pytest.approx(expected, abs=1e-03)
+
+
+class TestMRT3Arm:
+    @staticmethod
+    def test_mrt3arm_results() -> None:
+        power_results = \
+            power_tests.wp_mrt3arm_test(n=30, f1=0.43, f2=0, J=20, tau=0.4, sg2=2.25, alpha=0.05, power=None)[
+                "power"]
+        # wp.mrt3arm(n = 30, f1 = 0.43, J = 20, tau = 0.4, sg2 = 2.25, alpha = 0.05, power = NULL)
+        # Multisite randomized trials with 3 arms
+        #
+        #        J  n   f1 tau  sg2     power alpha
+        #       20 30 0.43 0.4 2.25 0.8066964  0.05
+        #
+        # NOTE: n is the number of subjects per cluster
+        expected = 0.8066964
+        assert power_results == pytest.approx(expected, abs=1e-05)
+
+        n_results = power_tests.wp_mrt3arm_test(n=None, f2=0.43, f1=0, J=20, tau=0.4, sg2=2.25, alpha=0.05, power=0.8,
+                                                test_type="treatment")["n"]
+        # wp.mrt3arm(n = NULL, f2 = 0.43, J = 20, tau = 0.4, sg2 = 2.25, alpha = 0.05, power = 0.8, type="treatment")
+        # Multisite randomized trials with 3 arms
+        #
+        #      J        n   f2 tau  sg2 power alpha
+        #     20 87.78486 0.43 0.4 2.25   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster
+        # URL: http://psychstat.org/mrt3arm
+        expected = 88
+        assert n_results == expected
+
+        j_results = \
+            power_tests.wp_mrt3arm_test(n=200, f2=0.43, f1=0.15, J=None, tau=0.4, sg2=2.25, alpha=0.05, power=0.8,
+                                        test_type="omnibus")["J"]
+        # wp.mrt3arm(n = 200, f2 = 0.43, f1 = 0.15, J = NULL, tau = 0.4, sg2 = 2.25, alpha = 0.05, power = 0.8, type="omnibus")
+        # Multisite randomized trials with 3 arms
+        #
+        #            J   n   f1   f2 tau  sg2 power alpha
+        #     18.82449 200 0.15 0.43 0.4 2.25   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster
+        # URL: http://psychstat.org/mrt3arm
+        expected = 19
+        assert j_results == expected
+
+        f1_results = power_tests.wp_mrt3arm_test(n=250, f1=None, f2=0, J=24, tau=0.5, sg2=3.2, alpha=0.1, power=0.8,
+                                                 alternative="one-sided")["f1"]
+        # wp.mrt3arm(n=250, f1=NULL, f2=0, J=24, tau=0.5, sg2=3.2, alpha=0.1, power=0.8, alternative="greater")
+        # Multisite randomized trials with 3 arms
+        #
+        #      J   n        f1 f2 tau sg2 power alpha
+        #     24 250 0.2217522  0 0.5 3.2   0.8   0.1
+        #
+        # NOTE: n is the number of subjects per cluster
+        # URL: http://psychstat.org/mrt3arm
+        expected = 0.2217522
+        assert f1_results == pytest.approx(expected, abs=1e-05)
+
+
+class TestCRT2Arm:
+
+    @staticmethod
+    def test_crt2arm_results() -> None:
+        power_results = power_tests.wp_crt2arm_test(f=0.6, n=20, J=10, icc=0.1, alpha=0.05, power=None)["power"]
+        # wp.crt2arm(f = 0.6, n = 20, J = 10, icc = 0.1, alpha = 0.05, power = NULL)
+        # Cluster randomized trials with 2 arms
+        #
+        #        J  n   f icc     power alpha
+        #       10 20 0.6 0.1 0.5901684  0.05
+        #
+        # NOTE: n is the number of subjects per cluster.
+        # URL: http://psychstat.org/crt2arm
+        expected = 0.5901684
+        assert power_results == pytest.approx(expected, abs=1e-05)
+
+        n_results = power_tests.wp_crt2arm_test(f=0.8, n=None, J=10, icc=0.1, alpha=0.05, power=0.8)["n"]
+        # wp.crt2arm(f = 0.8, n = NULL, J = 10, icc = 0.1, alpha = 0.05, power = 0.8)
+        # Cluster randomized trials with 2 arms
+        #
+        #        J        n   f icc power alpha
+        #       10 16.02558 0.8 0.1   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster.
+        # URL: http://psychstat.org/crt2arm
+        expected = 17
+        assert n_results == expected
+
+        icc_results = power_tests.wp_crt2arm_test(f=0.8, n=100, J=10, icc=None, alpha=0.05, power=0.8)["icc"]
+        # wp.crt2arm(f = 0.8, n = 100, J = 10, icc = NULL, alpha = 0.05, power = 0.8)
+        # Cluster randomized trials with 2 arms
+        #
+        #      J   n   f       icc power alpha
+        #     10 100 0.8 0.1476605   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster.
+        # URL: http://psychstat.org/crt2arm
+        expected = 0.1476605
+        assert icc_results == pytest.approx(expected, abs=1e-03)
+
+        f_results = power_tests.wp_crt2arm_test(f=None, n=200, J=20, icc=0.15, alpha=0.05, power=0.8)["effect_size"]
+        # wp.crt2arm(f = NULL, n = 200, J = 20, icc = 0.15, alpha = 0.05, power = 0.8)
+        # Cluster randomized trials with 2 arms
+        #
+        #      J   n         f  icc power alpha
+        #     20 200 0.5203701 0.15   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster.
+        # URL: http://psychstat.org/crt2arm
+        expected = 0.5203701
+        assert f_results == pytest.approx(expected, abs=1e-05)
+
+        alpha_results = power_tests.wp_crt2arm_test(f=0.3, n=200, J=20, icc=0.15, alpha=None, power=0.8)["alpha"]
+        # wp.crt2arm(f = 0.3, n = 200, J = 20, icc = 0.15, alpha = NULL, power = 0.8)
+        # Cluster randomized trials with 2 arms
+        #
+        #      J   n   f  icc power     alpha
+        #     20 200 0.3 0.15   0.8 0.3860032
+        #
+        # NOTE: n is the number of subjects per cluster.
+        # URL: http://psychstat.org/crt2arm
+        expected = 0.3860032
+        assert alpha_results == pytest.approx(expected, abs=1e-03)
+
+        # Need to figure out how to get reproducible results for J, currently cannot.
+
+
+class TestCRT3Arm:
+    @staticmethod
+    def test_crt3arm_results() -> None:
+        power_results = power_tests.wp_crt3arm_test(f=0.5, n=20, J=10, icc=0.1, alpha=0.05, power=None)["power"]
+        # wp.crt3arm(f = 0.5, n = 20, J = 10, icc = 0.1, alpha = 0.05, power = NULL)
+        # Cluster randomized trials with 3 arms
+        #
+        #        J  n   f icc     power alpha
+        #       10 20 0.5 0.1 0.3940027  0.05
+        #
+        # NOTE: n is the number of subjects per cluster.
+        # URL: http://psychstat.org/crt3arm
+        expected = 0.3940027
+        assert power_results == pytest.approx(expected, abs=1e-05)
+
+        f_results = \
+            power_tests.wp_crt3arm_test(f=None, n=100, J=15, icc=0.15, alpha=0.05, power=0.8, alternative="one-sided",
+                                        test_type="treatment")["effect_size"]
+        # wp.crt3arm(f = NULL, n = 100, J = 15, icc = 0.15, alpha = 0.05, power = 0.8, alternative = "one.sided", type = "treatment")
+        # Cluster randomized trials with 3 arms
+        #
+        #      J   n         f  icc power alpha
+        #     15 100 0.6646342 0.15   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster.
+        # URL: http://psychstat.org/crt3arm
+        expected = 0.6646342
+        assert f_results == pytest.approx(expected, abs=1e-05)
+
+        n_results = power_tests.wp_crt3arm_test(f=0.8, n=None, J=10, icc=0.1, alpha=0.05, power=0.8)["n"]
+        # wp.crt3arm(f = 0.8, n = NULL, J = 10, icc = 0.1, alpha = 0.05, power = 0.8)
+        # Cluster randomized trials with 3 arms
+        #
+        #        J        n   f icc  power alpha
+        #       10 27.25145 0.8  0.1   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster
+        expected = 28
+        assert n_results == expected
+
+        J_results = \
+            power_tests.wp_crt3arm_test(f=0.5, n=200, J=None, icc=0.4, alpha=0.05, power=0.8, test_type="omnibus",
+                                        alternative="one-sided")["J"]
+        # wp.crt3arm(f = 0.5, n = 200, J = NULL, icc = 0.4, alpha = 0.05, power = 0.8,
+        # +            alternative = "one.sided", type = "omnibus")
+        # Cluster randomized trials with 3 arms
+        #
+        #            J   n   f icc power alpha
+        #     18.87456 200 0.5 0.4   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster.
+        # URL: http://psychstat.org/crt3arm
+        expected = 19
+        assert J_results == expected
+
+        icc_results = \
+        power_tests.wp_crt3arm_test(f=0.8, n=575, J=50, icc=None, alpha=0.05, power=0.8, test_type="main")["icc"]
+        # wp.crt3arm(f = 0.8, n = 575, J = 50, icc = NULL, alpha = 0.05, power = 0.8, type="main")
+        # Cluster randomized trials with 3 arms
+        #
+        #      J   n   f      icc power alpha
+        #     50 575 0.8 0.868855   0.8  0.05
+        #
+        # NOTE: n is the number of subjects per cluster.
+        # URL: http://psychstat.org/crt3arm
+        expected = 0.868855
+        assert icc_results == pytest.approx(expected, abs=1e-05)
+
+        alpha_results = \
+        power_tests.wp_crt3arm_test(f=0.8, n=575, J=50, icc=0.8, alpha=None, power=0.8, test_type="treatment")["alpha"]
+        # wp.crt3arm(f = 0.8, n = 575, J = 50, icc = 0.8, alpha = NULL, power = 0.8, type="treatment")
+        # Cluster randomized trials with 3 arms
+        #
+        #      J   n   f icc power      alpha
+        #     50 575 0.8 0.8   0.8 0.08915664
+        #
+        # NOTE: n is the number of subjects per cluster.
+        # URL: http://psychstat.org/crt3arm
+        expected = 0.08915664
+        assert alpha_results == pytest.approx(expected, abs=1e-05)

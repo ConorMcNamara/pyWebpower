@@ -11,17 +11,18 @@ from webpower.proportion_classes import WpOneProp, WpTwoPropOneN, WpTwoPropTwoN
 from webpower.t_test_classes import WpOneT, WpTwoT
 from webpower.regression_classes import WPRegression, WpPoisson, WpLogistic
 from webpower.sem_classes import WPSEMChisq, WPSEMRMSEA
-from webpower.misc_classes import WpMediation
+from webpower.misc_classes import WpMediation, WpCorrelation
+from webpower.randomized_trial_classes import WpMRT2Arm, WpMRT3Arm, WpCRT2Arm, WpCRT3Arm
 
 
 def wp_anova_test(
-    k: Optional[int] = None,
-    n: Optional[int] = None,
-    f: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    test_type: str = "overall",
-    print_pretty: bool = True,
+        k: Optional[int] = None,
+        n: Optional[int] = None,
+        f: Optional[float] = None,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        test_type: str = "overall",
+        print_pretty: bool = True,
 ) -> Dict:
     """One-way analysis of variance (one-way ANOVA) is a technique used to compare means of two or more groups
     (e.g., Maxwell & Delaney, 2003). The ANOVA tests the null hypothesis that samples in two or more groups are drawn
@@ -103,12 +104,12 @@ def wp_anova_test(
 
 
 def wp_anova_binary_test(
-    k: Optional[int] = None,
-    n: Optional[int] = None,
-    V: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    print_pretty: bool = True,
+        k: Optional[int] = None,
+        n: Optional[int] = None,
+        V: Optional[float] = None,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        print_pretty: bool = True,
 ) -> Dict:
     """The power analysis procedure for one-way ANOVA with binary data is introduced by Mai and Zhang (2017). One-way
     ANOVA with binary data is used for comparing means of three or more groups of binary data. Its outcome variable is
@@ -181,12 +182,12 @@ def wp_anova_binary_test(
 
 
 def wp_anova_count_test(
-    k: Optional[int] = None,
-    n: Optional[int] = None,
-    V: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    print_pretty: bool = True,
+        k: Optional[int] = None,
+        n: Optional[int] = None,
+        V: Optional[float] = None,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        print_pretty: bool = True,
 ) -> Dict:
     """The power analysis procedure for one-way ANOVA with count data is introduced by Mai and Zhang(2017).
     One-way ANOVA with count data is used for comparing means of three or more groups of binary data. Its outcome
@@ -259,13 +260,13 @@ def wp_anova_count_test(
 
 
 def wp_kanova_test(
-    n: Optional[int] = None,
-    ndf: Optional[int] = None,
-    f: Optional[float] = None,
-    ng: Optional[int] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    print_pretty: float = True,
+        n: Optional[int] = None,
+        ndf: Optional[int] = None,
+        f: Optional[float] = None,
+        ng: Optional[int] = None,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        print_pretty: float = True,
 ) -> Dict:
     """Power analysis for k-way ANOVA
 
@@ -348,15 +349,15 @@ def wp_kanova_test(
 
 
 def wp_rmanova_test(
-    n: Optional[int] = None,
-    ng: Optional[int] = None,
-    nm: Optional[int] = None,
-    f: Optional[float] = None,
-    nscor: float = 1,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    test_type: str = "between",
-    print_pretty: bool = True,
+        n: Optional[int] = None,
+        ng: Optional[int] = None,
+        nm: Optional[int] = None,
+        f: Optional[float] = None,
+        nscor: float = 1,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        test_type: str = "between",
+        print_pretty: bool = True,
 ) -> Dict:
     """Repeated-measures ANOVA can be used to compare the means of a sequence of measurements(e.g., O’brien & Kaiser, 1985).
     In a repeated-measures design, evey subject is exposed to all dif-ferent treatments, or more commonly measured across
@@ -456,12 +457,12 @@ def wp_rmanova_test(
 
 
 def wp_one_prop_test(
-    h: Optional[float] = None,
-    n: Optional[int] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    alternative: str = "two-sided",
-    print_pretty: bool = True,
+        h: Optional[float] = None,
+        n: Optional[int] = None,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        alternative: str = "two-sided",
+        print_pretty: bool = True,
 ) -> Dict:
     """Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
     The one-sample test of proportion tests the null proportion of success, usually 0.5. The power
@@ -532,12 +533,12 @@ def wp_one_prop_test(
 
 
 def wp_two_prop_one_n_test(
-    h: Optional[float] = None,
-    n: Optional[int] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    alternative: str = "two-sided",
-    print_pretty: bool = True,
+        h: Optional[float] = None,
+        n: Optional[int] = None,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        alternative: str = "two-sided",
+        print_pretty: bool = True,
 ) -> Dict:
     """Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
     The two-sample test of proportions tests the null hypothesis that the two samples are drawn from
@@ -609,13 +610,13 @@ def wp_two_prop_one_n_test(
 
 
 def wp_two_prop_two_n_test(
-    h: Optional[float] = None,
-    n1: Optional[int] = None,
-    n2: Optional[int] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    alternative: str = "two-sided",
-    print_pretty: bool = True,
+        h: Optional[float] = None,
+        n1: Optional[int] = None,
+        n2: Optional[int] = None,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        alternative: str = "two-sided",
+        print_pretty: bool = True,
 ) -> Dict:
     """Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
     The two-sample test of proportions tests the null hypothesis that the two samples are drawn from
@@ -697,13 +698,13 @@ def wp_two_prop_two_n_test(
 
 
 def wp_t1_test(
-    n: Optional[int] = None,
-    d: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    test_type: str = "two-sample",
-    alternative: str = "two-sided",
-    print_pretty: bool = True,
+        n: Optional[int] = None,
+        d: Optional[float] = None,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        test_type: str = "two-sample",
+        alternative: str = "two-sided",
+        print_pretty: bool = True,
 ) -> Dict:
     """A t-test is a statistical hypothesis test in which the test statistic follows a Student’s t distribution if the
     null hypothesis is true and follows a non-central t distribution if the alternative hypothesis is true. The t test
@@ -805,13 +806,13 @@ def wp_t1_test(
 
 
 def wp_t2_test(
-    n1: Optional[int] = None,
-    n2: Optional[int] = None,
-    d: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    alternative: str = "two-sided",
-    print_pretty: bool = True,
+        n1: Optional[int] = None,
+        n2: Optional[int] = None,
+        d: Optional[float] = None,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        alternative: str = "two-sided",
+        print_pretty: bool = True,
 ) -> Dict:
     """A t-test is a statistical hypothesis test in which the test statistic follows a Student’s t distribution if the
     null hypothesis is true and follows a non-central t distribution if the alternative hypothesis is true. The t test
@@ -895,14 +896,14 @@ def wp_t2_test(
 
 
 def wp_regression_test(
-    n: Optional[int] = None,
-    p1: int = 1,
-    p2: int = 0,
-    f2: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    test_type: str = "regular",
-    print_pretty: bool = True,
+        n: Optional[int] = None,
+        p1: int = 1,
+        p2: int = 0,
+        f2: Optional[float] = None,
+        alpha: Optional[float] = None,
+        power: Optional[float] = None,
+        test_type: str = "regular",
+        print_pretty: bool = True,
 ) -> Dict:
     """This function is for power analysis for regression models. Regression is a statistical technique for examining
     the relationship between one or more independent variables (or predictors) and one dependent variable (or the outcome).
@@ -1349,9 +1350,9 @@ def wp_mediation_test(
         power: Optional[float] = None,
         a: Optional[float] = None,
         b: Optional[float] = None,
-        var_x: Optional[float] = None,
+        var_x: float = 1,
         var_y: Optional[float] = None,
-        var_m: Optional[float] = None,
+        var_m: float = 1,
         alpha: Optional[float] = None,
         print_pretty: bool = True,
 ) -> Dict:
@@ -1379,11 +1380,12 @@ def wp_mediation_test(
         Variance of m
     alpha: float, default=None
         Significance level chosen for the test
-    print_pretty
+    print_pretty: bool, default=True
+        Whether we want our results printed or not
 
     Returns
     -------
-
+    A dictionary containing n, a, b, var_x, var_y, var_m, alpha and the power of the test
     """
     if not any(x is None for x in [n, a, b, var_x, var_y, var_m, power, alpha]):
         raise ValueError("One of n, a, b, var_x, var_y, var_m, power or alpha must be None")
@@ -1395,6 +1397,522 @@ def wp_mediation_test(
         raise ValueError("power must be between 0 and 1")
     test = WpMediation(n, power, a, b, var_x, var_y, var_m, alpha).pwr_test()
     if print_pretty:
-        ...
+        print(
+            f"{test['method']}"
+            + "\n" * 2
+            + "\t"
+            + " " * (len(str(test["n"])) - 1)
+            + "n"
+            + " "
+            + "power"
+            + " " * (len(str(round(test["a"], 2))))
+            + "a"
+            + " " * (len(str(round(test["b"], 2))))
+            + "b"
+            + " " * max(len(str(round(test["var_x"], 2))) - 6, 1)
+            + "var_x"
+            + " " * max(len(str(round(test["var_m"], 2))) - 6, 1)
+            + "var_m"
+            + " " * max(len(str(round(test["var_y"], 2))) - 6, 1)
+            + "var_y"
+            + " "
+            + "alpha"
+            + "\n"
+            + "\t"
+            + f"{test['n']}"
+            + " " * (6 - len(str(round(test["power"], 2))))
+            + f"{round(test['power'], 2)}"
+            + " "
+            + f"{round(test['a'], 2)}"
+            + " "
+            + f"{round(test['b'], 2)}"
+            + " " * (6 - len(str(round(test["var_x"], 2))))
+            + f"{round(test['var_x'], 2)}"
+            + " " * (6 - len(str(round(test["var_m"], 2))))
+            + f"{round(test['var_m'], 2)}"
+            + " " * (6 - len(str(round(test["var_y"], 2))))
+            + f"{round(test['var_y'], 2)}"
+            + " " * (6 - len(str(round(test["alpha"], 2))))
+            + f"{round(test['alpha'], 2)}"
+            + " \n" * 2
+            + f"URL: {test['url']}"
+        )
     return test
 
+
+def wp_correlation_test(
+        n: Optional[int] = None,
+        r: Optional[float] = None,
+        power: Optional[float] = None,
+        p: int = 0,
+        rho0: float = 0.0,
+        alpha: Optional[float] = None,
+        alternative: str = "two-sided",
+        print_pretty: bool = True
+) -> Dict:
+    """This function is for power analysis for correlation. Correlation measures whether and how a pair of variables are
+    related. The Pearson Product Moment correlation coefficient (r) is adopted here. The power calculation for correlation
+    is conducted based on Fisher’s z transformation of Pearson correlation coefficent (Fisher, 1915, 1921).
+
+    Parameters
+    ----------
+    n: int, default=None
+        Sample size
+    r: float, default=None
+        Effect size or correlation. According to Cohen (1988), a correlation coefficient of 0.10, 0.30, and 0.50 are
+        considered as an effect size of "small", "medium", and "large", respectively.
+    power: float, default=None
+        Statistical power
+    p: int, default=0
+        Number of variables to partial out
+    rho0: float, default=0.0
+        Null correlation coefficient
+    alpha: float, default=None
+        Significance level chosen for the test
+    alternative: {'two-sided', 'greater', 'less'}
+        Direction of the alternative hypothesis.
+    print_pretty: bool, default=True
+        Whether we want our results printed or not
+
+    Returns
+    -------
+    A dictionary containing n, r, power, p, rho0, alpha and the alternative hypothesis of the test
+    """
+    if not any(x is None for x in [n, r, power, alpha]):
+        raise ValueError("One of n, r, power or alpha must be None")
+    if sum([x is None for x in [n, r, power, alpha]]) > 1:
+        raise ValueError("Only one of n, r, power or alpha may be None")
+    if alpha is not None and (alpha < 0 or alpha > 1):
+        raise ValueError("alpha must be between 0 and 1")
+    if power is not None and (power < 0 or power > 1):
+        raise ValueError("power must be between 0 and 1")
+    test = WpCorrelation(n, r, power, p, rho0, alpha, alternative).pwr_test()
+    if print_pretty:
+        print(
+            f"{test['method']}"
+            + "\n" * 2
+            + "\t"
+            + " " * (len(str(test["n"])) - 1)
+            + "n"
+            + " " * (len(str(round(test["effect_size"], 2))))
+            + "r"
+            + " "
+            + "alpha"
+            + " "
+            + "power"
+            + "\n"
+            + "\t"
+            + f"{test['n']}"
+            + " "
+            + f"{round(test['effect_size'], 2)}"
+            + " " * (6 - len(str(round(test["alpha"], 2))))
+            + f"{round(test['alpha'], 2)}"
+            + " " * (6 - len(str(round(test["power"], 2))))
+            + f"{round(test['power'], 2)}"
+            + " \n" * 2
+            + f"URL: {test['url']}"
+        )
+    return test
+
+
+def wp_mrt2arm_test(
+        n: Optional[int] = None,
+        f: Optional[float] = None,
+        J: Optional[int] = None,
+        tau00: float = 1.0,
+        tau11: float = 1.0,
+        sg2: float = 1.0,
+        power: Optional[float] = None,
+        alpha: float = 0.05,
+        alternative: str = "two-sided",
+        test_type: str = "main",
+        print_pretty: bool = True,
+) -> Dict:
+    """Multisite randomized trials (MRT) are a type of multilevel design for the situation when the entire cluster is
+    randomly assigned to either a treatment arm or a control arm (Liu, 2013). The data from MRT can be analyzed in a
+    two-level hierarchical linear model, where the indicator variable for treatment assignment is included in first level.
+    If a study contains multiple treatments, then multiple indicators will be used. This function is for designs with
+    2 arms (i.e., a treatment and a control). Three types of tests are considered in the function:
+        * (1) The "main" type tests treatment main effect;
+        * (2) The "site" type tests the variance of cluster/site means;
+        * and (3) The "variance" type tests variance of treatment effects.
+    Details leading to power calculation can be found in Raudenbush (1997) and Liu (2013).
+
+    Parameters
+    ----------
+    n: int, default=None
+        Sample size. It is the number of individuals within each cluster.
+    f: float, default=None
+        Effect size. It specifies the main effect of treatment, the mean difference between the treatment clusters/sites
+        and the control clusters/sites. Effect size must be positive.
+    J: int, default=None
+        Number of clusters / sites. It tells how many clusters are considered in the study design. At least two clusters
+        are required.
+    tau00: float, default=1.0
+        Variance of cluster/site means. It is one of the residual variances in the second level. Its value must be positive.
+    tau11: float, default=1.0
+        Variance of treatment effects across sites. It is one of the residual variances in the second level. Its value
+        must be positive.
+    sg2: float, default=1.0
+        Level-one error Variance. The residual variance in the first level.
+    power: float, default=None
+        Statistical power
+    alpha: float, default=0.05
+        Significance level chosen for the test.
+    alternative: str, default='two-sided'
+        Type of alternative hypothesis. The option 'one-sided' can be either 'less' or 'greater'
+    test_type: {'main', 'site', 'variance'}
+        Type of effect. The type "main" tests treatment main effect, no tau00 needed; Type "site" tests the variance of
+        cluster/site means, no tau11 or f needed; and Type "variance" tests variance of treatment effects, no tau00 or
+        f needed.
+    print_pretty: bool, default=True
+        Whether we want our results printed or not
+
+    Returns
+    -------
+    A dictionary containing n, J, f, power and alpha of our test
+    """
+    test = WpMRT2Arm(n, f, J, tau00, tau11, sg2, power, alpha, alternative, test_type).pwr_test()
+    if print_pretty:
+        print(
+            f"{test['method']}"
+            + "\n" * 2
+            + "\t"
+            + "\n"
+            + "\t"
+            + " \n" * 2
+            + f"Note: {test['note']}"
+            + "\n"
+            + f"URL: {test['url']}"
+        )
+    return test
+
+
+def wp_mrt3arm_test(
+        n: Optional[int] = None,
+        f1: Optional[float] = None,
+        f2: float = 0.0,
+        J: Optional[int] = None,
+        tau: float = 1.0,
+        sg2: float = 1.0,
+        power: Optional[float] = None,
+        alpha: float = 0.05,
+        alternative: str = "two-sided",
+        test_type: str = "main",
+        print_pretty: bool = True,
+) -> Dict:
+    """Multisite randomized trials (MRT) are a type of multilevel design for the situation when the entire cluster is
+    randomly assigned to either a treatment arm or a control arm (Liu, 2013). The data from MRT can be analyzed in a
+    two-level hierarchical linear model, where the indicator variable for treatment assignment is included in first level.
+    If a study contains multiple treatments, then multiple indicators will be used. This function is for designs with 3
+    arms (i.e., two treatments and a control). Three types of tests are considered in the function:
+        * (1) The "main" type tests treatment main effect;
+        * (2) The "treatment" type tests the difference between the two treatments;
+        * and (3) The "omnibus" type tests whether the three arms are all equivalent.
+    Details leading to power calculation can befound in Raudenbush (1997) and Liu (2013).
+
+    Parameters
+    ----------
+    n: int, default=None
+        Sample size. It is the number of individuals within each cluster.
+    f1: float, default=None
+        Effect size for treatment main effect. Effect size must be positive.
+    f2: float, default=0.0
+        Effect size for the difference between two treatments. Effect size must be positive.
+    J: int, default=None
+        Number of clusters / sites. It tells how many clusters are considered in the study design. At least two clusters
+        are required.
+    tau: float, default=1.0
+        Variance of treatment effects across sites/clusters.
+    sg2: float, default=1.0
+        Level-one error Variance. The residual variance in the first level.
+    power: float, default=None
+        Statistical power
+    alpha: float, default=0.05
+        Significance level chosed for the test. It equals 0.05 by default.
+    alternative: {'two-sided', 'one-sided'}
+        Type of the alternative hypothesis. The option "one-sided" can be either "less" or "greater"
+    test_type: {'main', 'treatment', 'omnibus'}
+        The type "main" tests the difference between the average treatment arms and the control arm;
+        Type "treatment" tests the difference between the two treatment arms;
+        and Type "omnibus" tests whether the three arms are all equivalent.
+    print_pretty: bool, default=True
+        Whether we want our results printed or not
+
+    Returns
+    -------
+    A dictionary containing n, r, power, p, rho0, alpha and the alternative hypothesis of the test
+    """
+    if not any(x is None for x in [n, f1, J, power]):
+        raise ValueError("One of n, f1, J, or power must be None")
+    if sum([x is None for x in [n, f1, J, power]]) > 1:
+        raise ValueError("Only one of n, f1, J, or power may be None")
+    if alpha is not None and (alpha < 0 or alpha > 1):
+        raise ValueError("alpha must be between 0 and 1")
+    if power is not None and (power < 0 or power > 1):
+        raise ValueError("power must be between 0 and 1")
+    if f1 is not None and f1 < 0:
+        raise ValueError("f1 must be positive")
+    if f2 is not None and f2 < 0:
+        raise ValueError("f2 must be positive")
+    if n is not None and n < 3:
+        raise ValueError("n must be greater than 2")
+    if J is not None and J < 2:
+        raise ValueError("Number of sites must be at least 2")
+    if tau < 0:
+        raise ValueError("Variance of treatment main effects across sites must be positive")
+    if sg2 < 0:
+        raise ValueError("Between-person variation must be a positive number")
+    if alternative.casefold() not in ["two-sided", "one-sided"]:
+        raise ValueError("alternative must be `two-sided` or `one-sided`")
+    if test_type.casefold() not in ["main", "treatment", "omnibus"]:
+        raise ValueError("test_type must be `main`, `treatment` or `omnibus`")
+    test = WpMRT3Arm(n, f1, f2, J, tau, sg2, power, alpha, alternative, test_type).pwr_test()
+    if print_pretty:
+        print(
+            f"{test['method']}"
+            + "\n" * 2
+            + "\t"
+            + " " * (len(str(test["J"])) - 1)
+            + "J"
+            + " " * (len(str(test["n"])))
+            + "n"
+            + " " * max(1, len(str(round(test["f1"], 2))) - 1)
+            + "f1"
+            + " " * max(1, len(str(round(test["f2"], 2))) - 1)
+            + "f2"
+            + " " * max(1, len(str(round(test["tau"], 2))) - 2)
+            + "tau"
+            + " " * max(1, len(str(round(test["sg2"], 2))) - 2)
+            + "sg2"
+            + " "
+            + "power"
+            + " "
+            + "alpha"
+            + "\n"
+            + "\t"
+            + f"{test['J']}"
+            + " "
+            + f"{test['n']}"
+            + " " * max(3 - len(str(round(test["f1"], 2))), 1)
+            + f"{round(test['f1'], 2)}"
+            + " " * max(3 - len(str(round(test["f2"], 2))), 1)
+            + f"{round(test['f2'], 2)}"
+            + " " * max(4 - len(str(round(test["tau"], 2))), 1)
+            + f"{round(test['tau'], 2)}"
+            + " " * max(4 - len(str(round(test["sg2"], 2))), 1)
+            + f"{round(test['sg2'], 2)}"
+            + " " * (6 - len(str(round(test["power"], 2))))
+            + f"{round(test['power'], 2)}"
+            + " " * (6 - len(str(round(test["alpha"], 2))))
+            + f"{round(test['alpha'], 2)}"
+            + " \n" * 2
+            + f"Note: {test['note']}"
+            + "\n"
+            + f"URL: {test['url']}"
+        )
+    return test
+
+
+def wp_crt2arm_test(
+        n: Optional[int] = None,
+        f: Optional[float] = None,
+        J: Optional[int] = None,
+        icc: Optional[float] = None,
+        power: Optional[float] = None,
+        alpha: Optional[float] = None,
+        alternative: str = "two-sided",
+        print_pretty: bool = True,
+) -> Dict:
+    """Cluster randomized trials (CRT) are a type of multilevel design for the situation when the entire cluster is
+    randomly assigned to either a treatment arm or a contral arm (Liu, 2013). The data from CRT can be analyzed in a
+    two-level hierachical linear model, where the indicator variable for treatment assignment is included in second level.
+    If a study contains multiple treatments, then mutiple indicators will be used. This function is for designs with
+    2 arms (i.e., a treatment and a control). Details leading to power calculation can be found in
+    Raudenbush (1997) and Liu (2013).
+
+    Parameters
+    ----------
+    n: int, default=None
+        Sample size. It is the number of individuals within each cluster
+    f: float, default=None
+        Effect size. It specifies either the main effect of treatment, or the mean difference between the treatment
+        clusters and the control clusters.
+    J: int, default=None
+        Number of clusters / sides. It tells how many clusters are considered in the study design. At least 2 clusters
+        are required.
+    icc: float, default=None
+        Intra-class correlation. ICC is calculated as the ratio of betwee-cluster variance to the total variance. It
+        quantifies the degree to which two randomly drawn observations within a cluster are correlated.
+    power: float, default=None
+        Statistical power
+    alpha: float, default=None
+        Significance level chosen for the test.
+    alternative: {"two-sided", "one-sided"}
+        Type of alternative hypothesis. The option "one-sided" can be either "less" or "greater"
+    print_pretty: bool, default=True
+        Whether we want our results printed or not
+
+    Returns
+    -------
+    A dictionary containing n, effect size, J, icc, power and alpha of our test
+    """
+    if not any(x is None for x in [n, f, J, icc, power, alpha]):
+        raise ValueError("One of n, f, J, icc, power, or alpha must be None")
+    if sum([x is None for x in [n, f, J, icc, power, alpha]]) > 1:
+        raise ValueError("Only one of n, f, J, icc, power, or alpha may be None")
+    if alpha is not None and (alpha < 0 or alpha > 1):
+        raise ValueError("alpha must be between 0 and 1")
+    if power is not None and (power < 0 or power > 1):
+        raise ValueError("power must be between 0 and 1")
+    if n is not None and n < 1:
+        raise ValueError("n must be at least 1")
+    if J is not None and J < 3:
+        raise ValueError("J must be at least 3")
+    if icc is not None and (icc < 0 or icc > 1):
+        raise ValueError("icc must be between 0 and 1")
+    if alternative.casefold() not in ["two-sided", "one-sided"]:
+        raise ValueError("alternative must be one of `two-sided` or `one-sided`")
+    test = WpCRT2Arm(n, f, J, icc, power, alpha, alternative).pwr_test()
+    if print_pretty:
+        print(
+            f"{test['method']}"
+            + "\n" * 2
+            + "\t"
+            + " " * (len(str(test["J"])) - 1)
+            + "J"
+            + " " * (len(str(test["n"])))
+            + "n"
+            + " " * max(1, len(str(round(test["effect_size"], 2))))
+            + "f"
+            + " " * max(1, len(str(round(test["icc"], 2))) - 2)
+            + "icc"
+            + " "
+            + "power"
+            + " "
+            + "alpha"
+            + "\n"
+            + "\t"
+            + f"{test['J']}"
+            + " "
+            + f"{test['n']}"
+            + " " * max(3 - len(str(round(test["effect_size"], 2))), 1)
+            + f"{round(test['effect_size'], 2)}"
+            + " " * max(3 - len(str(round(test["icc"], 2))), 1)
+            + f"{round(test['icc'], 2)}"
+            + " " * (6 - len(str(round(test["power"], 2))))
+            + f"{round(test['power'], 2)}"
+            + " " * (6 - len(str(round(test["alpha"], 2))))
+            + f"{round(test['alpha'], 2)}"
+            + " \n" * 2
+            + f"Note: {test['note']}"
+            + "\n"
+            + f"URL: {test['url']}"
+        )
+    return test
+
+
+def wp_crt3arm_test(
+        n: Optional[int] = None,
+        f: Optional[float] = None,
+        J: Optional[int] = None,
+        icc: Optional[float] = None,
+        power: Optional[float] = None,
+        alpha: Optional[float] = None,
+        alternative: str = "two-sided",
+        test_type: str = "main",
+        print_pretty: bool = True,
+) -> Dict:
+    """Cluster randomized trials (CRT) are a type of multilevel design for the situation when the entire cluster is
+    randomly assigned to either a treatment arm or a contral arm (Liu, 2013). The data from CRT can be analyzed in a
+    two-level hierachical linear model, where the indicator variable for treatment assignment is included in second level.
+    If a study contains multiple treatments, then mutiple indicators will be used. This function is for designs with
+    3 arms (i.e., two treatments and a control). Details leading to power calculation can be found in
+    Raudenbush (1997) and Liu (2013).
+
+    Parameters
+    ----------
+    n: int, default=None
+        Sample size. It is the number of individuals within each cluster
+    f: float, default=None
+        Effect size. It specifies either the main effect of treatment, or the mean difference between the treatment
+        clusters and the control clusters.
+    J: int, default=None
+        Number of clusters / sides. It tells how many clusters are considered in the study design. At least 2 clusters
+        are required.
+    icc: float, default=None
+        Intra-class correlation. ICC is calculated as the ratio of betwee-cluster variance to the total variance. It
+        quantifies the degree to which two randomly drawn observations within a cluster are correlated.
+    power: float, default=None
+        Statistical power
+    alpha: float, default=None
+        Significance level chosen for the test.
+    alternative: {"two-sided", "one-sided"}
+        Type of alternative hypothesis. The option "one-sided" can be either "less" or "greater"
+    test_type: {"main", "treatment", "omnibus"}
+        Type of effect.
+            * "main" tests the difference between the average treatment arms and the control arm.
+            * "treatment" tests the difference between the two treatment arms
+            * "omnibus" test whether the tree arms are all equivalent
+    print_pretty: bool, default=True
+        Whether we want our results printed or not
+
+    Returns
+    -------
+    A dictionary containing n, effect size, J, icc, power and alpha of our test
+    """
+    if not any(x is None for x in [n, f, J, icc, power, alpha]):
+        raise ValueError("One of n, f, J, icc, power, or alpha must be None")
+    if sum([x is None for x in [n, f, J, icc, power, alpha]]) > 1:
+        raise ValueError("Only one of n, f, J, icc, power, or alpha may be None")
+    if alpha is not None and (alpha < 0 or alpha > 1):
+        raise ValueError("alpha must be between 0 and 1")
+    if power is not None and (power < 0 or power > 1):
+        raise ValueError("power must be between 0 and 1")
+    if n is not None and n < 1:
+        raise ValueError("n must be at least 1")
+    if J is not None and J < 3:
+        raise ValueError("J must be at least 3")
+    if icc is not None and (icc < 0 or icc > 1):
+        raise ValueError("icc must be between 0 and 1")
+    if alternative.casefold() not in ["two-sided", "one-sided"]:
+        raise ValueError("alternative must be one of `two-sided` or `one-sided`")
+    if test_type.casefold() not in ["main", "treatment", "omnibus"]:
+        raise ValueError("test_type must be one of `main`, `treatment` or `omnibus`")
+    test = WpCRT3Arm(n, f, J, icc, power, alpha, alternative, test_type).pwr_test()
+    if print_pretty:
+        print(
+            f"{test['method']}"
+            + "\n" * 2
+            + "\t"
+            + " " * (len(str(test["J"])) - 1)
+            + "J"
+            + " " * (len(str(test["n"])))
+            + "n"
+            + " " * max(1, len(str(round(test["effect_size"], 2))))
+            + "f"
+            + " " * max(1, len(str(round(test["icc"], 2))) - 2)
+            + "icc"
+            + " "
+            + "power"
+            + " "
+            + "alpha"
+            + "\n"
+            + "\t"
+            + f"{test['J']}"
+            + " "
+            + f"{test['n']}"
+            + " " * max(3 - len(str(round(test["effect_size"], 2))), 1)
+            + f"{round(test['effect_size'], 2)}"
+            + " " * max(3 - len(str(round(test["icc"], 2))), 1)
+            + f"{round(test['icc'], 2)}"
+            + " " * (6 - len(str(round(test["power"], 2))))
+            + f"{round(test['power'], 2)}"
+            + " " * (6 - len(str(round(test["alpha"], 2))))
+            + f"{round(test['alpha'], 2)}"
+            + " \n" * 2
+            + f"Note: {test['note']}"
+            + "\n"
+            + f"URL: {test['url']}"
+        )
+    return test

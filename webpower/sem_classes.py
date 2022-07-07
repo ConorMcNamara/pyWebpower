@@ -25,31 +25,31 @@ class WPSEMChisq:
     def _get_power(self) -> float:
         ncp = (self.n - 1) * self.effect
         c_alpha = chi2.ppf(1 - self.alpha, self.df)
-        power = 1 - ncx2.cdf(c_alpha, self.df, ncp)
+        power = ncx2.sf(c_alpha, self.df, ncp)
         return power
 
     def _get_n(self, n: int) -> float:
         ncp = (n - 1) * self.effect
         c_alpha = chi2.ppf(1 - self.alpha, self.df)
-        n = 1 - ncx2.cdf(c_alpha, self.df, ncp) - self.power
+        n = ncx2.sf(c_alpha, self.df, ncp) - self.power
         return n
 
     def _get_df(self, df: int) -> float:
         ncp = (self.n - 1) * self.effect
         c_alpha = chi2.ppf(1 - self.alpha, df)
-        df = 1 - ncx2.cdf(c_alpha, df, ncp) - self.power
+        df = ncx2.sf(c_alpha, df, ncp) - self.power
         return df
 
     def _get_alpha(self, alpha: float) -> float:
         ncp = (self.n - 1) * self.effect
         c_alpha = chi2.ppf(1 - alpha, self.df)
-        alpha = 1 - ncx2.cdf(c_alpha, self.df, ncp) - self.power
+        alpha = ncx2.sf(c_alpha, self.df, ncp) - self.power
         return alpha
 
     def _get_effect_size(self, effect: float) -> float:
         ncp = (self.n - 1) * effect
         c_alpha = chi2.ppf(1 - self.alpha, self.df)
-        effect = 1 - ncx2.cdf(c_alpha, self.df, ncp) - self.power
+        effect = ncx2.sf(c_alpha, self.df, ncp) - self.power
         return effect
 
     def pwr_test(self) -> Dict:
@@ -102,7 +102,7 @@ class WPSEMRMSEA:
             c_alpha = ncx2.ppf(1 - self.alpha, self.df, ncp0)
         else:
             c_alpha = ncx2.ppf(self.alpha, self.df, ncp0)
-        power = 1 - ncx2.cdf(c_alpha, self.df, ncp1)
+        power = ncx2.sf(c_alpha, self.df, ncp1)
         return power
 
     def _get_n(self, n: int) -> float:
@@ -112,7 +112,7 @@ class WPSEMRMSEA:
             c_alpha = ncx2.ppf(1 - self.alpha, self.df, ncp0)
         else:
             c_alpha = ncx2.ppf(self.alpha, self.df, ncp0)
-        n = 1 - ncx2.cdf(c_alpha, self.df, ncp1) - self.power
+        n = ncx2.sf(c_alpha, self.df, ncp1) - self.power
         return n
 
     def _get_df(self, df: int) -> float:
@@ -122,7 +122,7 @@ class WPSEMRMSEA:
             c_alpha = ncx2.ppf(1 - self.alpha, df, ncp0)
         else:
             c_alpha = ncx2.ppf(self.alpha, df, ncp0)
-        df = 1 - ncx2.cdf(c_alpha, df, ncp1) - self.power
+        df = ncx2.sf(c_alpha, df, ncp1) - self.power
         return df
 
     def _get_rmsea0(self, rmsea0: float) -> float:
@@ -132,7 +132,7 @@ class WPSEMRMSEA:
             c_alpha = ncx2.ppf(1 - self.alpha, self.df, ncp0)
         else:
             c_alpha = ncx2.ppf(self.alpha, self.df, ncp0)
-        rmsea0 = 1 - ncx2.cdf(c_alpha, self.df, ncp1) - self.power
+        rmsea0 = ncx2.sf(c_alpha, self.df, ncp1) - self.power
         return rmsea0
 
     def _get_rmsea1(self, rmsea1: float) -> float:
@@ -142,7 +142,7 @@ class WPSEMRMSEA:
             c_alpha = ncx2.ppf(1 - self.alpha, self.df, ncp0)
         else:
             c_alpha = ncx2.ppf(self.alpha, self.df, ncp0)
-        rmsea1 = 1 - ncx2.cdf(c_alpha, self.df, ncp1) - self.power
+        rmsea1 = ncx2.sf(c_alpha, self.df, ncp1) - self.power
         return rmsea1
 
     def _get_alpha(self, alpha: float) -> float:
@@ -152,7 +152,7 @@ class WPSEMRMSEA:
             c_alpha = ncx2.ppf(1 - alpha, self.df, ncp0)
         else:
             c_alpha = ncx2.ppf(alpha, self.df, ncp0)
-        alpha = 1 - ncx2.cdf(c_alpha, self.df, ncp1) - self.power
+        alpha = ncx2.sf(c_alpha, self.df, ncp1) - self.power
         return alpha
 
     def pwr_test(self) -> Dict:

@@ -258,35 +258,35 @@ class WpAnovaBinaryClass:
         chi = pow(self.V, 2) * self.n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
-        power = 1 - ncx2.cdf(crit_value, df, chi)
+        power = ncx2.sf(crit_value, df, chi)
         return power
 
     def _get_groups(self, k) -> float:
         chi = pow(self.V, 2) * self.n * (k - 1)
         df = k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
-        k = 1 - ncx2.cdf(crit_value, df, chi) - self.power
+        k = ncx2.sf(crit_value, df, chi) - self.power
         return k
 
     def _get_sample_size(self, n) -> float:
         chi = pow(self.V, 2) * n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
-        n = 1 - ncx2.cdf(crit_value, df, chi) - self.power
+        n = ncx2.sf(crit_value, df, chi) - self.power
         return n
 
     def _get_effect_size(self, V) -> float:
         chi = pow(V, 2) * self.n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
-        V = 1 - ncx2.cdf(crit_value, df, chi) - self.power
+        V = ncx2.sf(crit_value, df, chi) - self.power
         return V
 
     def _get_alpha(self, alpha) -> float:
         chi = pow(self.V, 2) * self.n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - alpha, df)
-        alpha = 1 - ncx2.cdf(crit_value, df, chi) - self.power
+        alpha = ncx2.sf(crit_value, df, chi) - self.power
         return alpha
 
     def pwr_test(self) -> Dict:
