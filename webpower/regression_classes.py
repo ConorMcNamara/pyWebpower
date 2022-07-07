@@ -269,15 +269,15 @@ class WpPoisson:
 
 class WpLogistic:
     def __init__(
-        self,
-        n: Optional[int] = None,
-        p0: float = 0.5,
-        p1: float = 0.5,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
-        alternative: str = "two-sided",
-        family: str = "Bernoulli",
-        parameter: Optional[Union[int, float, list, tuple]] = None,
+            self,
+            n: Optional[int] = None,
+            p0: float = 0.5,
+            p1: float = 0.5,
+            alpha: Optional[float] = None,
+            power: Optional[float] = None,
+            alternative: str = "two-sided",
+            family: str = "Bernoulli",
+            parameter: Optional[Union[int, float, list, tuple]] = None,
     ) -> None:
         self.n = n
         if abs(p0) > 1:
