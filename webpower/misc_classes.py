@@ -4,7 +4,7 @@ from math import sqrt, pow, ceil, log
 from scipy.stats import norm
 from scipy.optimize import brentq
 
-from pyWebpower.utils import nuniroot
+from webpower.utils import nuniroot
 
 
 class WpMediation:
