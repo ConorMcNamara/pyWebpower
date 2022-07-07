@@ -1,18 +1,18 @@
 from typing import Dict, Optional, Union
 
-from pyWebpower.anova_classes import (
+from webpower.anova_classes import (
     WpAnovaClass,
     WpAnovaBinaryClass,
     WpAnovaCountClass,
     WpKAnovaClass,
     WpRMAnovaClass,
 )
-from pyWebpower.proportion_classes import WpOneProp, WpTwoPropOneN, WpTwoPropTwoN
-from pyWebpower.t_test_classes import WpOneT, WpTwoT
-from pyWebpower.regression_classes import WPRegression, WpPoisson, WpLogistic
-from pyWebpower.sem_classes import WPSEMChisq, WPSEMRMSEA
-from pyWebpower.misc_classes import WpMediation, WpCorrelation
-from pyWebpower.randomized_trial_classes import WpMRT2Arm, WpMRT3Arm, WpCRT2Arm, WpCRT3Arm
+from webpower.proportion_classes import WpOneProp, WpTwoPropOneN, WpTwoPropTwoN
+from webpower.t_test_classes import WpOneT, WpTwoT
+from webpower.regression_classes import WPRegression, WpPoisson, WpLogistic
+from webpower.sem_classes import WPSEMChisq, WPSEMRMSEA
+from webpower.misc_classes import WpMediation, WpCorrelation
+from webpower.randomized_trial_classes import WpMRT2Arm, WpMRT3Arm, WpCRT2Arm, WpCRT3Arm
 
 
 def wp_anova_test(
