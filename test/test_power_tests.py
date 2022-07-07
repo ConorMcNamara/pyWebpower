@@ -1,6 +1,6 @@
 import pytest
 
-import pyWebpower.power_tests as power_tests
+import webpower.power_tests as power_tests
 
 
 # ANOVA
