@@ -3,7 +3,7 @@ from math import sqrt, ceil
 
 from scipy.stats import t as t_dist, nct, f as f_dist, ncf
 
-from pyWebpower.utils import nuniroot
+from webpower.utils import nuniroot
 
 
 class WpMRT2Arm:
