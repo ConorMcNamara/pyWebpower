@@ -1,5 +1,5 @@
 # pyWebpower
-A python implementation of the [Webpower](https://cran.r-project.org/web/packages/WebPower/index.html) R package; a library for calculating the power, sample size and minimum detectable effect of various Statistical Tests and Experiments. 
+A Python implementation of the [Webpower](https://cran.r-project.org/web/packages/WebPower/index.html) R package; a library for calculating the power, sample size and minimum detectable effect of various Statistical Tests and Experiments. 
 
 To quote the documentation
 
