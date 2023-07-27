@@ -61,7 +61,7 @@ class WpAnovaClass:
             )
         return power
 
-    def _get_groups(self, k) -> float:
+    def _get_groups(self, k: float) -> float:
         if self.test_type == "overall":
             lambda_ = self.n * pow(self.f, 2)
             k = (
@@ -98,7 +98,7 @@ class WpAnovaClass:
             )
         return k
 
-    def _get_sample_size(self, n) -> float:
+    def _get_sample_size(self, n: int) -> float:
         if self.test_type == "overall":
             lambda_ = n * pow(self.f, 2)
             n = (
@@ -135,7 +135,7 @@ class WpAnovaClass:
             )
         return n
 
-    def _get_effect_size(self, f) -> float:
+    def _get_effect_size(self, f: float) -> float:
         if self.test_type == "overall":
             lambda_ = self.n * pow(f, 2)
             f = (
@@ -176,7 +176,7 @@ class WpAnovaClass:
             )
         return f
 
-    def _get_alpha(self, alpha) -> float:
+    def _get_alpha(self, alpha: float) -> float:
         if self.test_type == "overall":
             lambda_ = self.n * pow(self.f, 2)
             alpha = (
@@ -261,28 +261,28 @@ class WpAnovaBinaryClass:
         power = ncx2.sf(crit_value, df, chi)
         return power
 
-    def _get_groups(self, k) -> float:
+    def _get_groups(self, k: int) -> float:
         chi = pow(self.V, 2) * self.n * (k - 1)
         df = k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
         k = ncx2.sf(crit_value, df, chi) - self.power
         return k
 
-    def _get_sample_size(self, n) -> float:
+    def _get_sample_size(self, n: int) -> float:
         chi = pow(self.V, 2) * n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
         n = ncx2.sf(crit_value, df, chi) - self.power
         return n
 
-    def _get_effect_size(self, V) -> float:
+    def _get_effect_size(self, V: float) -> float:
         chi = pow(V, 2) * self.n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
         V = ncx2.sf(crit_value, df, chi) - self.power
         return V
 
-    def _get_alpha(self, alpha) -> float:
+    def _get_alpha(self, alpha: float) -> float:
         chi = pow(self.V, 2) * self.n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - alpha, df)
@@ -353,7 +353,7 @@ class WpKAnovaClass:
         power = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_)
         return power
 
-    def _get_sample_size(self, n) -> float:
+    def _get_sample_size(self, n: int) -> float:
         lambda_ = pow(self.f, 2) * n
         ddf = n - self.ng
         n = (
@@ -362,13 +362,13 @@ class WpKAnovaClass:
         )
         return n
 
-    def _get_numerator_df(self, ndf) -> float:
+    def _get_numerator_df(self, ndf: int) -> float:
         lambda_ = pow(self.f, 2) * self.n
         ddf = self.n - self.ng
         ndf = ncf.sf(f_dist.isf(self.alpha, ndf, ddf), ndf, ddf, lambda_) - self.power
         return ndf
 
-    def _get_effect_size(self, f) -> float:
+    def _get_effect_size(self, f: float) -> float:
         lambda_ = pow(f, 2) * self.n
         ddf = self.n - self.ng
         f = (
@@ -377,7 +377,7 @@ class WpKAnovaClass:
         )
         return f
 
-    def _get_groups(self, ng) -> float:
+    def _get_groups(self, ng: int) -> float:
         lambda_ = pow(self.f, 2) * self.n
         ddf = self.n - ng
         ng = (
@@ -386,7 +386,7 @@ class WpKAnovaClass:
         )
         return ng
 
-    def _get_alpha(self, alpha) -> float:
+    def _get_alpha(self, alpha: float) -> float:
         lambda_ = pow(self.f, 2) * self.n
         ddf = self.n - self.ng
         alpha = (
@@ -466,7 +466,7 @@ class WpRMAnovaClass:
         power = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_)
         return power
 
-    def _get_groups(self, ng) -> float:
+    def _get_groups(self, ng: int) -> float:
         if self.test_type == "between":
             df_1 = ng - 1
             df_2 = self.n - ng
@@ -482,7 +482,7 @@ class WpRMAnovaClass:
         )
         return ng
 
-    def _get_nm(self, nm):
+    def _get_nm(self, nm: int) -> float:
         if self.test_type == "between":
             raise ValueError("nm is not defined for between-effects")
         elif self.test_type == "within":
@@ -497,7 +497,7 @@ class WpRMAnovaClass:
         )
         return nm
 
-    def _get_sample_size(self, n):
+    def _get_sample_size(self, n: int) -> float:
         if self.test_type == "between":
             df_1 = self.ng - 1
             df_2 = n - self.ng
@@ -511,7 +511,7 @@ class WpRMAnovaClass:
         n = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
         return n
 
-    def _get_effect_size(self, f):
+    def _get_effect_size(self, f: float) -> float:
         if self.test_type == "between":
             df_1 = self.ng - 1
             df_2 = self.n - self.ng
@@ -525,7 +525,7 @@ class WpRMAnovaClass:
         f = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
         return f
 
-    def _get_alpha(self, alpha):
+    def _get_alpha(self, alpha: float) -> float:
         if self.test_type == "between":
             df_1 = self.ng - 1
             df_2 = self.n - self.ng
