@@ -42,7 +42,7 @@ class WpMediation:
         power = norm.sf(za2 - delta) + norm.cdf(-za2 - delta)
         return power
 
-    def _get_n(self, n: int):
+    def _get_n(self, n: int) -> float:
         numerator = sqrt(n) * self.a * self.b
         denominator = sqrt(
             pow(self.a, 2) * self.var_y / (self.var_m - pow(self.a, 2) * self.var_x)
@@ -54,7 +54,7 @@ class WpMediation:
         n = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - self.power
         return n
 
-    def _get_var_y(self, var_y: float):
+    def _get_var_y(self, var_y: float) -> float:
         numerator = sqrt(self.n) * self.a * self.b
         denominator = sqrt(
             pow(self.a, 2) * var_y / (self.var_m - pow(self.a, 2) * self.var_x)
@@ -66,7 +66,7 @@ class WpMediation:
         var_y = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - self.power
         return var_y
 
-    def _get_a(self, a: float):
+    def _get_a(self, a: float) -> float:
         numerator = sqrt(self.n) * a * self.b
         denominator = sqrt(
             pow(a, 2) * self.var_y / (self.var_m - pow(a, 2) * self.var_x)
@@ -78,7 +78,7 @@ class WpMediation:
         a = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - self.power
         return a
 
-    def _get_b(self, b: float):
+    def _get_b(self, b: float) -> float:
         numerator = sqrt(self.n) * self.a * b
         denominator = sqrt(
             pow(self.a, 2) * self.var_y / (self.var_m - pow(self.a, 2) * self.var_x)
