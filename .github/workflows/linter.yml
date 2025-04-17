@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff autopep8 docformatter mypy # Install required tools
+          pip install ruff autopep8 docformatter mypy pydocstringformatter # Install required tools
 
       - name: Check code style with ruff
         run: |
@@ -43,6 +43,10 @@ jobs:
         run: |
           find . -name "*.py" -print -exec docformatter --in-place --wrap-summaries 120 --wrap-descriptions 120 {} \;
 
+      - name: Generate docstrings with numpydoc style
+        run: |
+          find . -name "*.py" ! -path "./docs/auto_examples/*" -exec pydocstringformatter -w --style numpydoc --numpydoc-section-order --numpydoc-name-type-spacing --numpydoc-section-spacing --numpydoc-section-hyphen-length --no-final-period {} +
+
       # - name: Check type hints with mypy
       #   run: |
       #     mypy . --ignore-missing-imports --install-types # Run mypy for type checking
@@ -54,44 +58,6 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git add .
             git commit -m "Auto-format code with ruff, autopep8 and docformatter"
-            git push
-          else
-            echo "No changes to commit"
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  generate-docstrings_linux:
-    strategy:
-      matrix:
-        os: [ ubuntu-latest]
-        python-version: [ "3.12" ]
-    runs-on: ${{ matrix.os }}
-    needs: formatting  # Ensures this job runs after the formatting job
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: |
-          pip install pydocstringformatter
-
-      - name: Generate docstrings with numpydoc style
-        run: |
-          find . -name "*.py" ! -path "./docs/auto_examples/*" -exec pydocstringformatter -w --style numpydoc --numpydoc-section-order --numpydoc-name-type-spacing --numpydoc-section-spacing --numpydoc-section-hyphen-length --no-final-period {} +
-        
-      - name: Commit and push changes (if any)
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain)" ]; then
-            git add .
-            git commit -m "Generate docstrings using pydocstringformatter (numpydoc style)"
             git push
           else
             echo "No changes to commit"
