@@ -31,20 +31,20 @@ def wp_anova_test(
 
     Parameters
     ----------
-    k: int, default=None
+    k : int, default=None
         Number of groups
-    n: int, default=None
+    n : int, default=None
         Sample size
-    f: float, default=None
+    f : float, default=None
         Effect size
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    test_type: {'overall', 'two-sided', 'greater', 'less'}
+    test_type : {'overall', 'two-sided', 'greater', 'less'}
         The option "overall" is for the overall test of anova; "two-sided" is for a contrast anova; "greater" is testing
         the between-group variance greater than the within-group, while "less" is vis versus.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed our not
 
     Returns
@@ -117,17 +117,17 @@ def wp_anova_binary_test(
 
     Parameters
     ----------
-    k: int, default=None
+    k : int, default=None
         Number of groups
-    n: int, default=None
+    n : int, default=None
         Sample size
-    V: float, default=None
+    V : float, default=None
         Effect size
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not
 
     Returns
@@ -195,17 +195,17 @@ def wp_anova_count_test(
 
     Parameters
     ----------
-    k: int, default=None
+    k : int, default=None
         Number of groups
-    n: int, default=None
+    n : int, default=None
         Sample size
-    V: float, default=None
+    V : float, default=None
         Effect size
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not
 
     Returns
@@ -272,19 +272,19 @@ def wp_kanova_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size
-    ndf: int, default=None
+    ndf : int, default=None
         Numerator degrees of freedom
-    f: float, default=None
+    f : float, default=None
         Effect size
-    ng: int, default=None
+    ng : int, default=None
         Number of groups
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not
 
     Returns
@@ -368,29 +368,29 @@ def wp_rmanova_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size
-    ng: int, default=None
+    ng : int, default=None
         Number of groups
-    nm: int, default=None
+    nm : int, default=None
         Number of measurements
-    f: float, default=None
+    f : float, default=None
         Effect size. We use the statistic f as the measure of effect size for repeated measures ANOVA
         as in Cohen(1988, p.275).
-    nscor: float, default=1
+    nscor : float, default=1
         Nonsphericity correction coefficient. The nonsphericity correction coefficient is a measure of the degree of
         sphericity in the population. A coefficient of 1 means sphericity is met, while a coefficient less than 1 means
         not met. The samller value of the coefficient means the further departure from sphericity. The lowest value of
         the coefficient is 1/(nm-1) where nm is the total number of measurements. Two viable approaches for computing
         the empirical nonsphericity correction coefficient are sggested. One is by Greenhouse and Geisser (1959),
         the other is by Huynh and Feldt (1976).
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    test_type: {'between', 'within', 'interaction'}
+    test_type : {'between', 'within', 'interaction'}
         Type of analysis.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not
 
     Returns
@@ -471,18 +471,18 @@ def wp_one_prop_test(
 
     Parameters
     ----------
-    h: float, default=None
+    h : float, default=None
         Effect size of the proportion comparison. Cohen (1992) suggested that effect size values of 0.2, 0.5, and 0.8
         represent "small", "medium", and "large" effect sizes, respectively.
-    n: int, default=None
+    n : int, default=None
         The sample size of the group.
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test.
-    power: float, default=None
+    power : float, default=None
         Statistical power.
-    alternative: {'two-sided', 'greater', 'less'}
+    alternative : {'two-sided', 'greater', 'less'}
         Direction of the alternative hypothesis.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not.
 
     Returns
@@ -548,18 +548,18 @@ def wp_two_prop_one_n_test(
 
     Parameters
     ----------
-    h: float, default=None
+    h : float, default=None
         Effect size of the proportion comparison. Cohen (1992) suggested that effect size values of 0.2, 0.5, and 0.8
         represent "small", "medium", and "large" effect sizes, respectively.
-    n: int, default=None
+    n : int, default=None
         The sample size of the group.
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test.
-    power: float, default=None
+    power : float, default=None
         Statistical power.
-    alternative: {'two-sided', 'greater', 'less'}
+    alternative : {'two-sided', 'greater', 'less'}
         Direction of the alternative hypothesis.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not.
 
     Returns
@@ -626,20 +626,20 @@ def wp_two_prop_two_n_test(
 
     Parameters
     ----------
-    h: float, default=None
+    h : float, default=None
         Effect size of the proportion comparison. Cohen (1992) suggested that effect size values of 0.2, 0.5, and 0.8
         represent "small", "medium", and "large" effect sizes, respectively.
-    n1: int, default=None
+    n1 : int, default=None
         The sample size of the first group.
-    n2: int, default=None
+    n2 : int, default=None
         The sample size of the second group.
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test.
-    power: float, default=None
+    power : float, default=None
         Statistical power.
-    alternative: {'two-sided', 'greater', 'less'}
+    alternative : {'two-sided', 'greater', 'less'}
         Direction of the alternative hypothesis.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not.
 
     Returns
@@ -714,19 +714,19 @@ def wp_t1_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         If test_type='one-sample', then the sample size of our group; otherwise the sample size of both groups.
-    d: float, default=None
+    d : float, default=None
         Effect size
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test.
-    power: float, default=None
+    power : float, default=None
         Statistical power.
-    alternative: {'two-sided', 'greater', 'less'}
+    alternative : {'two-sided', 'greater', 'less'}
         Direction of the alternative hypothesis.
-    test_type: {'two-sample', 'paired', 'one-sample'}
+    test_type : {'two-sample', 'paired', 'one-sample'}
         Whether our test is a two-sample test, a paired test or a one-sample test.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not.
 
     Returns
@@ -822,19 +822,19 @@ def wp_t2_test(
 
     Parameters
     ----------
-    n1: int, default=None
+    n1 : int, default=None
         The sample size of our first group
-    n2: int, default=None
+    n2 : int, default=None
         The sample size of our second group
-    d: float, default=None
+    d : float, default=None
         Effect size
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test.
-    power: float, default=None
+    power : float, default=None
         Statistical power.
-    alternative: {'two-sided', 'greater', 'less'}
+    alternative : {'two-sided', 'greater', 'less'}
         Direction of the alternative hypothesis.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not.
 
     Returns
@@ -910,24 +910,24 @@ def wp_regression_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size.
-    p1: int, default=1
+    p1 : int, default=1
         Number of predictors in the full model.
-    p2: int, default=0
+    p2 : int, default=0
         Number of predictors in the reduced model, it is 0 by default. See the book by Maxwell and Delaney (2003)
         for the definition of the reduced model.
-    f2: float, default=None
+    f2 : float, default=None
         Effect size. We use the statistic f2 as the measure of effect size for linear regression proposed by Cohen(1988, p.410).
          Cohen discussed the effect size in three different cases. The calculation of f2 can be generalized using the
          idea of a full model and a reduced model by Maxwell and Delaney (2003).
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level chosen for the test.
-    power: float, default=None
+    power : float, default=None
         Statistical power.
-    test_type: {"cohen", "regular"}
+    test_type : {"cohen", "regular"}
         If set to "cohen", the formula used in the Cohen’s book will be used (not recommended).
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not.
 
     Returns
@@ -1006,26 +1006,26 @@ def wp_poisson_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size
-    exp0: float, default=1
+    exp0 : float, default=1
         The base rate under the null hypothesis. It always takes positive value. See the article by Demidenko (2007)
         for details.
-    exp1: float, default=0.5
+    exp1 : float, default=0.5
         The relative increase of the event rate. It is used for calculation of the effect size. See the article by
         Demidenko (2007) for details.
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level of the test.
-    power: float, default=None
+    power : float, default=None
         Statistical power.
-    alternative: {'two-sided', 'greater', 'less'}
+    alternative : {'two-sided', 'greater', 'less'}
         Direction of the alternative hypothesis
-    family: {'bernoulli', 'exponential', 'lognormal', 'normal', 'poisson', 'uniform'}
+    family : {'bernoulli', 'exponential', 'lognormal', 'normal', 'poisson', 'uniform'}
         Distribution of the predictor.
-    parameter: float, int or iterable
+    parameter : float, int or iterable
         Corresponding parameter for the predictor’s distribution. The default is 0.5 for 'bernoulli',
         1 for 'exponential', (0,1) for 'lognormal' or normal, 1 for 'poisson', and (0,1) for 'uniform'.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not.
 
     Returns
@@ -1105,24 +1105,24 @@ def wp_logistic_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size
-    p0: float, default=0.5
+    p0 : float, default=0.5
         Prob(Y=1|X=0): the probability of observing 1 for the outcome variable Y when the predictor X equals 0.
-    p1: float, default=0.5
+    p1 : float, default=0.5
         Prob(Y=1|X=1): the probability of observing 1 for the outcome variable Y when the predictor X equals 1.
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level chosen for the test.
-    power: float, default=None
+    power : float, default=None
         Statistical power.
-    alternative: {'two-sided', 'greater', 'less'}
+    alternative : {'two-sided', 'greater', 'less'}
         Direction of the alternative hypothesis
-    family: {'bernoulli', 'exponential', 'lognormal', 'normal', 'poisson', 'uniform'}
+    family : {'bernoulli', 'exponential', 'lognormal', 'normal', 'poisson', 'uniform'}
         Distribution of the predictor
-    parameter: float, int or iterable
+    parameter : float, int or iterable
         Corresponding parameter for the predictor’s distribution. The default is 0.5 for 'bernoulli',
         1 for 'exponential', (0,1) for 'lognormal' or normal, 1 for 'poisson', and (0,1) for 'uniform'.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not.
 
     Returns
@@ -1194,20 +1194,20 @@ def wp_sem_chisq_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size
-    df: int, default=None
+    df : int, default=None
         The degrees of freedom for our test, based on the Chi-Squared Test.
-    effect: float, default=None
+    effect : float, default=None
         Effect size. It specifies the population misfit of a SEM model, which is the difference between two SEM models:
         a full model (Mf) and a reduced model (Mr). A convienient way to get the effect size is to fit the reduced model
         using SEM software such R package ’lavaan’ (Rossel, 2012). Then the effect size is calculated as the
         chi-squared statistics dividing by the sample size.
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level chosen for the test.
-    power: float, default=None
+    power : float, default=None
         Statistical power.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not.
 
     Returns
@@ -1273,21 +1273,21 @@ def wp_sem_rmsea_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size
-    df: int, default=None
+    df : int, default=None
         The degrees of freedom for our test, based on the Chi-Squared Test.
-    rmsea0: float, default=None
+    rmsea0 : float, default=None
         The RMSE for H0. It usually equals 0.
-    rmsea1: float, default=None
+    rmsea1 : float, default=None
         The RMSE for H1
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level chosen for the test.
-    power: float, default=None
+    power : float, default=None
         Statistical power.
-    test_type: {'close' , 'notclose'}
+    test_type : {'close' , 'notclose'}
         Close fit or not-close fit.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not.
 
     Returns
@@ -1360,23 +1360,23 @@ def wp_mediation_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    a: float, default=None
+    a : float, default=None
         Coefficient from x to m
-    b: float, default=None
+    b : float, default=None
         Coefficient from m to y
-    var_x: float, default=None
+    var_x : float, default=None
         Variance of x
-    var_y: float, default=None
+    var_y : float, default=None
         Variance of y
-    var_m: float, default=None
+    var_m : float, default=None
         Variance of m
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level chosen for the test
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not
 
     Returns
@@ -1452,22 +1452,22 @@ def wp_correlation_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size
-    r: float, default=None
+    r : float, default=None
         Effect size or correlation. According to Cohen (1988), a correlation coefficient of 0.10, 0.30, and 0.50 are
         considered as an effect size of "small", "medium", and "large", respectively.
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    p: int, default=0
+    p : int, default=0
         Number of variables to partial out
-    rho0: float, default=0.0
+    rho0 : float, default=0.0
         Null correlation coefficient
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level chosen for the test
-    alternative: {'two-sided', 'greater', 'less'}
+    alternative : {'two-sided', 'greater', 'less'}
         Direction of the alternative hypothesis.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not
 
     Returns
@@ -1538,32 +1538,32 @@ def wp_mrt2arm_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size. It is the number of individuals within each cluster.
-    f: float, default=None
+    f : float, default=None
         Effect size. It specifies the main effect of treatment, the mean difference between the treatment clusters/sites
         and the control clusters/sites. Effect size must be positive.
-    J: int, default=None
+    J : int, default=None
         Number of clusters / sites. It tells how many clusters are considered in the study design. At least two clusters
         are required.
-    tau00: float, default=1.0
+    tau00 : float, default=1.0
         Variance of cluster/site means. It is one of the residual variances in the second level. Its value must be positive.
-    tau11: float, default=1.0
+    tau11 : float, default=1.0
         Variance of treatment effects across sites. It is one of the residual variances in the second level. Its value
         must be positive.
-    sg2: float, default=1.0
+    sg2 : float, default=1.0
         Level-one error Variance. The residual variance in the first level.
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    alpha: float, default=0.05
+    alpha : float, default=0.05
         Significance level chosen for the test.
-    alternative: str, default='two-sided'
+    alternative : str, default='two-sided'
         Type of alternative hypothesis. The option 'one-sided' can be either 'less' or 'greater'
-    test_type: {'main', 'site', 'variance'}
+    test_type : {'main', 'site', 'variance'}
         Type of effect. The type "main" tests treatment main effect, no tau00 needed; Type "site" tests the variance of
         cluster/site means, no tau11 or f needed; and Type "variance" tests variance of treatment effects, no tau00 or
         f needed.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not
 
     Returns
@@ -1613,30 +1613,30 @@ def wp_mrt3arm_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size. It is the number of individuals within each cluster.
-    f1: float, default=None
+    f1 : float, default=None
         Effect size for treatment main effect. Effect size must be positive.
-    f2: float, default=0.0
+    f2 : float, default=0.0
         Effect size for the difference between two treatments. Effect size must be positive.
-    J: int, default=None
+    J : int, default=None
         Number of clusters / sites. It tells how many clusters are considered in the study design. At least two clusters
         are required.
-    tau: float, default=1.0
+    tau : float, default=1.0
         Variance of treatment effects across sites/clusters.
-    sg2: float, default=1.0
+    sg2 : float, default=1.0
         Level-one error Variance. The residual variance in the first level.
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    alpha: float, default=0.05
+    alpha : float, default=0.05
         Significance level chosed for the test. It equals 0.05 by default.
-    alternative: {'two-sided', 'one-sided'}
+    alternative : {'two-sided', 'one-sided'}
         Type of the alternative hypothesis. The option "one-sided" can be either "less" or "greater"
-    test_type: {'main', 'treatment', 'omnibus'}
+    test_type : {'main', 'treatment', 'omnibus'}
         The type "main" tests the difference between the average treatment arms and the control arm;
         Type "treatment" tests the difference between the two treatment arms;
         and Type "omnibus" tests whether the three arms are all equivalent.
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not
 
     Returns
@@ -1733,24 +1733,24 @@ def wp_crt2arm_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size. It is the number of individuals within each cluster
-    f: float, default=None
+    f : float, default=None
         Effect size. It specifies either the main effect of treatment, or the mean difference between the treatment
         clusters and the control clusters.
-    J: int, default=None
+    J : int, default=None
         Number of clusters / sides. It tells how many clusters are considered in the study design. At least 2 clusters
         are required.
-    icc: float, default=None
+    icc : float, default=None
         Intra-class correlation. ICC is calculated as the ratio of betwee-cluster variance to the total variance. It
         quantifies the degree to which two randomly drawn observations within a cluster are correlated.
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level chosen for the test.
-    alternative: {"two-sided", "one-sided"}
+    alternative : {"two-sided", "one-sided"}
         Type of alternative hypothesis. The option "one-sided" can be either "less" or "greater"
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not
 
     Returns
@@ -1832,29 +1832,29 @@ def wp_crt3arm_test(
 
     Parameters
     ----------
-    n: int, default=None
+    n : int, default=None
         Sample size. It is the number of individuals within each cluster
-    f: float, default=None
+    f : float, default=None
         Effect size. It specifies either the main effect of treatment, or the mean difference between the treatment
         clusters and the control clusters.
-    J: int, default=None
+    J : int, default=None
         Number of clusters / sides. It tells how many clusters are considered in the study design. At least 2 clusters
         are required.
-    icc: float, default=None
+    icc : float, default=None
         Intra-class correlation. ICC is calculated as the ratio of betwee-cluster variance to the total variance. It
         quantifies the degree to which two randomly drawn observations within a cluster are correlated.
-    power: float, default=None
+    power : float, default=None
         Statistical power
-    alpha: float, default=None
+    alpha : float, default=None
         Significance level chosen for the test.
-    alternative: {"two-sided", "one-sided"}
+    alternative : {"two-sided", "one-sided"}
         Type of alternative hypothesis. The option "one-sided" can be either "less" or "greater"
-    test_type: {"main", "treatment", "omnibus"}
+    test_type : {"main", "treatment", "omnibus"}
         Type of effect.
             * "main" tests the difference between the average treatment arms and the control arm.
             * "treatment" tests the difference between the two treatment arms
             * "omnibus" test whether the tree arms are all equivalent
-    print_pretty: bool, default=True
+    print_pretty : bool, default=True
         Whether we want our results printed or not
 
     Returns

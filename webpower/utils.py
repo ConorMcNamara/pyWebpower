@@ -8,13 +8,13 @@ def nuniroot(f, low_val: float = 0, high_val: float = 1, max_length: int = 100) 
 
     Parameters
     ----------
-    f: function
+    f : function
         The function we are applying our bisect method on
-    low_val: float, default=0
+    low_val : float, default=0
         The low end of our interval for bisection
-    high_val: float, default=1
+    high_val : float, default=1
         The high end of our interval for bisection
-    max_length: int, default=100
+    max_length : int, default=100
         How many intervals between low_val and high_val we will have
 
     Returns
