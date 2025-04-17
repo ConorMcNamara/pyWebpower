@@ -203,11 +203,11 @@ class WpPoisson:
                 * poisson.pmf(val_range, self.parameter)
             )
         elif self.family == "uniform":
-            l = self.parameter[0]
+            l_var = self.parameter[0]
             r = self.parameter[1]
-            d = quad(lambda x: exp(beta0 + beta1 * x) / (r - l), l, r)[0]
-            e = quad(lambda x: x * exp(beta0 + beta1 * x) / (r - l), l, r)[0]
-            f = quad(lambda x: pow(x, 2) * exp(beta0 + beta1 * x) / (r - l), l, r)[0]
+            d = quad(lambda x: exp(beta0 + beta1 * x) / (r - l_var), l_var, r)[0]
+            e = quad(lambda x: x * exp(beta0 + beta1 * x) / (r - l_var), l_var, r)[0]
+            f = quad(lambda x: pow(x, 2) * exp(beta0 + beta1 * x) / (r - l_var), l_var, r)[0]
         else:
             raise ValueError(f"Do not recognize {self.family} for Poisson Regression")
         v1 = d / (d * f - pow(e, 2))
