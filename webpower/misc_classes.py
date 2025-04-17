@@ -9,15 +9,15 @@ from webpower.utils import nuniroot
 
 class WpMediation:
     def __init__(
-            self,
-            n: Optional[int] = None,
-            power: Optional[float] = None,
-            a: Optional[float] = None,
-            b: Optional[float] = None,
-            var_x: float = 1,
-            var_y: Optional[float] = None,
-            var_m: float = 1,
-            alpha: Optional[float] = None,
+        self,
+        n: Optional[int] = None,
+        power: Optional[float] = None,
+        a: Optional[float] = None,
+        b: Optional[float] = None,
+        var_x: float = 1,
+        var_y: Optional[float] = None,
+        var_m: float = 1,
+        alpha: Optional[float] = None,
     ) -> None:
         self.power = power
         self.n = n
@@ -134,14 +134,14 @@ class WpMediation:
 
 class WpCorrelation:
     def __init__(
-            self,
-            n: Optional[int] = None,
-            r: Optional[float] = None,
-            power: Optional[float] = None,
-            p: int = 0,
-            rho0: float = 0.0,
-            alpha: Optional[float] = None,
-            alternative: str = "two-sided",
+        self,
+        n: Optional[int] = None,
+        r: Optional[float] = None,
+        power: Optional[float] = None,
+        p: int = 0,
+        rho0: float = 0.0,
+        alpha: Optional[float] = None,
+        alternative: str = "two-sided",
     ) -> None:
         self.n = n
         self.r = r
@@ -155,38 +155,30 @@ class WpCorrelation:
 
     def _get_power(self) -> float:
         delta = sqrt(self.n - 3 - self.p) * (
-                log((1 + self.r) / (1 - self.r)) / 2
-                + self.r
-                / (self.n - 1 - self.p)
-                / 2
-                * (
-                        1
-                        + (5 + pow(self.r, 2)) / (self.n - 1 - self.p) / 4
-                        + (
-                                11
-                                + 2 * pow(self.r, 2)
-                                + 3 * pow(self.r, 4)) / pow(self.n - 1 - self.p, 2)
-                        / 8
-                )
-                - log((1 + self.rho0) / (1 - self.rho0)) / 2
-                - self.rho0 / (self.n - 1 - self.p) / 2
+            log((1 + self.r) / (1 - self.r)) / 2
+            + self.r
+            / (self.n - 1 - self.p)
+            / 2
+            * (
+                1
+                + (5 + pow(self.r, 2)) / (self.n - 1 - self.p) / 4
+                + (11 + 2 * pow(self.r, 2) + 3 * pow(self.r, 4)) / pow(self.n - 1 - self.p, 2) / 8
+            )
+            - log((1 + self.rho0) / (1 - self.rho0)) / 2
+            - self.rho0 / (self.n - 1 - self.p) / 2
         )
         v = (
-                (self.n - 3 - self.p)
-                / (self.n - 1 - self.p)
-                * (
-                        1
-                        + (4 - pow(self.r, 2)) / (self.n - 1 - self.p) / 2
-                        + (22 - 6 * pow(self.r, 2) - 3 * pow(self.r, 4))
-                        / pow(self.n - 1 - self.p, 2)
-                        / 6
-                )
+            (self.n - 3 - self.p)
+            / (self.n - 1 - self.p)
+            * (
+                1
+                + (4 - pow(self.r, 2)) / (self.n - 1 - self.p) / 2
+                + (22 - 6 * pow(self.r, 2) - 3 * pow(self.r, 4)) / pow(self.n - 1 - self.p, 2) / 6
+            )
         )
         if self.alternative == "two-sided":
             z_alpha = norm.ppf(1 - self.alpha / 2)
-            power = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf(
-                (-delta - z_alpha) / sqrt(v)
-            )
+            power = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf((-delta - z_alpha) / sqrt(v))
         else:
             z_alpha = norm.ppf(1 - self.alpha)
             if self.alternative == "greater":
@@ -197,38 +189,30 @@ class WpCorrelation:
 
     def _get_n(self, n: int) -> float:
         delta = sqrt(n - 3 - self.p) * (
-                log((1 + self.r) / (1 - self.r)) / 2
-                + self.r
-                / (n - 1 - self.p)
-                / 2
-                * (
-                        1
-                        + (5 + pow(self.r, 2)) / (n - 1 - self.p) / 4
-                        + (
-                                11
-                                + 2 * pow(self.r, 2)
-                                + 3 * pow(self.r, 4)) / pow(n - 1 - self.p, 2)
-                        / 8
-                )
-                - log((1 + self.rho0) / (1 - self.rho0)) / 2
-                - self.rho0 / (n - 1 - self.p) / 2
+            log((1 + self.r) / (1 - self.r)) / 2
+            + self.r
+            / (n - 1 - self.p)
+            / 2
+            * (
+                1
+                + (5 + pow(self.r, 2)) / (n - 1 - self.p) / 4
+                + (11 + 2 * pow(self.r, 2) + 3 * pow(self.r, 4)) / pow(n - 1 - self.p, 2) / 8
+            )
+            - log((1 + self.rho0) / (1 - self.rho0)) / 2
+            - self.rho0 / (n - 1 - self.p) / 2
         )
         v = (
-                (n - 3 - self.p)
-                / (n - 1 - self.p)
-                * (
-                        1
-                        + (4 - pow(self.r, 2)) / (n - 1 - self.p) / 2
-                        + (22 - 6 * pow(self.r, 2) - 3 * pow(self.r, 4))
-                        / pow(n - 1 - self.p, 2)
-                        / 6
-                )
+            (n - 3 - self.p)
+            / (n - 1 - self.p)
+            * (
+                1
+                + (4 - pow(self.r, 2)) / (n - 1 - self.p) / 2
+                + (22 - 6 * pow(self.r, 2) - 3 * pow(self.r, 4)) / pow(n - 1 - self.p, 2) / 6
+            )
         )
         if self.alternative == "two-sided":
             z_alpha = norm.ppf(1 - self.alpha / 2)
-            n = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf(
-                (-delta - z_alpha) / sqrt(v)
-            ) - self.power
+            n = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf((-delta - z_alpha) / sqrt(v)) - self.power
         else:
             z_alpha = norm.ppf(1 - self.alpha)
             if self.alternative == "greater":
@@ -239,38 +223,30 @@ class WpCorrelation:
 
     def _get_effect_size(self, effect_size: float) -> float:
         delta = sqrt(self.n - 3 - self.p) * (
-                log((1 + effect_size) / (1 - effect_size)) / 2
-                + effect_size
-                / (self.n - 1 - self.p)
-                / 2
-                * (
-                        1
-                        + (5 + pow(effect_size, 2)) / (self.n - 1 - self.p) / 4
-                        + (
-                                11
-                                + 2 * pow(effect_size, 2)
-                                + 3 * pow(effect_size, 4)) / pow(self.n - 1 - self.p, 2)
-                        / 8
-                )
-                - log((1 + self.rho0) / (1 - self.rho0)) / 2
-                - self.rho0 / (self.n - 1 - self.p) / 2
+            log((1 + effect_size) / (1 - effect_size)) / 2
+            + effect_size
+            / (self.n - 1 - self.p)
+            / 2
+            * (
+                1
+                + (5 + pow(effect_size, 2)) / (self.n - 1 - self.p) / 4
+                + (11 + 2 * pow(effect_size, 2) + 3 * pow(effect_size, 4)) / pow(self.n - 1 - self.p, 2) / 8
+            )
+            - log((1 + self.rho0) / (1 - self.rho0)) / 2
+            - self.rho0 / (self.n - 1 - self.p) / 2
         )
         v = (
-                (self.n - 3 - self.p)
-                / (self.n - 1 - self.p)
-                * (
-                        1
-                        + (4 - pow(effect_size, 2)) / (self.n - 1 - self.p) / 2
-                        + (22 - 6 * pow(effect_size, 2) - 3 * pow(effect_size, 4))
-                        / pow(self.n - 1 - self.p, 2)
-                        / 6
-                )
+            (self.n - 3 - self.p)
+            / (self.n - 1 - self.p)
+            * (
+                1
+                + (4 - pow(effect_size, 2)) / (self.n - 1 - self.p) / 2
+                + (22 - 6 * pow(effect_size, 2) - 3 * pow(effect_size, 4)) / pow(self.n - 1 - self.p, 2) / 6
+            )
         )
         if self.alternative == "two-sided":
             z_alpha = norm.ppf(1 - self.alpha / 2)
-            effect_size = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf(
-                (-delta - z_alpha) / sqrt(v)
-            ) - self.power
+            effect_size = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf((-delta - z_alpha) / sqrt(v)) - self.power
         else:
             z_alpha = norm.ppf(1 - self.alpha)
             if self.alternative == "greater":
@@ -281,37 +257,30 @@ class WpCorrelation:
 
     def _get_alpha(self, alpha: float) -> float:
         delta = sqrt(self.n - 3 - self.p) * (
-                log((1 + self.r) / (1 - self.r)) / 2
-                + self.r
-                / (self.n - 1 - self.p)
-                / 2
-                * (
-                        1
-                        + (5 + pow(self.r, 2)) / (self.n - 1 - self.p) / 4
-                        + (
-                                11
-                                + 2 * pow(self.r, 2)
-                                + 3 * pow(self.r, 4)) / pow(self.n - 1 - self.p, 2)
-                        / 8
-                )
-                - log((1 + self.rho0) / (1 - self.rho0)) / 2
-                - self.rho0 / (self.n - 1 - self.p) / 2
+            log((1 + self.r) / (1 - self.r)) / 2
+            + self.r
+            / (self.n - 1 - self.p)
+            / 2
+            * (
+                1
+                + (5 + pow(self.r, 2)) / (self.n - 1 - self.p) / 4
+                + (11 + 2 * pow(self.r, 2) + 3 * pow(self.r, 4)) / pow(self.n - 1 - self.p, 2) / 8
+            )
+            - log((1 + self.rho0) / (1 - self.rho0)) / 2
+            - self.rho0 / (self.n - 1 - self.p) / 2
         )
         v = (
-                (self.n - 3 - self.p)
-                / (self.n - 1 - self.p)
-                * (
-                        1
-                        + (4 - pow(self.r, 2)) / (self.n - 1 - self.p) / 2
-                        + (22 - 6 * pow(self.r, 2) - 3 * pow(self.r, 4))
-                        / pow(self.n - 1 - self.p, 2)
-                        / 6
-                )
+            (self.n - 3 - self.p)
+            / (self.n - 1 - self.p)
+            * (
+                1
+                + (4 - pow(self.r, 2)) / (self.n - 1 - self.p) / 2
+                + (22 - 6 * pow(self.r, 2) - 3 * pow(self.r, 4)) / pow(self.n - 1 - self.p, 2) / 6
+            )
         )
         if self.alternative == "two-sided":
             z_alpha = norm.ppf(1 - alpha / 2)
-            alpha = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf(
-                (-delta - z_alpha) / sqrt(v)) - self.power
+            alpha = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf((-delta - z_alpha) / sqrt(v)) - self.power
         else:
             z_alpha = norm.ppf(1 - alpha)
             if self.alternative == "greater":

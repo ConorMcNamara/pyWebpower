@@ -95,17 +95,9 @@ class WpOneT:
                 - self.power
             )
         elif self.alternative == "greater":
-            n = (
-                nct.sf(t_dist.isf(self.alpha, nu), nu, sqrt(n / self.t_sample) * self.d)
-                - self.power
-            )
+            n = nct.sf(t_dist.isf(self.alpha, nu), nu, sqrt(n / self.t_sample) * self.d) - self.power
         else:
-            n = (
-                nct.cdf(
-                    t_dist.ppf(self.alpha, nu), nu, sqrt(n / self.t_sample) * self.d
-                )
-                - self.power
-            )
+            n = nct.cdf(t_dist.ppf(self.alpha, nu), nu, sqrt(n / self.t_sample) * self.d) - self.power
         return n
 
     def _get_alpha(self, alpha: float) -> float:
@@ -118,17 +110,9 @@ class WpOneT:
                 - self.power
             )
         elif self.alternative == "greater":
-            alpha = (
-                nct.sf(t_dist.isf(alpha, nu), nu, sqrt(self.n / self.t_sample) * self.d)
-                - self.power
-            )
+            alpha = nct.sf(t_dist.isf(alpha, nu), nu, sqrt(self.n / self.t_sample) * self.d) - self.power
         else:
-            alpha = (
-                nct.cdf(
-                    t_dist.ppf(alpha, nu), nu, sqrt(self.n / self.t_sample) * self.d
-                )
-                - self.power
-            )
+            alpha = nct.cdf(t_dist.ppf(alpha, nu), nu, sqrt(self.n / self.t_sample) * self.d) - self.power
         return alpha
 
     def pwr_test(self) -> Dict:
@@ -192,9 +176,9 @@ class WpTwoT:
         nu = self.n1 + self.n2 - 2
         if self.alternative == "two-sided":
             qu = t_dist.isf(self.alpha / 2, nu)
-            power = nct.sf(
-                qu, nu, self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2))
-            ) + nct.cdf(-qu, nu, self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2)))
+            power = nct.sf(qu, nu, self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2))) + nct.cdf(
+                -qu, nu, self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2))
+            )
         elif self.alternative == "greater":
             power = nct.sf(
                 t_dist.isf(self.alpha, nu),

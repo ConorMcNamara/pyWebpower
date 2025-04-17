@@ -25,9 +25,9 @@ class WpOneProp:
 
     def _get_power(self) -> float:
         if self.alternative == "two-sided":
-            power = norm.sf(
-                norm.isf(self.alpha / 2) - self.h * sqrt(self.n)
-            ) + norm.cdf(norm.ppf(self.alpha / 2) - self.h * sqrt(self.n))
+            power = norm.sf(norm.isf(self.alpha / 2) - self.h * sqrt(self.n)) + norm.cdf(
+                norm.ppf(self.alpha / 2) - self.h * sqrt(self.n)
+            )
         elif self.alternative == "greater":
             power = norm.sf(norm.isf(self.alpha) - self.h * sqrt(self.n))
         else:
@@ -119,9 +119,9 @@ class WpTwoPropOneN:
 
     def _get_power(self) -> float:
         if self.alternative == "two-sided":
-            power = norm.sf(
-                norm.isf(self.alpha / 2) - self.h * sqrt(self.n / 2)
-            ) + norm.cdf(norm.ppf(self.alpha / 2) - self.h * sqrt(self.n / 2))
+            power = norm.sf(norm.isf(self.alpha / 2) - self.h * sqrt(self.n / 2)) + norm.cdf(
+                norm.ppf(self.alpha / 2) - self.h * sqrt(self.n / 2)
+            )
         elif self.alternative == "greater":
             power = norm.sf(norm.isf(self.alpha) - self.h * sqrt(self.n / 2))
         else:
@@ -216,142 +216,64 @@ class WpTwoPropTwoN:
     def _get_power(self) -> float:
         if self.alternative == "two-sided":
             power = norm.sf(
-                norm.isf(self.alpha / 2)
-                - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-            ) + norm.cdf(
-                norm.ppf(self.alpha / 2)
-                - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-            )
+                norm.isf(self.alpha / 2) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
+            ) + norm.cdf(norm.ppf(self.alpha / 2) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2)))
         elif self.alternative == "greater":
-            power = norm.sf(
-                norm.isf(self.alpha)
-                - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-            )
+            power = norm.sf(norm.isf(self.alpha) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2)))
         else:
-            power = norm.cdf(
-                norm.ppf(self.alpha)
-                - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-            )
+            power = norm.cdf(norm.ppf(self.alpha) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2)))
         return power
 
     def _get_effect_size(self, h: float) -> float:
         if self.alternative == "two-sided":
             h = (
-                norm.sf(
-                    norm.isf(self.alpha / 2)
-                    - h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-                )
-                + norm.cdf(
-                    norm.ppf(self.alpha / 2)
-                    - h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-                )
+                norm.sf(norm.isf(self.alpha / 2) - h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2)))
+                + norm.cdf(norm.ppf(self.alpha / 2) - h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2)))
                 - self.power
             )
         elif self.alternative == "greater":
-            h = (
-                norm.sf(
-                    norm.isf(self.alpha)
-                    - h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-                )
-                - self.power
-            )
+            h = norm.sf(norm.isf(self.alpha) - h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))) - self.power
         else:
-            h = (
-                norm.cdf(
-                    norm.ppf(self.alpha)
-                    - h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-                )
-                - self.power
-            )
+            h = norm.cdf(norm.ppf(self.alpha) - h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))) - self.power
         return h
 
     def _get_n1(self, n1: int) -> float:
         if self.alternative == "two-sided":
             n1 = (
-                norm.sf(
-                    norm.isf(self.alpha / 2)
-                    - self.h * sqrt(n1 * self.n2 / (n1 + self.n2))
-                )
-                + norm.cdf(
-                    norm.ppf(self.alpha / 2)
-                    - self.h * sqrt(n1 * self.n2 / (n1 + self.n2))
-                )
+                norm.sf(norm.isf(self.alpha / 2) - self.h * sqrt(n1 * self.n2 / (n1 + self.n2)))
+                + norm.cdf(norm.ppf(self.alpha / 2) - self.h * sqrt(n1 * self.n2 / (n1 + self.n2)))
                 - self.power
             )
         elif self.alternative == "greater":
-            n1 = (
-                norm.sf(
-                    norm.isf(self.alpha) - self.h * sqrt(n1 * self.n2 / (n1 + self.n2))
-                )
-                - self.power
-            )
+            n1 = norm.sf(norm.isf(self.alpha) - self.h * sqrt(n1 * self.n2 / (n1 + self.n2))) - self.power
         else:
-            n1 = (
-                norm.cdf(
-                    norm.ppf(self.alpha) - self.h * sqrt(n1 * self.n2 / (n1 + self.n2))
-                )
-                - self.power
-            )
+            n1 = norm.cdf(norm.ppf(self.alpha) - self.h * sqrt(n1 * self.n2 / (n1 + self.n2))) - self.power
         return n1
 
     def _get_n2(self, n2: int) -> float:
         if self.alternative == "two-sided":
             n2 = (
-                norm.sf(
-                    norm.isf(self.alpha / 2)
-                    - self.h * sqrt(self.n1 * n2 / (self.n1 + n2))
-                )
-                + norm.cdf(
-                    norm.ppf(self.alpha / 2)
-                    - self.h * sqrt(self.n1 * n2 / (self.n1 + n2))
-                )
+                norm.sf(norm.isf(self.alpha / 2) - self.h * sqrt(self.n1 * n2 / (self.n1 + n2)))
+                + norm.cdf(norm.ppf(self.alpha / 2) - self.h * sqrt(self.n1 * n2 / (self.n1 + n2)))
                 - self.power
             )
         elif self.alternative == "greater":
-            n2 = (
-                norm.sf(
-                    norm.isf(self.alpha) - self.h * sqrt(self.n1 * n2 / (self.n1 + n2))
-                )
-                - self.power
-            )
+            n2 = norm.sf(norm.isf(self.alpha) - self.h * sqrt(self.n1 * n2 / (self.n1 + n2))) - self.power
         else:
-            n2 = (
-                norm.cdf(
-                    norm.ppf(self.alpha) - self.h * sqrt(self.n1 * n2 / (self.n1 + n2))
-                )
-                - self.power
-            )
+            n2 = norm.cdf(norm.ppf(self.alpha) - self.h * sqrt(self.n1 * n2 / (self.n1 + n2))) - self.power
         return n2
 
     def _get_alpha(self, alpha: float) -> float:
         if self.alternative == "two-sided":
             alpha = (
-                norm.sf(
-                    norm.isf(alpha / 2)
-                    - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-                )
-                + norm.cdf(
-                    norm.ppf(alpha / 2)
-                    - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-                )
+                norm.sf(norm.isf(alpha / 2) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2)))
+                + norm.cdf(norm.ppf(alpha / 2) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2)))
                 - self.power
             )
         elif self.alternative == "greater":
-            alpha = (
-                norm.sf(
-                    norm.isf(alpha)
-                    - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-                )
-                - self.power
-            )
+            alpha = norm.sf(norm.isf(alpha) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))) - self.power
         else:
-            alpha = (
-                norm.cdf(
-                    norm.ppf(alpha)
-                    - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))
-                )
-                - self.power
-            )
+            alpha = norm.cdf(norm.ppf(alpha) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))) - self.power
         return alpha
 
     def pwr_test(self) -> Dict:

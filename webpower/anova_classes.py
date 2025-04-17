@@ -51,14 +51,10 @@ class WpAnovaClass:
             )
         elif self.test_type == "greater":
             lambda_ = sqrt(self.n) * self.f
-            power = nct.sf(
-                t_dist.isf(self.alpha, self.n - self.k), self.n - self.k, lambda_
-            )
+            power = nct.sf(t_dist.isf(self.alpha, self.n - self.k), self.n - self.k, lambda_)
         else:
             lambda_ = sqrt(self.n) * self.f
-            power = nct.cdf(
-                t_dist.ppf(self.alpha, self.n - self.k), self.n - self.k, lambda_
-            )
+            power = nct.cdf(t_dist.ppf(self.alpha, self.n - self.k), self.n - self.k, lambda_)
         return power
 
     def _get_groups(self, k: float) -> float:
@@ -86,16 +82,10 @@ class WpAnovaClass:
             )
         elif self.test_type == "greater":
             lambda_ = sqrt(self.n) * self.f
-            k = (
-                nct.sf(t_dist.isf(self.alpha, self.n - k), self.n - k, lambda_)
-                - self.power
-            )
+            k = nct.sf(t_dist.isf(self.alpha, self.n - k), self.n - k, lambda_) - self.power
         else:
             lambda_ = sqrt(self.n) * self.f
-            k = (
-                nct.cdf(t_dist.ppf(self.alpha, self.n - k), self.n - k, lambda_)
-                - self.power
-            )
+            k = nct.cdf(t_dist.ppf(self.alpha, self.n - k), self.n - k, lambda_) - self.power
         return k
 
     def _get_sample_size(self, n: int) -> float:
@@ -123,16 +113,10 @@ class WpAnovaClass:
             )
         elif self.test_type == "greater":
             lambda_ = sqrt(n) * self.f
-            n = (
-                nct.sf(t_dist.isf(self.alpha, n - self.k), n - self.k, lambda_)
-                - self.power
-            )
+            n = nct.sf(t_dist.isf(self.alpha, n - self.k), n - self.k, lambda_) - self.power
         else:
             lambda_ = sqrt(n) * self.f
-            n = (
-                nct.cdf(t_dist.ppf(self.alpha, n - self.k), n - self.k, lambda_)
-                - self.power
-            )
+            n = nct.cdf(t_dist.ppf(self.alpha, n - self.k), n - self.k, lambda_) - self.power
         return n
 
     def _get_effect_size(self, f: float) -> float:
@@ -160,20 +144,10 @@ class WpAnovaClass:
             )
         elif self.test_type == "greater":
             lambda_ = sqrt(self.n) * f
-            f = (
-                nct.sf(
-                    t_dist.isf(self.alpha, self.n - self.k), self.n - self.k, lambda_
-                )
-                - self.power
-            )
+            f = nct.sf(t_dist.isf(self.alpha, self.n - self.k), self.n - self.k, lambda_) - self.power
         else:
             lambda_ = sqrt(self.n) * f
-            f = (
-                nct.cdf(
-                    t_dist.ppf(self.alpha, self.n - self.k), self.n - self.k, lambda_
-                )
-                - self.power
-            )
+            f = nct.cdf(t_dist.ppf(self.alpha, self.n - self.k), self.n - self.k, lambda_) - self.power
         return f
 
     def _get_alpha(self, alpha: float) -> float:
@@ -201,16 +175,10 @@ class WpAnovaClass:
             )
         elif self.test_type == "greater":
             lambda_ = sqrt(self.n) * self.f
-            alpha = (
-                nct.sf(t_dist.isf(alpha, self.n - self.k), self.n - self.k, lambda_)
-                - self.power
-            )
+            alpha = nct.sf(t_dist.isf(alpha, self.n - self.k), self.n - self.k, lambda_) - self.power
         else:
             lambda_ = sqrt(self.n) * self.f
-            alpha = (
-                nct.cdf(t_dist.ppf(alpha, self.n - self.k), self.n - self.k, lambda_)
-                - self.power
-            )
+            alpha = nct.cdf(t_dist.ppf(alpha, self.n - self.k), self.n - self.k, lambda_) - self.power
         return alpha
 
     def pwr_test(self) -> Dict:
@@ -356,10 +324,7 @@ class WpKAnovaClass:
     def _get_sample_size(self, n: int) -> float:
         lambda_ = pow(self.f, 2) * n
         ddf = n - self.ng
-        n = (
-            ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_)
-            - self.power
-        )
+        n = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
         return n
 
     def _get_numerator_df(self, ndf: int) -> float:
@@ -371,28 +336,19 @@ class WpKAnovaClass:
     def _get_effect_size(self, f: float) -> float:
         lambda_ = pow(f, 2) * self.n
         ddf = self.n - self.ng
-        f = (
-            ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_)
-            - self.power
-        )
+        f = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
         return f
 
     def _get_groups(self, ng: int) -> float:
         lambda_ = pow(self.f, 2) * self.n
         ddf = self.n - ng
-        ng = (
-            ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_)
-            - self.power
-        )
+        ng = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
         return ng
 
     def _get_alpha(self, alpha: float) -> float:
         lambda_ = pow(self.f, 2) * self.n
         ddf = self.n - self.ng
-        alpha = (
-            ncf.sf(f_dist.isf(alpha, self.ndf, ddf), self.ndf, ddf, lambda_)
-            - self.power
-        )
+        alpha = ncf.sf(f_dist.isf(alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
         return alpha
 
     def pwr_test(self) -> Dict:
@@ -477,9 +433,7 @@ class WpRMAnovaClass:
             df_1 = (ng - 1) * (self.nm - 1) * self.nscor
             df_2 = (self.n - ng) * (self.nm - 1) * self.nscor
         lambda_ = pow(self.f, 2) * self.n * self.nscor
-        ng = (
-            ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        )
+        ng = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
         return ng
 
     def _get_nm(self, nm: int) -> float:
@@ -492,9 +446,7 @@ class WpRMAnovaClass:
             df_1 = (self.ng - 1) * (nm - 1) * self.nscor
             df_2 = (self.n - self.ng) * (nm - 1) * self.nscor
         lambda_ = pow(self.f, 2) * self.n * self.nscor
-        nm = (
-            ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        )
+        nm = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
         return nm
 
     def _get_sample_size(self, n: int) -> float:

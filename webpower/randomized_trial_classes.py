@@ -7,18 +7,19 @@ from webpower.utils import nuniroot
 
 
 class WpMRT2Arm:
-    def __init__(self,
-                 n: Optional[int] = None,
-                 f: Optional[float] = None,
-                 J: Optional[int] = None,
-                 tau00: float = 1.0,
-                 tau11: float = 1.0,
-                 sg2: float = 1.0,
-                 power: Optional[float] = None,
-                 alpha: float = 0.05,
-                 alternative: str = "two-sided",
-                 test_type: str = "main"
-                 ) -> None:
+    def __init__(
+        self,
+        n: Optional[int] = None,
+        f: Optional[float] = None,
+        J: Optional[int] = None,
+        tau00: float = 1.0,
+        tau11: float = 1.0,
+        sg2: float = 1.0,
+        power: Optional[float] = None,
+        alpha: float = 0.05,
+        alternative: str = "two-sided",
+        test_type: str = "main",
+    ) -> None:
         self.n = n
         self.f = f
         self.J = J
@@ -35,9 +36,9 @@ class WpMRT2Arm:
 
     def _get_power(self) -> float:
         df = self.J - 1
-        if self.test_type == 'main':
+        if self.test_type == "main":
             lamda1 = sqrt(self.J) * self.f / sqrt(4 / self.n + self.tau11 / self.sg2)
-            if self.alternative == 'two-sided':
+            if self.alternative == "two-sided":
                 t0 = t_dist.ppf(1 - self.alpha / 2, df)
                 power = nct.sf(t0, df, lamda1) + nct.cdf(-t0, df, lamda1)
             else:
@@ -54,9 +55,9 @@ class WpMRT2Arm:
 
     def _get_n(self, n: int) -> float:
         df = self.J - 1
-        if self.test_type == 'main':
+        if self.test_type == "main":
             lamda1 = sqrt(self.J) * self.f / sqrt(4 / n + self.tau11 / self.sg2)
-            if self.alternative == 'two-sided':
+            if self.alternative == "two-sided":
                 t0 = t_dist.ppf(1 - self.alpha / 2, df)
                 n = nct.sf(t0, df, lamda1) + nct.cdf(-t0, df, lamda1) - self.power
             else:
@@ -73,9 +74,9 @@ class WpMRT2Arm:
 
     def _get_J(self, J: int) -> float:
         df = J - 1
-        if self.test_type == 'main':
+        if self.test_type == "main":
             lamda1 = sqrt(J) * self.f / sqrt(4 / self.n + self.tau11 / self.sg2)
-            if self.alternative == 'two-sided':
+            if self.alternative == "two-sided":
                 t0 = t_dist.ppf(1 - self.alpha / 2, df)
                 J = nct.sf(t0, df, lamda1) + nct.cdf(-t0, df, lamda1) - self.power
             else:
@@ -92,9 +93,9 @@ class WpMRT2Arm:
 
     def _get_f(self, f: float) -> float:
         df = self.J - 1
-        if self.test_type == 'main':
+        if self.test_type == "main":
             lamda1 = sqrt(self.J) * f / sqrt(4 / self.n + self.tau11 / self.sg2)
-            if self.alternative == 'two-sided':
+            if self.alternative == "two-sided":
                 t0 = t_dist.ppf(1 - self.alpha / 2, df)
                 f = nct.sf(t0, df, lamda1) + nct.cdf(-t0, df, lamda1) - self.power
             else:
@@ -112,7 +113,7 @@ class WpMRT2Arm:
         elif self.J is None:
             self.J = ceil(nuniroot(self._get_J, 1 + 1e-10, 1e3))
         else:
-            self.f = nuniroot(self._get_f, 1e-07, 1e+07)
+            self.f = nuniroot(self._get_f, 1e-07, 1e07)
         return {
             "J": self.J,
             "n": self.n,
@@ -124,23 +125,24 @@ class WpMRT2Arm:
             "alpha": self.alpha,
             "note": self.note,
             "method": self.method,
-            "url": self.url
+            "url": self.url,
         }
 
 
 class WpMRT3Arm:
-    def __init__(self,
-                 n: Optional[int] = None,
-                 f1: Optional[float] = None,
-                 f2: float = 0.0,
-                 J: Optional[int] = None,
-                 tau: float = 1.0,
-                 sg2: float = 1.0,
-                 power: Optional[float] = None,
-                 alpha: float = 0.05,
-                 alternative: str = "two-sided",
-                 test_type: str = "main"
-                 ) -> None:
+    def __init__(
+        self,
+        n: Optional[int] = None,
+        f1: Optional[float] = None,
+        f2: float = 0.0,
+        J: Optional[int] = None,
+        tau: float = 1.0,
+        sg2: float = 1.0,
+        power: Optional[float] = None,
+        alpha: float = 0.05,
+        alternative: str = "two-sided",
+        test_type: str = "main",
+    ) -> None:
         self.n = n
         self.f1 = f1
         self.f2 = f2
@@ -281,21 +283,21 @@ class WpMRT3Arm:
             "sg2": self.sg2,
             "note": self.note,
             "method": self.method,
-            "url": self.url
+            "url": self.url,
         }
 
 
 class WpCRT2Arm:
-
-    def __init__(self,
-                 n: Optional[int] = None,
-                 f: Optional[float] = None,
-                 J: Optional[int] = None,
-                 icc: Optional[float] = None,
-                 power: Optional[float] = None,
-                 alpha: Optional[float] = None,
-                 alternative: str = "two-sided"
-                 ) -> None:
+    def __init__(
+        self,
+        n: Optional[int] = None,
+        f: Optional[float] = None,
+        J: Optional[int] = None,
+        icc: Optional[float] = None,
+        power: Optional[float] = None,
+        alpha: Optional[float] = None,
+        alternative: str = "two-sided",
+    ) -> None:
         self.n = n
         self.f = f
         self.J = J
@@ -377,11 +379,11 @@ class WpCRT2Arm:
         if self.power is None:
             self.power = self._get_power()
         elif self.n is None:
-            self.n = ceil(nuniroot(self._get_n, 1, 1e+06))
+            self.n = ceil(nuniroot(self._get_n, 1, 1e06))
         elif self.J is None:
             self.J = ceil(nuniroot(self._get_J, 2 + 1e-10, 1_000))
         elif self.f is None:
-            self.f = nuniroot(self._get_effect_size, 1e-07, 1e+07)
+            self.f = nuniroot(self._get_effect_size, 1e-07, 1e07)
         elif self.icc is None:
             self.icc = nuniroot(self._get_icc, 0, 1)
         else:
@@ -396,22 +398,22 @@ class WpCRT2Arm:
             "note": self.note,
             "method": self.method,
             "url": self.url,
-            "alternative": self.alternative
+            "alternative": self.alternative,
         }
 
 
 class WpCRT3Arm:
-
-    def __init__(self,
-                 n: Optional[int] = None,
-                 f: Optional[float] = None,
-                 J: Optional[int] = None,
-                 icc: Optional[float] = None,
-                 power: Optional[float] = None,
-                 alpha: Optional[float] = None,
-                 alternative: str = "two-sided",
-                 test_type: str = "main",
-                 ) -> None:
+    def __init__(
+        self,
+        n: Optional[int] = None,
+        f: Optional[float] = None,
+        J: Optional[int] = None,
+        icc: Optional[float] = None,
+        power: Optional[float] = None,
+        alpha: Optional[float] = None,
+        alternative: str = "two-sided",
+        test_type: str = "main",
+    ) -> None:
         self.n = n
         self.f = f
         self.J = J
@@ -452,7 +454,7 @@ class WpCRT3Arm:
     def _get_effect_size(self, effect_size: float) -> float:
         df = self.J - 3
         if self.test_type == "main":
-            lambda1 = sqrt(self.J) * effect_size/ sqrt(4.5 * (self.icc + (1 - self.icc) / self.n))
+            lambda1 = sqrt(self.J) * effect_size / sqrt(4.5 * (self.icc + (1 - self.icc) / self.n))
             if self.alternative == "two-sided":
                 t0 = t_dist.ppf(1 - self.alpha / 2, df)
                 effect_size = nct.sf(t0, df, lambda1) + nct.cdf(-t0, df, lambda1) - self.power
@@ -473,7 +475,7 @@ class WpCRT3Arm:
             f0 = f_dist.ppf(1 - self.alpha, df1, df)
             effect_size = ncf.sf(f0, df1, df, lambda3) - self.power
         return effect_size
-    
+
     def _get_n(self, n: int) -> float:
         df = self.J - 3
         if self.test_type == "main":
@@ -578,9 +580,9 @@ class WpCRT3Arm:
         if self.power is None:
             self.power = self._get_power()
         elif self.f is None:
-            self.f = nuniroot(self._get_effect_size, 1e-07, 1e+07)
+            self.f = nuniroot(self._get_effect_size, 1e-07, 1e07)
         elif self.n is None:
-            self.n = ceil(nuniroot(self._get_n, 2 + 1e-10, 1e+06))
+            self.n = ceil(nuniroot(self._get_n, 2 + 1e-10, 1e06))
         elif self.J is None:
             self.J = ceil(nuniroot(self._get_J, 3 + 1e-10, 1_000))
         elif self.icc is None:
@@ -596,5 +598,5 @@ class WpCRT3Arm:
             "alpha": self.alpha,
             "note": self.note,
             "method": self.method,
-            "url": self.url
+            "url": self.url,
         }

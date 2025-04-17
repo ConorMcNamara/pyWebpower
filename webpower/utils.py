@@ -4,7 +4,7 @@ import numpy as np
 
 
 def nuniroot(f, low_val: float = 0, high_val: float = 1, max_length: int = 100) -> float:
-    """Calculates the root of our function f given low_val and high_val
+    """Calculates the root of our function f given low_val and high_val.
 
     Parameters
     ----------
@@ -26,7 +26,8 @@ def nuniroot(f, low_val: float = 0, high_val: float = 1, max_length: int = 100) 
     if min(f_output) * max(f_output) > 0:
         raise ValueError(
             "The specified parameters do not yield valid results. Please try to supply a different interval, e.g., "
-            "using interval=[0, 1], for your parameter.") 
+            "using interval=[0, 1], for your parameter."
+        )
     else:
         low = max(f_output[f_output < 0])
         high = min(f_output[f_output > 0])

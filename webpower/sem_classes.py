@@ -76,14 +76,14 @@ class WPSEMChisq:
 
 class WPSEMRMSEA:
     def __init__(
-            self,
-            n: Optional[int] = None,
-            df: Optional[int] = None,
-            rmsea0: Optional[float] = None,
-            rmsea1: Optional[float] = None,
-            power: Optional[float] = None,
-            alpha: Optional[float] = None,
-            test_type: str = "close",
+        self,
+        n: Optional[int] = None,
+        df: Optional[int] = None,
+        rmsea0: Optional[float] = None,
+        rmsea1: Optional[float] = None,
+        power: Optional[float] = None,
+        alpha: Optional[float] = None,
+        test_type: str = "close",
     ) -> None:
         self.n = n
         self.df = df
