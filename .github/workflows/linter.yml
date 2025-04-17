@@ -57,7 +57,7 @@ jobs:
           git config --global user.email "github-actions@github.com"
           if [ -n "$(git status --porcelain)" ]; then
             git add .
-            git commit -m "Auto-format code with ruff, autopep8 and docformatter"
+            git commit -m "Auto-format code with ruff, autopep8 and pydocstringformatter"
             git push
           else
             echo "No changes to commit"
