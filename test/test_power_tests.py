@@ -1548,3 +1548,6 @@ class TestCRT3Arm:
         # URL: http://psychstat.org/crt3arm
         expected = 0.08915664
         assert alpha_results == pytest.approx(expected, abs=1e-05)
+
+if __name__ == "__main__":
+    pytest.main()
