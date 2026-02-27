@@ -916,7 +916,8 @@ def wp_regression_test(
         Number of predictors in the reduced model, it is 0 by default. See the book by Maxwell and Delaney (2003)
         for the definition of the reduced model.
     f2 : float, default=None
-        Effect size. We use the statistic f2 as the measure of effect size for linear regression proposed by Cohen (1988, p.410).
+        Effect size. We use the statistic f2 as the measure of effect size for linear
+        regression proposed by Cohen (1988, p.410).
          Cohen discussed the effect size in three different cases. The calculation of f2 can be generalized using the
          idea of a full model and a reduced model by Maxwell and Delaney (2003).
     alpha : float, default=None
@@ -1545,7 +1546,8 @@ def wp_mrt2arm_test(
         Number of clusters / sites. It tells how many clusters are considered in the study design. At least two clusters
         are required.
     tau00 : float, default=1.0
-        Variance of cluster/site means. It is one of the residual variances in the second level. Its value must be positive.
+        Variance of cluster/site means. It is one of the residual variances in the second
+        level. Its value must be positive.
     tau11 : float, default=1.0
         Variance of treatment effects across sites. It is one of the residual variances in the second level. Its value
         must be positive.

@@ -666,7 +666,8 @@ class TestTwoT:
         #       sig.level = 0.7387184
         #           power = 0.8
         #     alternative = less
-        # Having an issue where webpower is simply reporting the same values when alternative="greater" and alternative="less",
+        # Having an issue where webpower is simply reporting the same values when
+        # alternative="greater" and alternative="less",
         # which shouldn't be the case at all. Raised an issue about this.
         expected = 0.7387184
         assert alpha_results == pytest.approx(expected, abs=1e-05)
@@ -741,7 +742,8 @@ class TestPoisson:
             family="Bernoulli",
             parameter=0.53,
         )["power"]
-        # wp.poisson(n = 4406, exp0 = 2.798, exp1 = 0.8938, alpha = 0.05, power = NULL, family = "Bernoulli", parameter = 0.53)
+        # wp.poisson(n = 4406, exp0 = 2.798, exp1 = 0.8938, alpha = 0.05, power = NULL,
+        #            family = "Bernoulli", parameter = 0.53)
         # Power for Poisson regression
         #
         #    n     power alpha  exp0   exp1    beta0      beta1 parameter
@@ -761,7 +763,8 @@ class TestPoisson:
             parameter=0.53,
             alternative="less",
         )["n"]
-        # wp.poisson(n = NULL, exp0 = 2.798, exp1 = 0.8938, alpha = 0.05, power = 0.8, family = "exponential", parameter = 0.53, alternative = "less")
+        # wp.poisson(n = NULL, exp0 = 2.798, exp1 = 0.8938, alpha = 0.05, power = 0.8,
+        #            family = "exponential", parameter = 0.53, alternative = "less")
         # Power for Poisson regression
         #
         #            n power alpha  exp0   exp1    beta0      beta1 paremeter
@@ -860,7 +863,8 @@ class TestLogistic:
     @staticmethod
     def test_logistic_results() -> None:
         # The webpower logistic class currently does not calculate alpha, so cannot compare alpha results,
-        # only power and n. Also, family="poisson" appears to be broken, I can't find any combination of p0 and p1 values
+        # only power and n. Also, family="poisson" appears to be broken, I can't find any
+        # combination of p0 and p1 values
         # to get it to run on the R package.
         power_results = power_tests.wp_logistic_test(
             n=1_000,
@@ -1029,7 +1033,8 @@ class TestSEMChisq:
 class TestSEMRMSEA:
     @staticmethod
     def test_sem_rmsea_results() -> None:
-        # Could not for the life of me find a way to make type="notclose" work for WebPower, so all my validations assume
+        # Could not for the life of me find a way to make type="notclose" work for WebPower,
+        # so all my validations assume
         # test_type = "close"
         power_results = power_tests.wp_sem_rmsea_test(n=100, df=4, rmsea0=0, rmsea1=0.116, power=None, alpha=0.05)[
             "power"
@@ -1278,7 +1283,8 @@ class TestMRT2Arm:
         n_results = power_tests.wp_mrt2arm_test(
             n=None, f=0.5, J=20, tau11=0.5, sg2=1.25, alpha=0.05, power=0.8, alternative="one-sided"
         )["n"]
-        # wp.mrt2arm(n = NULL, f = 0.5, J =20, tau11 = 0.5, sg2 = 1.25, alpha = 0.05, power = 0.8, alternative = 'one.sided')
+        # wp.mrt2arm(n = NULL, f = 0.5, J =20, tau11 = 0.5, sg2 = 1.25, alpha = 0.05,
+        #            power = 0.8, alternative = 'one.sided')
         # Multisite randomized trials with 2 arms
         #
         #      J       n   f tau11  sg2 power alpha
@@ -1349,7 +1355,8 @@ class TestMRT3Arm:
         j_results = power_tests.wp_mrt3arm_test(
             n=200, f2=0.43, f1=0.15, J=None, tau=0.4, sg2=2.25, alpha=0.05, power=0.8, test_type="omnibus"
         )["J"]
-        # wp.mrt3arm(n = 200, f2 = 0.43, f1 = 0.15, J = NULL, tau = 0.4, sg2 = 2.25, alpha = 0.05, power = 0.8, type="omnibus")
+        # wp.mrt3arm(n = 200, f2 = 0.43, f1 = 0.15, J = NULL, tau = 0.4, sg2 = 2.25,
+        #            alpha = 0.05, power = 0.8, type="omnibus")
         # Multisite randomized trials with 3 arms
         #
         #            J   n   f1   f2 tau  sg2 power alpha
@@ -1459,7 +1466,8 @@ class TestCRT3Arm:
         f_results = power_tests.wp_crt3arm_test(
             f=None, n=100, J=15, icc=0.15, alpha=0.05, power=0.8, alternative="one-sided", test_type="treatment"
         )["effect_size"]
-        # wp.crt3arm(f = NULL, n = 100, J = 15, icc = 0.15, alpha = 0.05, power = 0.8, alternative = "one.sided", type = "treatment")
+        # wp.crt3arm(f = NULL, n = 100, J = 15, icc = 0.15, alpha = 0.05, power = 0.8,
+        #            alternative = "one.sided", type = "treatment")
         # Cluster randomized trials with 3 arms
         #
         #      J   n         f  icc power alpha
