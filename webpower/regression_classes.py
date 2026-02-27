@@ -1,22 +1,21 @@
+from math import ceil, exp, log, sqrt
+
 import numpy as np
-
-from math import ceil, log, exp, sqrt
-from typing import Dict, Optional, Tuple, Union
-
-from scipy.stats import ncf, f as f_dist, norm, lognorm, poisson, expon
-from scipy.optimize import brentq
 from scipy.integrate import quad
+from scipy.optimize import brentq
+from scipy.stats import expon, lognorm, ncf, norm, poisson
+from scipy.stats import f as f_dist
 
 
 class WPRegression:
     def __init__(
         self,
-        n: Optional[int] = None,
+        n: int | None = None,
         p1: int = 1,
         p2: int = 0,
-        f2: Optional[float] = None,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        f2: float | None = None,
+        alpha: float | None = None,
+        power: float | None = None,
         test_type: str = "regular",
     ) -> None:
         self.n = n
@@ -37,7 +36,7 @@ class WPRegression:
         else:
             lambda_ = self.f2 * self.n
         power = ncf.sf(f_dist.isf(self.alpha, self.u, v), self.u, v, lambda_)
-        return power
+        return float(power)
 
     def _get_effect_size(self, f2: float) -> float:
         v = self.n - self.p1 - 1
@@ -46,7 +45,7 @@ class WPRegression:
         else:
             lambda_ = f2 * self.n
         f2 = ncf.sf(f_dist.isf(self.alpha, self.u, v), self.u, v, lambda_) - self.power
-        return f2
+        return float(f2)
 
     def _get_n(self, n: int) -> float:
         v = n - self.p1 - 1
@@ -55,7 +54,7 @@ class WPRegression:
         else:
             lambda_ = self.f2 * n
         n = ncf.sf(f_dist.isf(self.alpha, self.u, v), self.u, v, lambda_) - self.power
-        return n
+        return float(n)
 
     def _get_alpha(self, alpha: float) -> float:
         v = self.n - self.p1 - 1
@@ -64,9 +63,9 @@ class WPRegression:
         else:
             lambda_ = self.f2 * self.n
         alpha = ncf.sf(f_dist.isf(alpha, self.u, v), self.u, v, lambda_) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.n is None:
@@ -90,14 +89,14 @@ class WPRegression:
 class WpPoisson:
     def __init__(
         self,
-        n: Optional[int] = None,
+        n: int | None = None,
         exp0: float = 1,
         exp1: float = 0.5,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        alpha: float | None = None,
+        power: float | None = None,
         alternative: str = "two-sided",
         family: str = "Bernoulli",
-        parameter: Optional[Union[int, float, list, tuple]] = None,
+        parameter: int | float | list | tuple | None = None,
     ) -> None:
         self.n = n
         self.exp0 = exp0
@@ -123,7 +122,7 @@ class WpPoisson:
         self.method = "Power for Poisson regression"
         self.url = "http://psychstat.org/poisson"
 
-    def _get_values(self) -> Tuple:
+    def _get_values(self) -> tuple:
         beta1 = log(self.exp1)
         beta0 = log(self.exp0)
         if self.family == "bernoulli":
@@ -142,7 +141,7 @@ class WpPoisson:
                 np.inf,
             )[0]
             f = quad(
-                lambda x: pow(x, 2) * exp(beta0 + (beta1 - self.parameter) * x) * self.parameter,
+                lambda x: x**2 * exp(beta0 + (beta1 - self.parameter) * x) * self.parameter,
                 0,
                 np.inf,
             )[0]
@@ -156,7 +155,7 @@ class WpPoisson:
                 np.inf,
             )[0]
             f = quad(
-                lambda x: pow(x, 2) * exp(beta0 + beta1 * x) * lognorm.pdf(x, sigma, 0, exp(mu)),
+                lambda x: x**2 * exp(beta0 + beta1 * x) * lognorm.pdf(x, sigma, 0, exp(mu)),
                 0,
                 np.inf,
             )[0]
@@ -174,7 +173,7 @@ class WpPoisson:
                 np.inf,
             )[0]
             f = quad(
-                lambda x: pow(x, 2) * exp(beta0 + beta1 * x) * norm.pdf(x, mu, sigma),
+                lambda x: x**2 * exp(beta0 + beta1 * x) * norm.pdf(x, mu, sigma),
                 -np.inf,
                 np.inf,
             )[0]
@@ -190,10 +189,10 @@ class WpPoisson:
             r = self.parameter[1]
             d = quad(lambda x: exp(beta0 + beta1 * x) / (r - l_var), l_var, r)[0]
             e = quad(lambda x: x * exp(beta0 + beta1 * x) / (r - l_var), l_var, r)[0]
-            f = quad(lambda x: pow(x, 2) * exp(beta0 + beta1 * x) / (r - l_var), l_var, r)[0]
+            f = quad(lambda x: x**2 * exp(beta0 + beta1 * x) / (r - l_var), l_var, r)[0]
         else:
             raise ValueError(f"Do not recognize {self.family} for Poisson Regression")
-        v1 = d / (d * f - pow(e, 2))
+        v1 = d / (d * f - e**2)
         if self.alternative == "less":
             s = 1
             t = 0
@@ -210,7 +209,7 @@ class WpPoisson:
         power = s * norm.cdf(-norm.ppf(1 - self.alpha) - sqrt(self.n) / sqrt(v1) * beta1) + t * norm.cdf(
             -norm.ppf(1 - self.alpha) + sqrt(self.n) / sqrt(v1) * beta1
         )
-        return power
+        return float(power)
 
     def _get_n(self, n: int) -> float:
         s, t, v1, beta1 = self._get_values()
@@ -219,7 +218,7 @@ class WpPoisson:
             + t * norm.cdf(-norm.ppf(1 - self.alpha) + sqrt(n) / sqrt(v1) * beta1)
             - self.power
         )
-        return n
+        return float(n)
 
     def _get_alpha(self, alpha: float) -> float:
         s, t, v1, beta1 = self._get_values()
@@ -228,9 +227,9 @@ class WpPoisson:
             + t * norm.cdf(-norm.ppf(1 - alpha) + sqrt(self.n) / sqrt(v1) * beta1)
             - self.power
         )
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.n is None:
@@ -253,14 +252,14 @@ class WpPoisson:
 class WpLogistic:
     def __init__(
         self,
-        n: Optional[int] = None,
+        n: int | None = None,
         p0: float = 0.5,
         p1: float = 0.5,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        alpha: float | None = None,
+        power: float | None = None,
         alternative: str = "two-sided",
         family: str = "Bernoulli",
-        parameter: Optional[Union[int, float, list, tuple]] = None,
+        parameter: int | float | list | tuple | None = None,
     ) -> None:
         self.n = n
         if abs(p0) > 1:
@@ -291,7 +290,7 @@ class WpLogistic:
         self.method = "Power for Logistic regression"
         self.url = "http://psychstat.org/logistic"
 
-    def _get_values(self) -> Tuple:
+    def _get_values(self) -> tuple:
         g = 0
         odds = (self.p1 / (1 - self.p1)) / (self.p0 / (1 - self.p0))
         self.beta1 = log(odds)
@@ -299,44 +298,50 @@ class WpLogistic:
         if self.family == "bernoulli":
             d = self.parameter * self.p1 * (1 - self.p1) + (1 - self.parameter) * self.p0 * (1 - self.p0)
             e = self.parameter * self.p1 * (1 - self.p1)
-            v1 = d / (d * e - pow(e, 2))
+            v1 = d / (d * e - e**2)
             mu1 = self.parameter * self.p1 + (1 - self.parameter) * self.p0
             i00 = log(mu1 / (1 - mu1))
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
             b = self.parameter * a
-            v0 = b / (a * b - pow(b, 2))
+            v0 = b / (a * b - b**2)
         elif self.family == "exponential":
             d = quad(
-                lambda x: (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
-                * 1
-                / (1 + exp(-self.beta0 - self.beta1 * x))
-                * expon.pdf(x, scale=self.parameter),
+                lambda x: (
+                    (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
+                    * 1
+                    / (1 + exp(-self.beta0 - self.beta1 * x))
+                    * expon.pdf(x, scale=self.parameter)
+                ),
                 a=0,
                 b=100,
                 limit=100,
             )[0]
             e = quad(
-                lambda x: x
-                * (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
-                * 1
-                / (1 + exp(-self.beta0 - self.beta1 * x))
-                * expon.pdf(x, scale=self.parameter),
+                lambda x: (
+                    x
+                    * (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
+                    * 1
+                    / (1 + exp(-self.beta0 - self.beta1 * x))
+                    * expon.pdf(x, scale=self.parameter)
+                ),
                 a=0,
                 b=100,
                 limit=100,
             )[0]
             f = quad(
-                lambda x: pow(x, 2)
-                * (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
-                * 1
-                / (1 + exp(-self.beta0 - self.beta1 * x))
-                * expon.pdf(x, scale=self.parameter),
+                lambda x: (
+                    x**2
+                    * (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
+                    * 1
+                    / (1 + exp(-self.beta0 - self.beta1 * x))
+                    * expon.pdf(x, scale=self.parameter)
+                ),
                 a=0,
                 b=100,
                 limit=100,
             )[0]
-            v1 = d / (d * f - pow(e, 2))
+            v1 = d / (d * f - e**2)
             mu1 = quad(
                 lambda x: 1 / (1 + exp(-self.beta0 - self.beta1 * x)) * expon.pdf(x, scale=self.parameter),
                 a=0,
@@ -346,42 +351,48 @@ class WpLogistic:
             i00 = log(mu1 / (1 - mu1))
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
-            b = 2 * pow(self.parameter, -2) * pn * (1 - pn)
-            c = pow(self.parameter, -1) * pn * (1 - pn)
-            v0 = a / (a * b - pow(c, 2))
+            b = 2 * self.parameter**-2 * pn * (1 - pn)
+            c = self.parameter**-1 * pn * (1 - pn)
+            v0 = a / (a * b - c**2)
         elif self.family == "lognormal":
             mu = self.parameter[0]
             sigma = self.parameter[1]
             d = quad(
-                lambda x: (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
-                * 1
-                / (1 + exp(-self.beta0 - self.beta1 * x))
-                * lognorm.pdf(x, sigma, scale=exp(mu)),
+                lambda x: (
+                    (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
+                    * 1
+                    / (1 + exp(-self.beta0 - self.beta1 * x))
+                    * lognorm.pdf(x, sigma, scale=exp(mu))
+                ),
                 a=0,
                 b=100,
                 limit=100,
             )[0]
             e = quad(
-                lambda x: x
-                * (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
-                * 1
-                / (1 + exp(-self.beta0 - self.beta1 * x))
-                * lognorm.pdf(x, sigma, scale=exp(mu)),
+                lambda x: (
+                    x
+                    * (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
+                    * 1
+                    / (1 + exp(-self.beta0 - self.beta1 * x))
+                    * lognorm.pdf(x, sigma, scale=exp(mu))
+                ),
                 a=0,
                 b=100,
                 limit=100,
             )[0]
             f = quad(
-                lambda x: pow(x, 2)
-                * (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
-                * 1
-                / (1 + exp(-self.beta0 - self.beta1 * x))
-                * lognorm.pdf(x, sigma, scale=exp(mu)),
+                lambda x: (
+                    x**2
+                    * (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
+                    * 1
+                    / (1 + exp(-self.beta0 - self.beta1 * x))
+                    * lognorm.pdf(x, sigma, scale=exp(mu))
+                ),
                 a=0,
                 b=100,
                 limit=100,
             )[0]
-            v1 = d / (d * f - pow(e, 2))
+            v1 = d / (d * f - e**2)
             mu1 = quad(
                 lambda x: 1 / (1 + exp(-self.beta0 - self.beta1 * x)) * lognorm.pdf(x, sigma, scale=exp(mu)),
                 a=0,
@@ -391,42 +402,48 @@ class WpLogistic:
             i00 = log(mu1 / (1 - mu1))
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
-            b = (exp(pow(sigma, 2)) - 1) * exp(2 * mu + pow(sigma, 2)) * pn * (1 - pn)
-            c = exp(mu + 0.5 * pow(sigma, 2)) * pn * (1 - pn)
-            v0 = a / (a * b - pow(c, 2))
+            b = (exp(sigma**2) - 1) * exp(2 * mu + sigma**2) * pn * (1 - pn)
+            c = exp(mu + 0.5 * sigma**2) * pn * (1 - pn)
+            v0 = a / (a * b - c**2)
         elif self.family == "normal":
             mu = self.parameter[0]
             sigma = self.parameter[1]
             d = quad(
-                lambda x: (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
-                * 1
-                / (1 + exp(-self.beta0 - self.beta1 * x))
-                * norm.pdf(x, mu, sigma),
+                lambda x: (
+                    (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
+                    * 1
+                    / (1 + exp(-self.beta0 - self.beta1 * x))
+                    * norm.pdf(x, mu, sigma)
+                ),
                 a=-100,
                 b=100,
                 limit=100,
             )[0]
             e = quad(
-                lambda x: x
-                * (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
-                * 1
-                / (1 + exp(-self.beta0 - self.beta1 * x))
-                * norm.pdf(x, mu, sigma),
+                lambda x: (
+                    x
+                    * (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
+                    * 1
+                    / (1 + exp(-self.beta0 - self.beta1 * x))
+                    * norm.pdf(x, mu, sigma)
+                ),
                 a=-100,
                 b=100,
                 limit=100,
             )[0]
             f = quad(
-                lambda x: pow(x, 2)
-                * (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
-                * 1
-                / (1 + exp(-self.beta0 - self.beta1 * x))
-                * norm.pdf(x, mu, sigma),
+                lambda x: (
+                    x**2
+                    * (1 - 1 / (1 + exp(-self.beta0 - self.beta1 * x)))
+                    * 1
+                    / (1 + exp(-self.beta0 - self.beta1 * x))
+                    * norm.pdf(x, mu, sigma)
+                ),
                 a=-100,
                 b=100,
                 limit=100,
             )[0]
-            v1 = d / (d * f - pow(e, 2))
+            v1 = d / (d * f - e**2)
             mu1 = quad(
                 lambda x: 1 / (1 + exp(-self.beta0 - self.beta1 * x)) * norm.pdf(x, mu, sigma),
                 a=-100,
@@ -436,9 +453,9 @@ class WpLogistic:
             i00 = log(mu1 / (1 - mu1))
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
-            b = (exp(pow(sigma, 2)) - 1) * exp(2 * mu + pow(sigma, 2)) * pn * (1 - pn)
-            c = exp(mu + 0.5 * pow(sigma, 2)) * pn * (1 - pn)
-            v0 = a / (a * b - pow(c, 2))
+            b = (exp(sigma**2) - 1) * exp(2 * mu + sigma**2) * pn * (1 - pn)
+            c = exp(mu + 0.5 * sigma**2) * pn * (1 - pn)
+            v0 = a / (a * b - c**2)
         elif self.family == "poisson":
             val_range = np.arange(0, int(1e05) + 1)
             d = np.sum(
@@ -459,7 +476,7 @@ class WpLogistic:
                 / (1 + np.exp(-self.beta0 - self.beta1 * val_range))
                 * poisson.pmf(val_range, self.parameter)
             )
-            v1 = d / (d * f - pow(e, 2))
+            v1 = d / (d * f - e**2)
             mu1 = np.sum(
                 1 / (1 + np.exp(-self.beta0 - self.beta1 * val_range)) * poisson.pmf(val_range, self.parameter)
             )
@@ -468,37 +485,43 @@ class WpLogistic:
             a = pn * (1 - pn)
             b = self.parameter * pn * (1 - pn)
             c = self.parameter * pn * (1 - pn)
-            v0 = a / (a * b - pow(c, 2))
+            v0 = a / (a * b - c**2)
         elif self.family == "uniform":
             L = self.parameter[0]
             R = self.parameter[1]
             d = quad(
-                lambda x: (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
-                * (1 / (1 + exp(-self.beta0 - self.beta1 * x)))
-                / (R - L),
+                lambda x: (
+                    (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
+                    * (1 / (1 + exp(-self.beta0 - self.beta1 * x)))
+                    / (R - L)
+                ),
                 a=L,
                 b=R,
                 limit=100,
             )[0]
             e = quad(
-                lambda x: x
-                * (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
-                * (1 / (1 + exp(-self.beta0 - self.beta1 * x)))
-                / (R - L),
+                lambda x: (
+                    x
+                    * (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
+                    * (1 / (1 + exp(-self.beta0 - self.beta1 * x)))
+                    / (R - L)
+                ),
                 a=L,
                 b=R,
                 limit=100,
             )[0]
             f = quad(
-                lambda x: pow(x, 2)
-                * (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
-                * (1 / (1 + exp(-self.beta0 - self.beta1 * x)))
-                / (R - L),
+                lambda x: (
+                    x**2
+                    * (1 - (1 / (1 + exp(-self.beta0 - self.beta1 * x))))
+                    * (1 / (1 + exp(-self.beta0 - self.beta1 * x)))
+                    / (R - L)
+                ),
                 a=L,
                 b=R,
                 limit=100,
             )[0]
-            v1 = d / (d * f - pow(e, 2))
+            v1 = d / (d * f - e**2)
             mu1 = quad(
                 lambda x: 1 / (1 + exp(-self.beta0 - self.beta1 * x)) / (R - L),
                 a=L,
@@ -508,9 +531,9 @@ class WpLogistic:
             i00 = log(mu1 / (1 - mu1))
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
-            b = pow(R - L, 2) / 12 * pn * (1 - pn)
-            c = pow(R - L, 2) * pn * (1 - pn)
-            v0 = a / (a * b - pow(c, 2))
+            b = (R - L) ** 2 / 12 * pn * (1 - pn)
+            c = (R - L) ** 2 * pn * (1 - pn)
+            v0 = a / (a * b - c**2)
         else:
             raise ValueError(f"Do not recognize {self.family} for Logistic Regression")
         if self.alternative == "less":
@@ -529,7 +552,7 @@ class WpLogistic:
         power = s * norm.cdf(
             -norm.ppf(1 - self.alpha) - sqrt(self.n) / sqrt(g * v0 + (1 - g) * v1) * self.beta1
         ) + t * norm.cdf(-norm.ppf(1 - self.alpha) + sqrt(self.n) / sqrt(g * v0 + (1 - g) * v1) * self.beta1)
-        return power
+        return float(power)
 
     def _get_n(self, n: int) -> float:
         s, t, g, v0, v1 = self._get_values()
@@ -538,18 +561,18 @@ class WpLogistic:
             + t * norm.cdf(-norm.ppf(1 - self.alpha) + sqrt(n) / sqrt(g * v0 + (1 - g) * v1) * self.beta1)
             - self.power
         )
-        return n
+        return float(n)
 
-    def _get_alpha(self, alpha):
+    def _get_alpha(self, alpha: float) -> float:
         s, t, g, v0, v1 = self._get_values()
         alpha = (
             s * norm.cdf(-norm.ppf(1 - alpha) - sqrt(self.n) / sqrt(g * v0 + (1 - g) * v1) * self.beta1)
             + t * norm.cdf(-norm.ppf(1 - alpha) + sqrt(self.n) / sqrt(g * v0 + (1 - g) * v1) * self.beta1)
             - self.power
         )
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self):
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.n is None:

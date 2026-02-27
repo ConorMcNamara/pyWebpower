@@ -1,9 +1,10 @@
-from scipy.optimize import bisect
+from collections.abc import Callable
 
 import numpy as np
+from scipy.optimize import bisect
 
 
-def nuniroot(f, low_val: float = 0, high_val: float = 1, max_length: int = 100) -> float:
+def nuniroot(f: Callable[[float], float], low_val: float = 0, high_val: float = 1, max_length: int = 100) -> float:
     """Calculates the root of our function f given low_val and high_val.
 
     Parameters
@@ -32,4 +33,4 @@ def nuniroot(f, low_val: float = 0, high_val: float = 1, max_length: int = 100) 
         low = max(f_output[f_output < 0])
         high = min(f_output[f_output > 0])
         interval = [x[f_output == low][0], x[f_output == high][0]]
-        return bisect(f, interval[0], interval[1])
+        return float(bisect(f, interval[0], interval[1]))

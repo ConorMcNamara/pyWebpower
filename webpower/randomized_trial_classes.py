@@ -1,7 +1,8 @@
-from typing import Optional, Dict
-from math import sqrt, ceil
+from math import ceil, sqrt
 
-from scipy.stats import t as t_dist, nct, f as f_dist, ncf
+from scipy.stats import f as f_dist
+from scipy.stats import ncf, nct
+from scipy.stats import t as t_dist
 
 from webpower.utils import nuniroot
 
@@ -9,13 +10,13 @@ from webpower.utils import nuniroot
 class WpMRT2Arm:
     def __init__(
         self,
-        n: Optional[int] = None,
-        f: Optional[float] = None,
-        J: Optional[int] = None,
+        n: int | None = None,
+        f: float | None = None,
+        J: int | None = None,
         tau00: float = 1.0,
         tau11: float = 1.0,
         sg2: float = 1.0,
-        power: Optional[float] = None,
+        power: float | None = None,
         alpha: float = 0.05,
         alternative: str = "two-sided",
         test_type: str = "main",
@@ -31,7 +32,7 @@ class WpMRT2Arm:
         self.alternative = alternative.casefold()
         self.test_type = test_type.casefold()
         self.note = "n is the number of subjects per cluster"
-        self.method = "Power analysis for Multileve model Multisite randomized trials with 2 arms"
+        self.method = "Power analysis for Multilevel model Multisite randomized trials with 2 arms"
         self.url = "http://psychstat.org/mrt2arm"
 
     def _get_power(self) -> float:
@@ -51,7 +52,7 @@ class WpMRT2Arm:
                 power = f_dist.sf(f0 / (self.n * self.tau00 / self.sg2 + 1), df, df2)
             else:
                 power = f_dist.sf(f0 / (self.n * self.tau11 / self.sg2 / 4 + 1), df, df2)
-        return power
+        return float(power)
 
     def _get_n(self, n: int) -> float:
         df = self.J - 1
@@ -70,7 +71,7 @@ class WpMRT2Arm:
                 n = f_dist.sf(f0 / (self.n * self.tau00 / self.sg2 + 1), df, df2) - self.power
             else:
                 n = f_dist.sf(f0 / (self.n * self.tau11 / self.sg2 / 4 + 1), df, df2) - self.power
-        return n
+        return float(n)
 
     def _get_J(self, J: int) -> float:
         df = J - 1
@@ -89,7 +90,7 @@ class WpMRT2Arm:
                 J = f_dist.sf(f0 / (self.n * self.tau00 / self.sg2 + 1), df, df2) - self.power
             else:
                 J = f_dist.sf(f0 / (self.n * self.tau11 / self.sg2 / 4 + 1), df, df2) - self.power
-        return J
+        return float(J)
 
     def _get_f(self, f: float) -> float:
         df = self.J - 1
@@ -103,9 +104,9 @@ class WpMRT2Arm:
                 f = nct.sf(t0, df, lamda1) - self.power
         else:
             raise NotImplementedError("f not needed for `site` or `variance` tests")
-        return f
+        return float(f)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.n is None:
@@ -132,13 +133,13 @@ class WpMRT2Arm:
 class WpMRT3Arm:
     def __init__(
         self,
-        n: Optional[int] = None,
-        f1: Optional[float] = None,
+        n: int | None = None,
+        f1: float | None = None,
         f2: float = 0.0,
-        J: Optional[int] = None,
+        J: int | None = None,
         tau: float = 1.0,
         sg2: float = 1.0,
-        power: Optional[float] = None,
+        power: float | None = None,
         alpha: float = 0.05,
         alternative: str = "two-sided",
         test_type: str = "main",
@@ -180,10 +181,10 @@ class WpMRT3Arm:
             df2 = 2 * (self.J - 1)
             lamda1 = sqrt(self.J) * self.f1 / sqrt(4.5 / self.n + 1.5 * self.tau / self.sg2)
             lamda2 = sqrt(self.J) * self.f2 / sqrt(6 / self.n + 2 * self.tau / self.sg2)
-            lamda3 = pow(lamda1, 2) + pow(lamda2, 2)
+            lamda3 = lamda1**2 + lamda2**2
             f0 = f_dist.ppf(1 - self.alpha, df1, df2)
             power = ncf.sf(f0, df1, df2, lamda3)
-        return power
+        return float(power)
 
     def _get_n(self, n: int) -> float:
         df = self.J - 1
@@ -208,10 +209,10 @@ class WpMRT3Arm:
             df2 = 2 * (self.J - 1)
             lamda1 = sqrt(self.J) * self.f1 / sqrt(4.5 / n + 1.5 * self.tau / self.sg2)
             lamda2 = sqrt(self.J) * self.f2 / sqrt(6 / n + 2 * self.tau / self.sg2)
-            lamda3 = pow(lamda1, 2) + pow(lamda2, 2)
+            lamda3 = lamda1**2 + lamda2**2
             f0 = f_dist.ppf(1 - self.alpha, df1, df2)
             n = ncf.sf(f0, df1, df2, lamda3) - self.power
-        return n
+        return float(n)
 
     def _get_f1(self, f1: float) -> float:
         df = self.J - 1
@@ -230,10 +231,10 @@ class WpMRT3Arm:
             df2 = 2 * (self.J - 1)
             lamda1 = sqrt(self.J) * f1 / sqrt(4.5 / self.n + 1.5 * self.tau / self.sg2)
             lamda2 = sqrt(self.J) * self.f2 / sqrt(6 / self.n + 2 * self.tau / self.sg2)
-            lamda3 = pow(lamda1, 2) + pow(lamda2, 2)
+            lamda3 = lamda1**2 + lamda2**2
             f0 = f_dist.ppf(1 - self.alpha, df1, df2)
             f1 = ncf.sf(f0, df1, df2, lamda3) - self.power
-        return f1
+        return float(f1)
 
     def _get_J(self, J: int) -> float:
         df = J - 1
@@ -258,12 +259,12 @@ class WpMRT3Arm:
             df2 = 2 * (J - 1)
             lamda1 = sqrt(J) * self.f1 / sqrt(4.5 / self.n + 1.5 * self.tau / self.sg2)
             lamda2 = sqrt(J) * self.f2 / sqrt(6 / self.n + 2 * self.tau / self.sg2)
-            lamda3 = pow(lamda1, 2) + pow(lamda2, 2)
+            lamda3 = lamda1**2 + lamda2**2
             f0 = f_dist.ppf(1 - self.alpha, df1, df2)
             J = ncf.sf(f0, df1, df2, lamda3) - self.power
-        return J
+        return float(J)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.J is None:
@@ -290,12 +291,12 @@ class WpMRT3Arm:
 class WpCRT2Arm:
     def __init__(
         self,
-        n: Optional[int] = None,
-        f: Optional[float] = None,
-        J: Optional[int] = None,
-        icc: Optional[float] = None,
-        power: Optional[float] = None,
-        alpha: Optional[float] = None,
+        n: int | None = None,
+        f: float | None = None,
+        J: int | None = None,
+        icc: float | None = None,
+        power: float | None = None,
+        alpha: float | None = None,
         alternative: str = "two-sided",
     ) -> None:
         self.n = n
@@ -311,71 +312,71 @@ class WpCRT2Arm:
 
     def _get_power(self) -> float:
         df = self.J - 2
-        lamda = sqrt(self.J * pow(self.f, 2) / (4 * self.icc + 4 * (1 - self.icc) / self.n))
+        lamda = sqrt(self.J * self.f**2 / (4 * self.icc + 4 * (1 - self.icc) / self.n))
         if self.alternative == "two-sided":
             z_t = t_dist.ppf(1 - self.alpha / 2, df)
             power = nct.sf(z_t, df, lamda) + nct.cdf(-z_t, df, lamda)
         else:
             z_t = t_dist.ppf(1 - self.alpha, df)
             power = nct.sf(z_t, df, lamda)
-        return power
+        return float(power)
 
     def _get_effect_size(self, effect_size: float) -> float:
         df = self.J - 2
-        lamda = sqrt(self.J * pow(effect_size, 2) / (4 * self.icc + 4 * (1 - self.icc) / self.n))
+        lamda = sqrt(self.J * effect_size**2 / (4 * self.icc + 4 * (1 - self.icc) / self.n))
         if self.alternative == "two-sided":
             z_t = t_dist.ppf(1 - self.alpha / 2, df)
             effect_size = nct.sf(z_t, df, lamda) + nct.cdf(-z_t, df, lamda) - self.power
         else:
             z_t = t_dist.ppf(1 - self.alpha, df)
             effect_size = nct.sf(z_t, df, lamda) - self.power
-        return effect_size
+        return float(effect_size)
 
     def _get_n(self, n: int) -> float:
         df = self.J - 2
-        lamda = sqrt(self.J * pow(self.f, 2) / (4 * self.icc + 4 * (1 - self.icc) / n))
+        lamda = sqrt(self.J * self.f**2 / (4 * self.icc + 4 * (1 - self.icc) / n))
         if self.alternative == "two-sided":
             z_t = t_dist.ppf(1 - self.alpha / 2, df)
             n = nct.sf(z_t, df, lamda) + nct.cdf(-z_t, df, lamda) - self.power
         else:
             z_t = t_dist.ppf(1 - self.alpha, df)
             n = nct.sf(z_t, df, lamda) - self.power
-        return n
+        return float(n)
 
     def _get_J(self, J: int) -> float:
         df = J - 2
-        lamda = sqrt(J * pow(self.f, 2) / (4 * self.icc + 4 * (1 - self.icc) / self.n))
+        lamda = sqrt(J * self.f**2 / (4 * self.icc + 4 * (1 - self.icc) / self.n))
         if self.alternative == "two-sided":
             z_t = t_dist.ppf(1 - self.alpha / 2, df)
             J = nct.sf(z_t, df, lamda) + nct.cdf(-z_t, df, lamda) - self.power
         else:
             z_t = t_dist.ppf(1 - self.alpha, df)
             J = nct.sf(z_t, df, lamda) - self.power
-        return J
+        return float(J)
 
     def _get_icc(self, icc: float) -> float:
         df = self.J - 2
-        lamda = sqrt(self.J * pow(self.f, 2) / (4 * icc + 4 * (1 - icc) / self.n))
+        lamda = sqrt(self.J * self.f**2 / (4 * icc + 4 * (1 - icc) / self.n))
         if self.alternative == "two-sided":
             z_t = t_dist.ppf(1 - self.alpha / 2, df)
             icc = nct.sf(z_t, df, lamda) + nct.cdf(-z_t, df, lamda) - self.power
         else:
             z_t = t_dist.ppf(1 - self.alpha, df)
             icc = nct.sf(z_t, df, lamda) - self.power
-        return icc
+        return float(icc)
 
     def _get_alpha(self, alpha: float) -> float:
         df = self.J - 2
-        lamda = sqrt(self.J * pow(self.f, 2) / (4 * self.icc + 4 * (1 - self.icc) / self.n))
+        lamda = sqrt(self.J * self.f**2 / (4 * self.icc + 4 * (1 - self.icc) / self.n))
         if self.alternative == "two-sided":
             z_t = t_dist.ppf(1 - alpha / 2, df)
             alpha = nct.sf(z_t, df, lamda) + nct.cdf(-z_t, df, lamda) - self.power
         else:
             z_t = t_dist.ppf(1 - alpha, df)
             alpha = nct.sf(z_t, df, lamda) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.n is None:
@@ -405,12 +406,12 @@ class WpCRT2Arm:
 class WpCRT3Arm:
     def __init__(
         self,
-        n: Optional[int] = None,
-        f: Optional[float] = None,
-        J: Optional[int] = None,
-        icc: Optional[float] = None,
-        power: Optional[float] = None,
-        alpha: Optional[float] = None,
+        n: int | None = None,
+        f: float | None = None,
+        J: int | None = None,
+        icc: float | None = None,
+        power: float | None = None,
+        alpha: float | None = None,
         alternative: str = "two-sided",
         test_type: str = "main",
     ) -> None:
@@ -446,10 +447,10 @@ class WpCRT3Arm:
                 power = nct.sf(t0, df, lambda2)
         else:
             df1 = 2
-            lambda3 = self.J * pow(self.f, 2) / (self.icc + (1 - self.icc) / self.n)
+            lambda3 = self.J * self.f**2 / (self.icc + (1 - self.icc) / self.n)
             f0 = f_dist.ppf(1 - self.alpha, df, df1)
             power = ncf.sf(f0, df1, df, lambda3)
-        return power
+        return float(power)
 
     def _get_effect_size(self, effect_size: float) -> float:
         df = self.J - 3
@@ -471,10 +472,10 @@ class WpCRT3Arm:
                 effect_size = nct.sf(t0, df, lambda2) - self.power
         else:
             df1 = 2
-            lambda3 = self.J * pow(effect_size, 2) / (self.icc + (1 - self.icc) / self.n)
+            lambda3 = self.J * effect_size**2 / (self.icc + (1 - self.icc) / self.n)
             f0 = f_dist.ppf(1 - self.alpha, df1, df)
             effect_size = ncf.sf(f0, df1, df, lambda3) - self.power
-        return effect_size
+        return float(effect_size)
 
     def _get_n(self, n: int) -> float:
         df = self.J - 3
@@ -496,10 +497,10 @@ class WpCRT3Arm:
                 n = nct.sf(t0, df, lambda2) - self.power
         else:
             df1 = 2
-            lambda3 = self.J * pow(self.f, 2) / (self.icc + (1 - self.icc) / n)
+            lambda3 = self.J * self.f**2 / (self.icc + (1 - self.icc) / n)
             f0 = f_dist.ppf(1 - self.alpha, df1, df)
             n = ncf.sf(f0, df1, df, lambda3) - self.power
-        return n
+        return float(n)
 
     def _get_J(self, J: int) -> float:
         df = J - 3
@@ -521,10 +522,10 @@ class WpCRT3Arm:
                 J = nct.sf(t0, df, lambda2) - self.power
         else:
             df1 = 2
-            lambda3 = J * pow(self.f, 2) / (self.icc + (1 - self.icc) / self.n)
+            lambda3 = J * self.f**2 / (self.icc + (1 - self.icc) / self.n)
             f0 = f_dist.ppf(1 - self.alpha, df1, df)
             J = ncf.sf(f0, df1, df, lambda3) - self.power
-        return J
+        return float(J)
 
     def _get_icc(self, icc: float) -> float:
         df = self.J - 3
@@ -546,10 +547,10 @@ class WpCRT3Arm:
                 icc = nct.sf(t0, df, lambda2) - self.power
         else:
             df1 = 2
-            lambda3 = self.J * pow(self.f, 2) / (icc + (1 - icc) / self.n)
+            lambda3 = self.J * self.f**2 / (icc + (1 - icc) / self.n)
             f0 = f_dist.ppf(1 - self.alpha, df, df1)
             icc = ncf.sf(f0, df1, df, lambda3) - self.power
-        return icc
+        return float(icc)
 
     def _get_alpha(self, alpha: float) -> float:
         df = self.J - 3
@@ -571,12 +572,12 @@ class WpCRT3Arm:
                 alpha = nct.sf(t0, df, lambda2) - self.power
         else:
             df1 = 2
-            lambda3 = self.J * pow(self.f, 2) / (self.icc + (1 - self.icc) / self.n)
+            lambda3 = self.J * self.f**2 / (self.icc + (1 - self.icc) / self.n)
             f0 = f_dist.ppf(1 - alpha, df, df1)
             alpha = ncf.sf(f0, df1, df, lambda3) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.f is None:

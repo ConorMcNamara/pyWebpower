@@ -1,17 +1,17 @@
 from math import ceil, sqrt
-from typing import Dict, Optional
 
-from scipy.stats import nct, t as t_dist
 from scipy.optimize import brentq
+from scipy.stats import nct
+from scipy.stats import t as t_dist
 
 
 class WpOneT:
     def __init__(
         self,
-        n: Optional[int] = None,
-        d: Optional[float] = None,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        n: int | None = None,
+        d: float | None = None,
+        alpha: float | None = None,
+        power: float | None = None,
         test_type: str = "two-sample",
         alternative: str = "two-sided",
     ) -> None:
@@ -54,7 +54,7 @@ class WpOneT:
                 nu,
                 sqrt(self.n / self.t_sample) * self.d,
             )
-        return power
+        return float(power)
 
     def _get_effect_size(self, effect_size: float) -> float:
         nu = (self.n - 1) * self.t_sample
@@ -83,7 +83,7 @@ class WpOneT:
                 )
                 - self.power
             )
-        return effect_size
+        return float(effect_size)
 
     def _get_n(self, n: int) -> float:
         nu = (n - 1) * self.t_sample
@@ -98,7 +98,7 @@ class WpOneT:
             n = nct.sf(t_dist.isf(self.alpha, nu), nu, sqrt(n / self.t_sample) * self.d) - self.power
         else:
             n = nct.cdf(t_dist.ppf(self.alpha, nu), nu, sqrt(n / self.t_sample) * self.d) - self.power
-        return n
+        return float(n)
 
     def _get_alpha(self, alpha: float) -> float:
         nu = (self.n - 1) * self.t_sample
@@ -113,9 +113,9 @@ class WpOneT:
             alpha = nct.sf(t_dist.isf(alpha, nu), nu, sqrt(self.n / self.t_sample) * self.d) - self.power
         else:
             alpha = nct.cdf(t_dist.ppf(alpha, nu), nu, sqrt(self.n / self.t_sample) * self.d) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.d is None:
@@ -136,7 +136,7 @@ class WpOneT:
                 "alpha": self.alpha,
                 "power": self.power,
                 "alternative": self.alternative,
-                "method": "{} t test power calculation".format(self.method),
+                "method": f"{self.method} t test power calculation",
                 "note": self.note,
                 "url": self.url,
             }
@@ -147,7 +147,7 @@ class WpOneT:
                 "alpha": self.alpha,
                 "power": self.power,
                 "alternative": self.alternative,
-                "method": "{} t test power calculation".format(self.method),
+                "method": f"{self.method} t test power calculation",
                 "url": self.url,
             }
 
@@ -155,11 +155,11 @@ class WpOneT:
 class WpTwoT:
     def __init__(
         self,
-        n1: Optional[int] = None,
-        n2: Optional[int] = None,
-        d: Optional[float] = None,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        n1: int | None = None,
+        n2: int | None = None,
+        d: float | None = None,
+        alpha: float | None = None,
+        power: float | None = None,
         alternative: str = "two-sided",
     ) -> None:
         self.n1 = n1
@@ -191,7 +191,7 @@ class WpTwoT:
                 nu,
                 self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2)),
             )
-        return power
+        return float(power)
 
     def _get_effect_size(self, effect_size: float) -> float:
         nu = self.n1 + self.n2 - 2
@@ -220,7 +220,7 @@ class WpTwoT:
                 )
                 - self.power
             )
-        return effect_size
+        return float(effect_size)
 
     def _get_n1(self, n1: int) -> float:
         nu = n1 + self.n2 - 2
@@ -249,7 +249,7 @@ class WpTwoT:
                 )
                 - self.power
             )
-        return n1
+        return float(n1)
 
     def _get_n2(self, n2: int) -> float:
         nu = self.n1 + n2 - 2
@@ -278,7 +278,7 @@ class WpTwoT:
                 )
                 - self.power
             )
-        return n2
+        return float(n2)
 
     def _get_alpha(self, alpha: float) -> float:
         nu = self.n1 + self.n2 - 2
@@ -307,9 +307,9 @@ class WpTwoT:
                 )
                 - self.power
             )
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.d is None:

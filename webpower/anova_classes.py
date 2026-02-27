@@ -1,18 +1,19 @@
-from math import ceil, sqrt, pow
-from typing import Dict, Optional
+from math import ceil, sqrt
 
-from scipy.stats import chi2, ncx2, ncf, nct, f as f_dist, t as t_dist
-from scipy.optimize import brentq, bisect
+from scipy.optimize import bisect, brentq
+from scipy.stats import chi2, ncf, nct, ncx2
+from scipy.stats import f as f_dist
+from scipy.stats import t as t_dist
 
 
 class WpAnovaClass:
     def __init__(
         self,
-        k: Optional[int] = None,
-        n: Optional[int] = None,
-        f: Optional[float] = None,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        k: int | None = None,
+        n: int | None = None,
+        f: float | None = None,
+        alpha: float | None = None,
+        power: float | None = None,
         test_type: str = "overall",
     ) -> None:
         self.k = k
@@ -34,7 +35,7 @@ class WpAnovaClass:
 
     def _get_power(self) -> float:
         if self.test_type == "overall":
-            lambda_ = self.n * pow(self.f, 2)
+            lambda_ = self.n * self.f**2
             power = ncf.sf(
                 f_dist.isf(self.alpha, self.k - 1, self.n - self.k),
                 self.k - 1,
@@ -42,7 +43,7 @@ class WpAnovaClass:
                 lambda_,
             )
         elif self.test_type == "two-sided":
-            lambda_ = self.n * pow(self.f, 2)
+            lambda_ = self.n * self.f**2
             power = ncf.sf(
                 f_dist.isf(self.alpha, self.k - 1, self.n - self.k),
                 1,
@@ -55,11 +56,11 @@ class WpAnovaClass:
         else:
             lambda_ = sqrt(self.n) * self.f
             power = nct.cdf(t_dist.ppf(self.alpha, self.n - self.k), self.n - self.k, lambda_)
-        return power
+        return float(power)
 
     def _get_groups(self, k: float) -> float:
         if self.test_type == "overall":
-            lambda_ = self.n * pow(self.f, 2)
+            lambda_ = self.n * self.f**2
             k = (
                 ncf.sf(
                     f_dist.isf(self.alpha, k - 1, self.n - k),
@@ -70,7 +71,7 @@ class WpAnovaClass:
                 - self.power
             )
         elif self.test_type == "two-sided":
-            lambda_ = self.n * pow(self.f, 2)
+            lambda_ = self.n * self.f**2
             k = (
                 ncf.sf(
                     f_dist.isf(self.alpha, k - 1, self.n - k),
@@ -86,11 +87,11 @@ class WpAnovaClass:
         else:
             lambda_ = sqrt(self.n) * self.f
             k = nct.cdf(t_dist.ppf(self.alpha, self.n - k), self.n - k, lambda_) - self.power
-        return k
+        return float(k)
 
     def _get_sample_size(self, n: int) -> float:
         if self.test_type == "overall":
-            lambda_ = n * pow(self.f, 2)
+            lambda_ = n * self.f**2
             n = (
                 ncf.sf(
                     f_dist.isf(self.alpha, self.k - 1, n - self.k),
@@ -101,7 +102,7 @@ class WpAnovaClass:
                 - self.power
             )
         elif self.test_type == "two-sided":
-            lambda_ = n * pow(self.f, 2)
+            lambda_ = n * self.f**2
             n = (
                 ncf.sf(
                     f_dist.isf(self.alpha, self.k - 1, n - self.k),
@@ -117,11 +118,11 @@ class WpAnovaClass:
         else:
             lambda_ = sqrt(n) * self.f
             n = nct.cdf(t_dist.ppf(self.alpha, n - self.k), n - self.k, lambda_) - self.power
-        return n
+        return float(n)
 
     def _get_effect_size(self, f: float) -> float:
         if self.test_type == "overall":
-            lambda_ = self.n * pow(f, 2)
+            lambda_ = self.n * f**2
             f = (
                 ncf.sf(
                     f_dist.isf(self.alpha, self.k - 1, self.n - self.k),
@@ -132,7 +133,7 @@ class WpAnovaClass:
                 - self.power
             )
         elif self.test_type == "two-sided":
-            lambda_ = self.n * pow(f, 2)
+            lambda_ = self.n * f**2
             f = (
                 ncf.sf(
                     f_dist.isf(self.alpha, self.k - 1, self.n - self.k),
@@ -148,11 +149,11 @@ class WpAnovaClass:
         else:
             lambda_ = sqrt(self.n) * f
             f = nct.cdf(t_dist.ppf(self.alpha, self.n - self.k), self.n - self.k, lambda_) - self.power
-        return f
+        return float(f)
 
     def _get_alpha(self, alpha: float) -> float:
         if self.test_type == "overall":
-            lambda_ = self.n * pow(self.f, 2)
+            lambda_ = self.n * self.f**2
             alpha = (
                 ncf.sf(
                     f_dist.isf(alpha, self.k - 1, self.n - self.k),
@@ -163,7 +164,7 @@ class WpAnovaClass:
                 - self.power
             )
         elif self.test_type == "two-sided":
-            lambda_ = self.n * pow(self.f, 2)
+            lambda_ = self.n * self.f**2
             alpha = (
                 ncf.sf(
                     f_dist.isf(alpha, self.k - 1, self.n - self.k),
@@ -179,9 +180,9 @@ class WpAnovaClass:
         else:
             lambda_ = sqrt(self.n) * self.f
             alpha = nct.cdf(t_dist.ppf(alpha, self.n - self.k), self.n - self.k, lambda_) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.k is None:
@@ -207,11 +208,11 @@ class WpAnovaClass:
 class WpAnovaBinaryClass:
     def __init__(
         self,
-        k: Optional[int] = None,
-        n: Optional[int] = None,
-        V: Optional[float] = None,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        k: int | None = None,
+        n: int | None = None,
+        V: float | None = None,
+        alpha: float | None = None,
+        power: float | None = None,
     ) -> None:
         self.k = k
         self.n = n
@@ -223,41 +224,41 @@ class WpAnovaBinaryClass:
         self.note = "n is the total sample size"
 
     def _get_power(self) -> float:
-        chi = pow(self.V, 2) * self.n * (self.k - 1)
+        chi = self.V**2 * self.n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
         power = ncx2.sf(crit_value, df, chi)
-        return power
+        return float(power)
 
     def _get_groups(self, k: int) -> float:
-        chi = pow(self.V, 2) * self.n * (k - 1)
+        chi = self.V**2 * self.n * (k - 1)
         df = k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
         k = ncx2.sf(crit_value, df, chi) - self.power
-        return k
+        return float(k)
 
     def _get_sample_size(self, n: int) -> float:
-        chi = pow(self.V, 2) * n * (self.k - 1)
+        chi = self.V**2 * n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
         n = ncx2.sf(crit_value, df, chi) - self.power
-        return n
+        return float(n)
 
     def _get_effect_size(self, V: float) -> float:
-        chi = pow(V, 2) * self.n * (self.k - 1)
+        chi = V**2 * self.n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - self.alpha, df)
         V = ncx2.sf(crit_value, df, chi) - self.power
-        return V
+        return float(V)
 
     def _get_alpha(self, alpha: float) -> float:
-        chi = pow(self.V, 2) * self.n * (self.k - 1)
+        chi = self.V**2 * self.n * (self.k - 1)
         df = self.k - 1
         crit_value = chi2.ppf(1 - alpha, df)
         alpha = ncx2.sf(crit_value, df, chi) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.k is None:
@@ -283,11 +284,11 @@ class WpAnovaBinaryClass:
 class WpAnovaCountClass(WpAnovaBinaryClass):
     def __init__(
         self,
-        k: Optional[int] = None,
-        n: Optional[int] = None,
-        V: Optional[float] = None,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        k: int | None = None,
+        n: int | None = None,
+        V: float | None = None,
+        alpha: float | None = None,
+        power: float | None = None,
     ) -> None:
         super().__init__(k, n, V, alpha, power)
         self.method = "One-way Analogous ANOVA with Count Data"
@@ -298,12 +299,12 @@ class WpAnovaCountClass(WpAnovaBinaryClass):
 class WpKAnovaClass:
     def __init__(
         self,
-        n: Optional[int] = None,
-        ndf: Optional[int] = None,
-        f: Optional[float] = None,
-        ng: Optional[int] = None,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        n: int | None = None,
+        ndf: int | None = None,
+        f: float | None = None,
+        ng: int | None = None,
+        alpha: float | None = None,
+        power: float | None = None,
     ) -> None:
         self.n = n
         self.ndf = ndf
@@ -316,42 +317,42 @@ class WpKAnovaClass:
         self.note = "Sample size is the total sample size"
 
     def _get_power(self) -> float:
-        lambda_ = pow(self.f, 2) * self.n
+        lambda_ = self.f**2 * self.n
         ddf = self.n - self.ng
         power = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_)
-        return power
+        return float(power)
 
     def _get_sample_size(self, n: int) -> float:
-        lambda_ = pow(self.f, 2) * n
+        lambda_ = self.f**2 * n
         ddf = n - self.ng
         n = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
-        return n
+        return float(n)
 
     def _get_numerator_df(self, ndf: int) -> float:
-        lambda_ = pow(self.f, 2) * self.n
+        lambda_ = self.f**2 * self.n
         ddf = self.n - self.ng
         ndf = ncf.sf(f_dist.isf(self.alpha, ndf, ddf), ndf, ddf, lambda_) - self.power
-        return ndf
+        return float(ndf)
 
     def _get_effect_size(self, f: float) -> float:
-        lambda_ = pow(f, 2) * self.n
+        lambda_ = f**2 * self.n
         ddf = self.n - self.ng
         f = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
-        return f
+        return float(f)
 
     def _get_groups(self, ng: int) -> float:
-        lambda_ = pow(self.f, 2) * self.n
+        lambda_ = self.f**2 * self.n
         ddf = self.n - ng
         ng = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
-        return ng
+        return float(ng)
 
     def _get_alpha(self, alpha: float) -> float:
-        lambda_ = pow(self.f, 2) * self.n
+        lambda_ = self.f**2 * self.n
         ddf = self.n - self.ng
         alpha = ncf.sf(f_dist.isf(alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.n is None:
@@ -382,13 +383,13 @@ class WpKAnovaClass:
 class WpRMAnovaClass:
     def __init__(
         self,
-        n: Optional[int] = None,
-        ng: Optional[int] = None,
-        nm: Optional[int] = None,
-        f: Optional[float] = None,
+        n: int | None = None,
+        ng: int | None = None,
+        nm: int | None = None,
+        f: float | None = None,
         nscor: float = 1,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        alpha: float | None = None,
+        power: float | None = None,
         test_type: str = "between",
     ) -> None:
         self.n = n
@@ -418,9 +419,9 @@ class WpRMAnovaClass:
         else:
             df_1 = (self.ng - 1) * (self.nm - 1) * self.nscor
             df_2 = (self.n - self.ng) * (self.nm - 1) * self.nscor
-        lambda_ = pow(self.f, 2) * self.n * self.nscor
+        lambda_ = self.f**2 * self.n * self.nscor
         power = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_)
-        return power
+        return float(power)
 
     def _get_groups(self, ng: int) -> float:
         if self.test_type == "between":
@@ -432,9 +433,9 @@ class WpRMAnovaClass:
         else:
             df_1 = (ng - 1) * (self.nm - 1) * self.nscor
             df_2 = (self.n - ng) * (self.nm - 1) * self.nscor
-        lambda_ = pow(self.f, 2) * self.n * self.nscor
+        lambda_ = self.f**2 * self.n * self.nscor
         ng = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        return ng
+        return float(ng)
 
     def _get_nm(self, nm: int) -> float:
         if self.test_type == "between":
@@ -445,9 +446,9 @@ class WpRMAnovaClass:
         else:
             df_1 = (self.ng - 1) * (nm - 1) * self.nscor
             df_2 = (self.n - self.ng) * (nm - 1) * self.nscor
-        lambda_ = pow(self.f, 2) * self.n * self.nscor
+        lambda_ = self.f**2 * self.n * self.nscor
         nm = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        return nm
+        return float(nm)
 
     def _get_sample_size(self, n: int) -> float:
         if self.test_type == "between":
@@ -459,9 +460,9 @@ class WpRMAnovaClass:
         else:
             df_1 = (self.ng - 1) * (self.nm - 1) * self.nscor
             df_2 = (n - self.ng) * (self.nm - 1) * self.nscor
-        lambda_ = pow(self.f, 2) * n * self.nscor
+        lambda_ = self.f**2 * n * self.nscor
         n = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        return n
+        return float(n)
 
     def _get_effect_size(self, f: float) -> float:
         if self.test_type == "between":
@@ -473,9 +474,9 @@ class WpRMAnovaClass:
         else:
             df_1 = (self.ng - 1) * (self.nm - 1) * self.nscor
             df_2 = (self.n - self.ng) * (self.nm - 1) * self.nscor
-        lambda_ = pow(f, 2) * self.n * self.nscor
+        lambda_ = f**2 * self.n * self.nscor
         f = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        return f
+        return float(f)
 
     def _get_alpha(self, alpha: float) -> float:
         if self.test_type == "between":
@@ -487,11 +488,11 @@ class WpRMAnovaClass:
         else:
             df_1 = (self.ng - 1) * (self.nm - 1) * self.nscor
             df_2 = (self.n - self.ng) * (self.nm - 1) * self.nscor
-        lambda_ = pow(self.f, 2) * self.n * self.nscor
+        lambda_ = self.f**2 * self.n * self.nscor
         alpha = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.n is None:

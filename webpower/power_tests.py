@@ -1,29 +1,27 @@
-from typing import Dict, Optional, Union
-
 from webpower.anova_classes import (
-    WpAnovaClass,
     WpAnovaBinaryClass,
+    WpAnovaClass,
     WpAnovaCountClass,
     WpKAnovaClass,
     WpRMAnovaClass,
 )
+from webpower.misc_classes import WpCorrelation, WpMediation
 from webpower.proportion_classes import WpOneProp, WpTwoPropOneN, WpTwoPropTwoN
+from webpower.randomized_trial_classes import WpCRT2Arm, WpCRT3Arm, WpMRT2Arm, WpMRT3Arm
+from webpower.regression_classes import WpLogistic, WpPoisson, WPRegression
+from webpower.sem_classes import WPSEMRMSEA, WPSEMChisq
 from webpower.t_test_classes import WpOneT, WpTwoT
-from webpower.regression_classes import WPRegression, WpPoisson, WpLogistic
-from webpower.sem_classes import WPSEMChisq, WPSEMRMSEA
-from webpower.misc_classes import WpMediation, WpCorrelation
-from webpower.randomized_trial_classes import WpMRT2Arm, WpMRT3Arm, WpCRT2Arm, WpCRT3Arm
 
 
 def wp_anova_test(
-    k: Optional[int] = None,
-    n: Optional[int] = None,
-    f: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    k: int | None = None,
+    n: int | None = None,
+    f: float | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     test_type: str = "overall",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """One-way analysis of variance (one-way ANOVA) is a technique used to compare means of two or more groups (e.g.,
     Maxwell & Delaney, 2003). The ANOVA tests the null hypothesis that samples in two or more groups are drawn from
     populations with the same mean values. The ANOVA analysis typically produces an F-statistic, the ratio of the
@@ -43,9 +41,9 @@ def wp_anova_test(
         Statistical power
     test_type : {'overall', 'two-sided', 'greater', 'less'}
         The option "overall" is for the overall test of anova; "two-sided" is for a contrast anova; "greater" is testing
-        the between-group variance greater than the within-group, while "less" is vis versus.
+        the between-group variance greater than the within-group, while "less" is vice versa.
     print_pretty : bool, default=True
-        Whether we want our results printed our not
+        Whether we want our results printed or not
 
     Returns
     -------
@@ -104,13 +102,13 @@ def wp_anova_test(
 
 
 def wp_anova_binary_test(
-    k: Optional[int] = None,
-    n: Optional[int] = None,
-    V: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    k: int | None = None,
+    n: int | None = None,
+    V: float | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """The power analysis procedure for one-way ANOVA with binary data is introduced by Mai and Zhang (2017). One-way
     ANOVA with binary data is used for comparing means of three or more groups of binary data. Its outcome variable is
     supposed to follow Bernoulli distribution. And its overall test uses a likelihood ratio test statistics.
@@ -182,14 +180,14 @@ def wp_anova_binary_test(
 
 
 def wp_anova_count_test(
-    k: Optional[int] = None,
-    n: Optional[int] = None,
-    V: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    k: int | None = None,
+    n: int | None = None,
+    V: float | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     print_pretty: bool = True,
-) -> Dict:
-    """The power analysis procedure for one-way ANOVA with count data is introduced by Mai and Zhang(2017). One-way
+) -> dict:
+    """The power analysis procedure for one-way ANOVA with count data is introduced by Mai and Zhang (2017). One-way
     ANOVA with count data is used for comparing means of three or more groups of binary data. Its outcome variable is
     supposed to follow Poisson distribution. And its overall test uses a likelihood ratio test statistics.
 
@@ -260,14 +258,14 @@ def wp_anova_count_test(
 
 
 def wp_kanova_test(
-    n: Optional[int] = None,
-    ndf: Optional[int] = None,
-    f: Optional[float] = None,
-    ng: Optional[int] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
-    print_pretty: float = True,
-) -> Dict:
+    n: int | None = None,
+    ndf: int | None = None,
+    f: float | None = None,
+    ng: int | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
+    print_pretty: bool = True,
+) -> dict:
     """Power analysis for k-way ANOVA.
 
     Parameters
@@ -349,20 +347,20 @@ def wp_kanova_test(
 
 
 def wp_rmanova_test(
-    n: Optional[int] = None,
-    ng: Optional[int] = None,
-    nm: Optional[int] = None,
-    f: Optional[float] = None,
+    n: int | None = None,
+    ng: int | None = None,
+    nm: int | None = None,
+    f: float | None = None,
     nscor: float = 1,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    alpha: float | None = None,
+    power: float | None = None,
     test_type: str = "between",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """Repeated-measures ANOVA can be used to compare the means of a sequence of measurements(e.g., O’brien & Kaiser,
-    1985). In a repeated-measures design, evey subject is exposed to all dif-ferent treatments, or more commonly
+    1985). In a repeated-measures design, every subject is exposed to all different treatments, or more commonly
     measured across different time points. Power analysis for (1)the within-effect test about the mean difference among
-    measurements by default. If the subjects arefrom more than one group,the power analysis is also available for (2)
+    measurements by default. If the subjects are from more than one group, the power analysis is also available for (2)
     the between-effect test about mean difference among groups and (3) the interaction effect test of the measurements
     and groups.
 
@@ -376,13 +374,13 @@ def wp_rmanova_test(
         Number of measurements
     f : float, default=None
         Effect size. We use the statistic f as the measure of effect size for repeated measures ANOVA
-        as in Cohen(1988, p.275).
+        as in Cohen (1988, p.275).
     nscor : float, default=1
         Nonsphericity correction coefficient. The nonsphericity correction coefficient is a measure of the degree of
         sphericity in the population. A coefficient of 1 means sphericity is met, while a coefficient less than 1 means
-        not met. The samller value of the coefficient means the further departure from sphericity. The lowest value of
+        not met. The smaller value of the coefficient means the further departure from sphericity. The lowest value of
         the coefficient is 1/(nm-1) where nm is the total number of measurements. Two viable approaches for computing
-        the empirical nonsphericity correction coefficient are sggested. One is by Greenhouse and Geisser (1959),
+        the empirical nonsphericity correction coefficient are suggested. One is by Greenhouse and Geisser (1959),
         the other is by Huynh and Feldt (1976).
     alpha : float, default=None
         Significance level of the test
@@ -458,13 +456,13 @@ def wp_rmanova_test(
 
 
 def wp_one_prop_test(
-    h: Optional[float] = None,
-    n: Optional[int] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    h: float | None = None,
+    n: int | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     alternative: str = "two-sided",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
     The one-sample test of proportion tests the null proportion of success, usually 0.5. The power calculation is based
     on the arcsine transformation of the proportion (see Cohen, 1988, p.548).
@@ -534,13 +532,13 @@ def wp_one_prop_test(
 
 
 def wp_two_prop_one_n_test(
-    h: Optional[float] = None,
-    n: Optional[int] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    h: float | None = None,
+    n: int | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     alternative: str = "two-sided",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
     The two-sample test of proportions tests the null hypothesis that the two samples are drawn from populations with
     the same proportion of success. The power calculation is based on the arcsine transformation of the proportion (see
@@ -611,14 +609,14 @@ def wp_two_prop_one_n_test(
 
 
 def wp_two_prop_two_n_test(
-    h: Optional[float] = None,
-    n1: Optional[int] = None,
-    n2: Optional[int] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    h: float | None = None,
+    n1: int | None = None,
+    n2: int | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     alternative: str = "two-sided",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
     The two-sample test of proportions tests the null hypothesis that the two samples are drawn from populations with
     the same proportion of success. The power calculation is based on the arcsine transformation of the proportion (see
@@ -699,14 +697,14 @@ def wp_two_prop_two_n_test(
 
 
 def wp_t1_test(
-    n: Optional[int] = None,
-    d: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    n: int | None = None,
+    d: float | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     test_type: str = "two-sample",
     alternative: str = "two-sided",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """A t-test is a statistical hypothesis test in which the test statistic follows a Student’s t distribution if the
     null hypothesis is true and follows a non-central t distribution if the alternative hypothesis is true. The t test
     can assess the statistical significance of (1) the difference between population mean and a specific value, (2) the
@@ -807,14 +805,14 @@ def wp_t1_test(
 
 
 def wp_t2_test(
-    n1: Optional[int] = None,
-    n2: Optional[int] = None,
-    d: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    n1: int | None = None,
+    n2: int | None = None,
+    d: float | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     alternative: str = "two-sided",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """A t-test is a statistical hypothesis test in which the test statistic follows a Student’s t distribution if the
     null hypothesis is true and follows a non-central t distribution if the alternative hypothesis is true. The t test
     can assess the statistical significance of (1) the difference between population mean and a specific value, (2) the
@@ -893,15 +891,15 @@ def wp_t2_test(
 
 
 def wp_regression_test(
-    n: Optional[int] = None,
+    n: int | None = None,
     p1: int = 1,
     p2: int = 0,
-    f2: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    f2: float | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     test_type: str = "regular",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """This function is for power analysis for regression models. Regression is a statistical technique for examining
     the relationship between one or more independent variables (or predictors) and one dependent variable (or the
     outcome). Regression provides an F-statistic that can be formulated using the ratio between variation in the outcome
@@ -918,7 +916,7 @@ def wp_regression_test(
         Number of predictors in the reduced model, it is 0 by default. See the book by Maxwell and Delaney (2003)
         for the definition of the reduced model.
     f2 : float, default=None
-        Effect size. We use the statistic f2 as the measure of effect size for linear regression proposed by Cohen(1988, p.410).
+        Effect size. We use the statistic f2 as the measure of effect size for linear regression proposed by Cohen (1988, p.410).
          Cohen discussed the effect size in three different cases. The calculation of f2 can be generalized using the
          idea of a full model and a reduced model by Maxwell and Delaney (2003).
     alpha : float, default=None
@@ -988,16 +986,16 @@ def wp_regression_test(
 
 
 def wp_poisson_test(
-    n: Optional[int] = None,
+    n: int | None = None,
     exp0: float = 1,
     exp1: float = 0.5,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    alpha: float | None = None,
+    power: float | None = None,
     alternative: str = "two-sided",
     family: str = "Bernoulli",
-    parameter: Optional[Union[int, float, list, tuple]] = None,
+    parameter: int | float | list | tuple | None = None,
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """This function is for Poisson regression models. Poisson regression is a type of generalized linear models where
     the outcomes are usually count data. Here, Maximum likelihood methods is used to estimate the model parameters. The
     estimated regression coefficient is assumed to follow a normal distribution. A Wald test is used to test the mean
@@ -1086,19 +1084,19 @@ def wp_poisson_test(
 
 
 def wp_logistic_test(
-    n: Optional[int] = None,
+    n: int | None = None,
     p0: float = 0.5,
     p1: float = 0.5,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    alpha: float | None = None,
+    power: float | None = None,
     alternative: str = "two-sided",
     family: str = "Bernoulli",
-    parameter: Optional[Union[int, float, list, tuple]] = None,
+    parameter: int | float | list | tuple | None = None,
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """This function is for Logistic regression models. Logistic regression is a type of generalized linear models where
     the outcome variable follows Bernoulli distribution. Here, Maximum likelihood methods is used to estimate the model
-    parameters. The estimated regression coefficient is assumed to follow a normal distribution. A Wald test is use to
+    parameters. The estimated regression coefficient is assumed to follow a normal distribution. A Wald test is used to
     test the mean difference between the estimated parameter and the null parameter (typically the null hypothesis
     assumes it equals 0). The procedure introduced by Demidenko (2007) is adopted here for computing the statistical
     power.
@@ -1159,9 +1157,9 @@ def wp_logistic_test(
             + "alpha"
             + "\n"
             + "\t"
-            + f"{'{0:.2f}'.format(test['p0'])}"
+            + f"{'{:.2f}'.format(test['p0'])}"
             + " "
-            + f"{'{0:.2f}'.format(test['p1'])}"
+            + f"{'{:.2f}'.format(test['p1'])}"
             + " "
             + f"{round(test['beta0'], 4)}"
             + " "
@@ -1179,13 +1177,13 @@ def wp_logistic_test(
 
 
 def wp_sem_chisq_test(
-    n: Optional[int] = None,
-    df: Optional[int] = None,
-    effect: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    n: int | None = None,
+    df: int | None = None,
+    effect: float | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """Structural equation modeling (SEM) is a multivariate technique used to analyze relationships among observed and
     latent variables. It can be viewed as a combination of factor analysis and multivariate regression analysis. Two
     methods are widely used in power analysis for SEM. One is based on the likelihood ratio test proposed by Satorra and
@@ -1256,15 +1254,15 @@ def wp_sem_chisq_test(
 
 
 def wp_sem_rmsea_test(
-    n: Optional[int] = None,
-    df: Optional[int] = None,
-    rmsea0: Optional[float] = None,
-    rmsea1: Optional[float] = None,
-    alpha: Optional[float] = None,
-    power: Optional[float] = None,
+    n: int | None = None,
+    df: int | None = None,
+    rmsea0: float | None = None,
+    rmsea1: float | None = None,
+    alpha: float | None = None,
+    power: float | None = None,
     test_type: str = "close",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """Structural equation modeling (SEM) is a multivariate technique used to analyze relationships among observed and
     latent variables. It can be viewed as a combination of factor analysis and multivariate regression analysis. Two
     methods are widely used in power analysis for SEM. One is based on the likelihood ratio test proposed by Satorra and
@@ -1342,16 +1340,16 @@ def wp_sem_rmsea_test(
 
 
 def wp_mediation_test(
-    n: Optional[int] = None,
-    power: Optional[float] = None,
-    a: Optional[float] = None,
-    b: Optional[float] = None,
+    n: int | None = None,
+    power: float | None = None,
+    a: float | None = None,
+    b: float | None = None,
     var_x: float = 1,
-    var_y: Optional[float] = None,
+    var_y: float | None = None,
     var_m: float = 1,
-    alpha: Optional[float] = None,
+    alpha: float | None = None,
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """This function is for mediation models. Mediation models can be used to investigate the underlying mechanisms
     related to why an input variable x influences an output variable y (e.g., Hayes, 2013; MacKinnon, 2008). The
     mediation effect is calculated as a*b, where a is the path coefficent from the predictor x to the mediator m, and b
@@ -1437,18 +1435,18 @@ def wp_mediation_test(
 
 
 def wp_correlation_test(
-    n: Optional[int] = None,
-    r: Optional[float] = None,
-    power: Optional[float] = None,
+    n: int | None = None,
+    r: float | None = None,
+    power: float | None = None,
     p: int = 0,
     rho0: float = 0.0,
-    alpha: Optional[float] = None,
+    alpha: float | None = None,
     alternative: str = "two-sided",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """This function is for power analysis for correlation. Correlation measures whether and how a pair of variables are
     related. The Pearson Product Moment correlation coefficient (r) is adopted here. The power calculation for
-    correlation is conducted based on Fisher’s z transformation of Pearson correlation coefficent (Fisher, 1915, 1921).
+    correlation is conducted based on Fisher’s z transformation of Pearson correlation coefficient (Fisher, 1915, 1921).
 
     Parameters
     ----------
@@ -1512,18 +1510,18 @@ def wp_correlation_test(
 
 
 def wp_mrt2arm_test(
-    n: Optional[int] = None,
-    f: Optional[float] = None,
-    J: Optional[int] = None,
+    n: int | None = None,
+    f: float | None = None,
+    J: int | None = None,
     tau00: float = 1.0,
     tau11: float = 1.0,
     sg2: float = 1.0,
-    power: Optional[float] = None,
+    power: float | None = None,
     alpha: float = 0.05,
     alternative: str = "two-sided",
     test_type: str = "main",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """Multisite randomized trials (MRT) are a type of multilevel design for the situation when the entire cluster is
     randomly assigned to either a treatment arm or a control arm (Liu, 2013). The data from MRT can be analyzed in a
     two-level hierarchical linear model, where the indicator variable for treatment assignment is included in first
@@ -1587,18 +1585,18 @@ def wp_mrt2arm_test(
 
 
 def wp_mrt3arm_test(
-    n: Optional[int] = None,
-    f1: Optional[float] = None,
+    n: int | None = None,
+    f1: float | None = None,
     f2: float = 0.0,
-    J: Optional[int] = None,
+    J: int | None = None,
     tau: float = 1.0,
     sg2: float = 1.0,
-    power: Optional[float] = None,
+    power: float | None = None,
     alpha: float = 0.05,
     alternative: str = "two-sided",
     test_type: str = "main",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """Multisite randomized trials (MRT) are a type of multilevel design for the situation when the entire cluster is
     randomly assigned to either a treatment arm or a control arm (Liu, 2013). The data from MRT can be analyzed in a
     two-level hierarchical linear model, where the indicator variable for treatment assignment is included in first
@@ -1715,15 +1713,15 @@ def wp_mrt3arm_test(
 
 
 def wp_crt2arm_test(
-    n: Optional[int] = None,
-    f: Optional[float] = None,
-    J: Optional[int] = None,
-    icc: Optional[float] = None,
-    power: Optional[float] = None,
-    alpha: Optional[float] = None,
+    n: int | None = None,
+    f: float | None = None,
+    J: int | None = None,
+    icc: float | None = None,
+    power: float | None = None,
+    alpha: float | None = None,
     alternative: str = "two-sided",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """Cluster randomized trials (CRT) are a type of multilevel design for the situation when the entire cluster is
     randomly assigned to either a treatment arm or a contral arm (Liu, 2013). The data from CRT can be analyzed in a
     two-level hierachical linear model, where the indicator variable for treatment assignment is included in second
@@ -1813,16 +1811,16 @@ def wp_crt2arm_test(
 
 
 def wp_crt3arm_test(
-    n: Optional[int] = None,
-    f: Optional[float] = None,
-    J: Optional[int] = None,
-    icc: Optional[float] = None,
-    power: Optional[float] = None,
-    alpha: Optional[float] = None,
+    n: int | None = None,
+    f: float | None = None,
+    J: int | None = None,
+    icc: float | None = None,
+    power: float | None = None,
+    alpha: float | None = None,
     alternative: str = "two-sided",
     test_type: str = "main",
     print_pretty: bool = True,
-) -> Dict:
+) -> dict:
     """Cluster randomized trials (CRT) are a type of multilevel design for the situation when the entire cluster is
     randomly assigned to either a treatment arm or a contral arm (Liu, 2013). The data from CRT can be analyzed in a
     two-level hierachical linear model, where the indicator variable for treatment assignment is included in second

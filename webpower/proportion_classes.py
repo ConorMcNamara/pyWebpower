@@ -1,17 +1,16 @@
 from math import ceil, sqrt
-from typing import Dict, Optional
 
-from scipy.stats import norm
 from scipy.optimize import brentq
+from scipy.stats import norm
 
 
 class WpOneProp:
     def __init__(
         self,
-        h: Optional[float],
-        n: Optional[int],
-        alpha: Optional[float],
-        power: Optional[float],
+        h: float | None,
+        n: int | None,
+        alpha: float | None,
+        power: float | None,
         alternative: str = "two-sided",
     ) -> None:
         self.h = h
@@ -32,7 +31,7 @@ class WpOneProp:
             power = norm.sf(norm.isf(self.alpha) - self.h * sqrt(self.n))
         else:
             power = norm.cdf(norm.ppf(self.alpha) - self.h * sqrt(self.n))
-        return power
+        return float(power)
 
     def _get_effect_size(self, h: float) -> float:
         if self.alternative == "two-sided":
@@ -45,7 +44,7 @@ class WpOneProp:
             h = norm.sf(norm.isf(self.alpha) - h * sqrt(self.n)) - self.power
         else:
             h = norm.cdf(norm.ppf(self.alpha) - h * sqrt(self.n)) - self.power
-        return h
+        return float(h)
 
     def _get_n(self, n: int) -> float:
         if self.alternative == "two-sided":
@@ -58,7 +57,7 @@ class WpOneProp:
             n = norm.sf(norm.isf(self.alpha) - self.h * sqrt(n)) - self.power
         else:
             n = norm.cdf(norm.ppf(self.alpha) - self.h * sqrt(n)) - self.power
-        return n
+        return float(n)
 
     def _get_alpha(self, alpha: float) -> float:
         if self.alternative == "two-sided":
@@ -71,9 +70,9 @@ class WpOneProp:
             alpha = norm.sf(norm.isf(alpha) - self.h * sqrt(self.n)) - self.power
         else:
             alpha = norm.cdf(norm.ppf(alpha) - self.h * sqrt(self.n)) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.h is None:
@@ -102,10 +101,10 @@ class WpOneProp:
 class WpTwoPropOneN:
     def __init__(
         self,
-        h: Optional[float],
-        n: Optional[int],
-        alpha: Optional[float],
-        power: Optional[float],
+        h: float | None,
+        n: int | None,
+        alpha: float | None,
+        power: float | None,
         alternative: str = "two-sided",
     ) -> None:
         self.h = h
@@ -126,7 +125,7 @@ class WpTwoPropOneN:
             power = norm.sf(norm.isf(self.alpha) - self.h * sqrt(self.n / 2))
         else:
             power = norm.cdf(norm.ppf(self.alpha) - self.h * sqrt(self.n / 2))
-        return power
+        return float(power)
 
     def _get_effect_size(self, h: float) -> float:
         if self.alternative == "two-sided":
@@ -139,7 +138,7 @@ class WpTwoPropOneN:
             h = norm.sf(norm.isf(self.alpha) - h * sqrt(self.n / 2)) - self.power
         else:
             h = norm.cdf(norm.ppf(self.alpha) - h * sqrt(self.n / 2)) - self.power
-        return h
+        return float(h)
 
     def _get_n(self, n: int) -> float:
         if self.alternative == "two-sided":
@@ -152,7 +151,7 @@ class WpTwoPropOneN:
             n = norm.sf(norm.isf(self.alpha) - self.h * sqrt(n / 2)) - self.power
         else:
             n = norm.cdf(norm.ppf(self.alpha) - self.h * sqrt(n / 2)) - self.power
-        return n
+        return float(n)
 
     def _get_alpha(self, alpha: float) -> float:
         if self.alternative == "two-sided":
@@ -165,9 +164,9 @@ class WpTwoPropOneN:
             alpha = norm.sf(norm.isf(alpha) - self.h * sqrt(self.n / 2)) - self.power
         else:
             alpha = norm.cdf(norm.ppf(alpha) - self.h * sqrt(self.n / 2)) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.h is None:
@@ -196,11 +195,11 @@ class WpTwoPropOneN:
 class WpTwoPropTwoN:
     def __init__(
         self,
-        h: Optional[float],
-        n1: Optional[int],
-        n2: Optional[int],
-        alpha: Optional[float],
-        power: Optional[float],
+        h: float | None,
+        n1: int | None,
+        n2: int | None,
+        alpha: float | None,
+        power: float | None,
         alternative: str = "two-sided",
     ) -> None:
         self.h = h
@@ -222,7 +221,7 @@ class WpTwoPropTwoN:
             power = norm.sf(norm.isf(self.alpha) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2)))
         else:
             power = norm.cdf(norm.ppf(self.alpha) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2)))
-        return power
+        return float(power)
 
     def _get_effect_size(self, h: float) -> float:
         if self.alternative == "two-sided":
@@ -235,7 +234,7 @@ class WpTwoPropTwoN:
             h = norm.sf(norm.isf(self.alpha) - h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))) - self.power
         else:
             h = norm.cdf(norm.ppf(self.alpha) - h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))) - self.power
-        return h
+        return float(h)
 
     def _get_n1(self, n1: int) -> float:
         if self.alternative == "two-sided":
@@ -248,7 +247,7 @@ class WpTwoPropTwoN:
             n1 = norm.sf(norm.isf(self.alpha) - self.h * sqrt(n1 * self.n2 / (n1 + self.n2))) - self.power
         else:
             n1 = norm.cdf(norm.ppf(self.alpha) - self.h * sqrt(n1 * self.n2 / (n1 + self.n2))) - self.power
-        return n1
+        return float(n1)
 
     def _get_n2(self, n2: int) -> float:
         if self.alternative == "two-sided":
@@ -261,7 +260,7 @@ class WpTwoPropTwoN:
             n2 = norm.sf(norm.isf(self.alpha) - self.h * sqrt(self.n1 * n2 / (self.n1 + n2))) - self.power
         else:
             n2 = norm.cdf(norm.ppf(self.alpha) - self.h * sqrt(self.n1 * n2 / (self.n1 + n2))) - self.power
-        return n2
+        return float(n2)
 
     def _get_alpha(self, alpha: float) -> float:
         if self.alternative == "two-sided":
@@ -274,9 +273,9 @@ class WpTwoPropTwoN:
             alpha = norm.sf(norm.isf(alpha) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))) - self.power
         else:
             alpha = norm.cdf(norm.ppf(alpha) - self.h * sqrt(self.n1 * self.n2 / (self.n1 + self.n2))) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.h is None:

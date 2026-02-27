@@ -1,18 +1,17 @@
 from math import ceil
-from typing import Dict, Optional
 
-from scipy.stats import ncx2, chi2
 from scipy.optimize import brentq
+from scipy.stats import chi2, ncx2
 
 
 class WPSEMChisq:
     def __init__(
         self,
-        n: Optional[int] = None,
-        df: Optional[int] = None,
-        effect: Optional[float] = None,
-        alpha: Optional[float] = None,
-        power: Optional[float] = None,
+        n: int | None = None,
+        df: int | None = None,
+        effect: float | None = None,
+        alpha: float | None = None,
+        power: float | None = None,
     ) -> None:
         self.n = n
         self.df = df
@@ -26,33 +25,33 @@ class WPSEMChisq:
         ncp = (self.n - 1) * self.effect
         c_alpha = chi2.ppf(1 - self.alpha, self.df)
         power = ncx2.sf(c_alpha, self.df, ncp)
-        return power
+        return float(power)
 
     def _get_n(self, n: int) -> float:
         ncp = (n - 1) * self.effect
         c_alpha = chi2.ppf(1 - self.alpha, self.df)
         n = ncx2.sf(c_alpha, self.df, ncp) - self.power
-        return n
+        return float(n)
 
     def _get_df(self, df: int) -> float:
         ncp = (self.n - 1) * self.effect
         c_alpha = chi2.ppf(1 - self.alpha, df)
         df = ncx2.sf(c_alpha, df, ncp) - self.power
-        return df
+        return float(df)
 
     def _get_alpha(self, alpha: float) -> float:
         ncp = (self.n - 1) * self.effect
         c_alpha = chi2.ppf(1 - alpha, self.df)
         alpha = ncx2.sf(c_alpha, self.df, ncp) - self.power
-        return alpha
+        return float(alpha)
 
     def _get_effect_size(self, effect: float) -> float:
         ncp = (self.n - 1) * effect
         c_alpha = chi2.ppf(1 - self.alpha, self.df)
         effect = ncx2.sf(c_alpha, self.df, ncp) - self.power
-        return effect
+        return float(effect)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.effect is None:
@@ -77,12 +76,12 @@ class WPSEMChisq:
 class WPSEMRMSEA:
     def __init__(
         self,
-        n: Optional[int] = None,
-        df: Optional[int] = None,
-        rmsea0: Optional[float] = None,
-        rmsea1: Optional[float] = None,
-        power: Optional[float] = None,
-        alpha: Optional[float] = None,
+        n: int | None = None,
+        df: int | None = None,
+        rmsea0: float | None = None,
+        rmsea1: float | None = None,
+        power: float | None = None,
+        alpha: float | None = None,
         test_type: str = "close",
     ) -> None:
         self.n = n
@@ -96,66 +95,66 @@ class WPSEMRMSEA:
         self.url = "http://psychstat.org/rmsea"
 
     def _get_power(self) -> float:
-        ncp0 = (self.n - 1) * self.df * pow(self.rmsea0, 2)
-        ncp1 = (self.n - 1) * self.df * pow(self.rmsea1, 2)
+        ncp0 = (self.n - 1) * self.df * self.rmsea0**2
+        ncp1 = (self.n - 1) * self.df * self.rmsea1**2
         if self.test_type == "close":
             c_alpha = ncx2.ppf(1 - self.alpha, self.df, ncp0)
         else:
             c_alpha = ncx2.ppf(self.alpha, self.df, ncp0)
         power = ncx2.sf(c_alpha, self.df, ncp1)
-        return power
+        return float(power)
 
     def _get_n(self, n: int) -> float:
-        ncp0 = (n - 1) * self.df * pow(self.rmsea0, 2)
-        ncp1 = (n - 1) * self.df * pow(self.rmsea1, 2)
+        ncp0 = (n - 1) * self.df * self.rmsea0**2
+        ncp1 = (n - 1) * self.df * self.rmsea1**2
         if self.test_type == "close":
             c_alpha = ncx2.ppf(1 - self.alpha, self.df, ncp0)
         else:
             c_alpha = ncx2.ppf(self.alpha, self.df, ncp0)
         n = ncx2.sf(c_alpha, self.df, ncp1) - self.power
-        return n
+        return float(n)
 
     def _get_df(self, df: int) -> float:
-        ncp0 = (self.n - 1) * df * pow(self.rmsea0, 2)
-        ncp1 = (self.n - 1) * df * pow(self.rmsea1, 2)
+        ncp0 = (self.n - 1) * df * self.rmsea0**2
+        ncp1 = (self.n - 1) * df * self.rmsea1**2
         if self.test_type == "close":
             c_alpha = ncx2.ppf(1 - self.alpha, df, ncp0)
         else:
             c_alpha = ncx2.ppf(self.alpha, df, ncp0)
         df = ncx2.sf(c_alpha, df, ncp1) - self.power
-        return df
+        return float(df)
 
     def _get_rmsea0(self, rmsea0: float) -> float:
-        ncp0 = (self.n - 1) * self.df * pow(rmsea0, 2)
-        ncp1 = (self.n - 1) * self.df * pow(self.rmsea1, 2)
+        ncp0 = (self.n - 1) * self.df * rmsea0**2
+        ncp1 = (self.n - 1) * self.df * self.rmsea1**2
         if self.test_type == "close":
             c_alpha = ncx2.ppf(1 - self.alpha, self.df, ncp0)
         else:
             c_alpha = ncx2.ppf(self.alpha, self.df, ncp0)
         rmsea0 = ncx2.sf(c_alpha, self.df, ncp1) - self.power
-        return rmsea0
+        return float(rmsea0)
 
     def _get_rmsea1(self, rmsea1: float) -> float:
-        ncp0 = (self.n - 1) * self.df * pow(self.rmsea0, 2)
-        ncp1 = (self.n - 1) * self.df * pow(rmsea1, 2)
+        ncp0 = (self.n - 1) * self.df * self.rmsea0**2
+        ncp1 = (self.n - 1) * self.df * rmsea1**2
         if self.test_type == "close":
             c_alpha = ncx2.ppf(1 - self.alpha, self.df, ncp0)
         else:
             c_alpha = ncx2.ppf(self.alpha, self.df, ncp0)
         rmsea1 = ncx2.sf(c_alpha, self.df, ncp1) - self.power
-        return rmsea1
+        return float(rmsea1)
 
     def _get_alpha(self, alpha: float) -> float:
-        ncp0 = (self.n - 1) * self.df * pow(self.rmsea0, 2)
-        ncp1 = (self.n - 1) * self.df * pow(self.rmsea1, 2)
+        ncp0 = (self.n - 1) * self.df * self.rmsea0**2
+        ncp1 = (self.n - 1) * self.df * self.rmsea1**2
         if self.test_type == "close":
             c_alpha = ncx2.ppf(1 - alpha, self.df, ncp0)
         else:
             c_alpha = ncx2.ppf(alpha, self.df, ncp0)
         alpha = ncx2.sf(c_alpha, self.df, ncp1) - self.power
-        return alpha
+        return float(alpha)
 
-    def pwr_test(self) -> Dict:
+    def pwr_test(self) -> dict:
         if self.power is None:
             self.power = self._get_power()
         elif self.rmsea0 is None:
