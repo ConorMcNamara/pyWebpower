@@ -33,166 +33,180 @@ class WpAnovaClass:
             self.note = "n is the total sample size (contrast, two-sided)"
         self.url = "http://psychstat.org/anova"
 
-    def _get_power(self) -> float:
+    def _get_power(self, n: int, f: float, k: int, alpha: float) -> float:
         if self.test_type == "overall":
-            lambda_ = self.n * self.f**2
+            lambda_ = n * f**2
             power = ncf.sf(
-                f_dist.isf(self.alpha, self.k - 1, self.n - self.k),
-                self.k - 1,
-                self.n - self.k,
+                f_dist.isf(alpha, k - 1, n - k),
+                k - 1,
+                n - k,
                 lambda_,
             )
         elif self.test_type == "two-sided":
-            lambda_ = self.n * self.f**2
+            lambda_ = n * f**2
             power = ncf.sf(
-                f_dist.isf(self.alpha, self.k - 1, self.n - self.k),
+                f_dist.isf(alpha, k - 1, n - k),
                 1,
-                self.n - self.k,
+                n - k,
                 lambda_,
             )
         elif self.test_type == "greater":
-            lambda_ = sqrt(self.n) * self.f
-            power = nct.sf(t_dist.isf(self.alpha, self.n - self.k), self.n - self.k, lambda_)
+            lambda_ = sqrt(n) * f
+            power = nct.sf(t_dist.isf(alpha, n - k), n - k, lambda_)
         else:
-            lambda_ = sqrt(self.n) * self.f
-            power = nct.cdf(t_dist.ppf(self.alpha, self.n - self.k), self.n - self.k, lambda_)
+            lambda_ = sqrt(n) * f
+            power = nct.cdf(t_dist.ppf(alpha, n - k), n - k, lambda_)
         return float(power)
 
-    def _get_groups(self, k: float) -> float:
+    def _get_groups(self, k: float, n: int, f: float, alpha: float, power: float) -> float:
         if self.test_type == "overall":
-            lambda_ = self.n * self.f**2
-            k = (
+            lambda_ = n * f**2
+            result: float = (
                 ncf.sf(
-                    f_dist.isf(self.alpha, k - 1, self.n - k),
+                    f_dist.isf(alpha, k - 1, n - k),
                     k - 1,
-                    self.n - k,
+                    n - k,
                     lambda_,
                 )
-                - self.power
+                - power
             )
         elif self.test_type == "two-sided":
-            lambda_ = self.n * self.f**2
-            k = (
+            lambda_ = n * f**2
+            result = (
                 ncf.sf(
-                    f_dist.isf(self.alpha, k - 1, self.n - k),
+                    f_dist.isf(alpha, k - 1, n - k),
                     1,
-                    self.n - self.k,
+                    n - k,
                     lambda_,
                 )
-                - self.power
+                - power
             )
         elif self.test_type == "greater":
-            lambda_ = sqrt(self.n) * self.f
-            k = nct.sf(t_dist.isf(self.alpha, self.n - k), self.n - k, lambda_) - self.power
+            lambda_ = sqrt(n) * f
+            result = nct.sf(t_dist.isf(alpha, n - k), n - k, lambda_) - power
         else:
-            lambda_ = sqrt(self.n) * self.f
-            k = nct.cdf(t_dist.ppf(self.alpha, self.n - k), self.n - k, lambda_) - self.power
-        return float(k)
+            lambda_ = sqrt(n) * f
+            result = nct.cdf(t_dist.ppf(alpha, n - k), n - k, lambda_) - power
+        return float(result)
 
-    def _get_sample_size(self, n: int) -> float:
+    def _get_sample_size(self, n: float, f: float, k: int, alpha: float, power: float) -> float:
         if self.test_type == "overall":
-            lambda_ = n * self.f**2
-            n = (
+            lambda_ = n * f**2
+            result: float = (
                 ncf.sf(
-                    f_dist.isf(self.alpha, self.k - 1, n - self.k),
-                    self.k - 1,
-                    n - self.k,
+                    f_dist.isf(alpha, k - 1, n - k),
+                    k - 1,
+                    n - k,
                     lambda_,
                 )
-                - self.power
+                - power
             )
         elif self.test_type == "two-sided":
-            lambda_ = n * self.f**2
-            n = (
+            lambda_ = n * f**2
+            result = (
                 ncf.sf(
-                    f_dist.isf(self.alpha, self.k - 1, n - self.k),
+                    f_dist.isf(alpha, k - 1, n - k),
                     1,
-                    n - self.k,
+                    n - k,
                     lambda_,
                 )
-                - self.power
+                - power
             )
         elif self.test_type == "greater":
-            lambda_ = sqrt(n) * self.f
-            n = nct.sf(t_dist.isf(self.alpha, n - self.k), n - self.k, lambda_) - self.power
+            lambda_ = sqrt(n) * f
+            result = nct.sf(t_dist.isf(alpha, n - k), n - k, lambda_) - power
         else:
-            lambda_ = sqrt(n) * self.f
-            n = nct.cdf(t_dist.ppf(self.alpha, n - self.k), n - self.k, lambda_) - self.power
-        return float(n)
+            lambda_ = sqrt(n) * f
+            result = nct.cdf(t_dist.ppf(alpha, n - k), n - k, lambda_) - power
+        return float(result)
 
-    def _get_effect_size(self, f: float) -> float:
+    def _get_effect_size(self, f: float, n: int, k: int, alpha: float, power: float) -> float:
         if self.test_type == "overall":
-            lambda_ = self.n * f**2
-            f = (
+            lambda_ = n * f**2
+            result: float = (
                 ncf.sf(
-                    f_dist.isf(self.alpha, self.k - 1, self.n - self.k),
-                    self.k - 1,
-                    self.n - self.k,
+                    f_dist.isf(alpha, k - 1, n - k),
+                    k - 1,
+                    n - k,
                     lambda_,
                 )
-                - self.power
+                - power
             )
         elif self.test_type == "two-sided":
-            lambda_ = self.n * f**2
-            f = (
+            lambda_ = n * f**2
+            result = (
                 ncf.sf(
-                    f_dist.isf(self.alpha, self.k - 1, self.n - self.k),
+                    f_dist.isf(alpha, k - 1, n - k),
                     1,
-                    self.n - self.k,
+                    n - k,
                     lambda_,
                 )
-                - self.power
+                - power
             )
         elif self.test_type == "greater":
-            lambda_ = sqrt(self.n) * f
-            f = nct.sf(t_dist.isf(self.alpha, self.n - self.k), self.n - self.k, lambda_) - self.power
+            lambda_ = sqrt(n) * f
+            result = nct.sf(t_dist.isf(alpha, n - k), n - k, lambda_) - power
         else:
-            lambda_ = sqrt(self.n) * f
-            f = nct.cdf(t_dist.ppf(self.alpha, self.n - self.k), self.n - self.k, lambda_) - self.power
-        return float(f)
+            lambda_ = sqrt(n) * f
+            result = nct.cdf(t_dist.ppf(alpha, n - k), n - k, lambda_) - power
+        return float(result)
 
-    def _get_alpha(self, alpha: float) -> float:
+    def _get_alpha(self, alpha: float, n: int, f: float, k: int, power: float) -> float:
         if self.test_type == "overall":
-            lambda_ = self.n * self.f**2
-            alpha = (
+            lambda_ = n * f**2
+            result: float = (
                 ncf.sf(
-                    f_dist.isf(alpha, self.k - 1, self.n - self.k),
-                    self.k - 1,
-                    self.n - self.k,
+                    f_dist.isf(alpha, k - 1, n - k),
+                    k - 1,
+                    n - k,
                     lambda_,
                 )
-                - self.power
+                - power
             )
         elif self.test_type == "two-sided":
-            lambda_ = self.n * self.f**2
-            alpha = (
+            lambda_ = n * f**2
+            result = (
                 ncf.sf(
-                    f_dist.isf(alpha, self.k - 1, self.n - self.k),
+                    f_dist.isf(alpha, k - 1, n - k),
                     1,
-                    self.n - self.k,
+                    n - k,
                     lambda_,
                 )
-                - self.power
+                - power
             )
         elif self.test_type == "greater":
-            lambda_ = sqrt(self.n) * self.f
-            alpha = nct.sf(t_dist.isf(alpha, self.n - self.k), self.n - self.k, lambda_) - self.power
+            lambda_ = sqrt(n) * f
+            result = nct.sf(t_dist.isf(alpha, n - k), n - k, lambda_) - power
         else:
-            lambda_ = sqrt(self.n) * self.f
-            alpha = nct.cdf(t_dist.ppf(alpha, self.n - self.k), self.n - self.k, lambda_) - self.power
-        return float(alpha)
+            lambda_ = sqrt(n) * f
+            result = nct.cdf(t_dist.ppf(alpha, n - k), n - k, lambda_) - power
+        return float(result)
 
     def pwr_test(self) -> dict:
         if self.power is None:
-            self.power = self._get_power()
+            if self.n is None or self.f is None or self.k is None or self.alpha is None:
+                raise ValueError("n, f, k, and alpha must be provided to compute power")
+            self.power = self._get_power(self.n, self.f, self.k, self.alpha)
         elif self.k is None:
-            self.k = ceil(bisect(self._get_groups, 2 + 1e-10, 100))
+            if self.n is None or self.f is None or self.alpha is None or self.power is None:
+                raise ValueError("n, f, alpha, and power must be provided to solve for k")
+            n, f, alpha, power = self.n, self.f, self.alpha, self.power
+            self.k = ceil(bisect(lambda k: self._get_groups(k, n, f, alpha, power), 2 + 1e-10, 100))
         elif self.n is None:
-            self.n = ceil(brentq(self._get_sample_size, 2 + self.k + 1e-10, 1e05))
+            if self.k is None or self.f is None or self.alpha is None or self.power is None:
+                raise ValueError("k, f, alpha, and power must be provided to solve for n")
+            k, f, alpha, power = self.k, self.f, self.alpha, self.power
+            self.n = ceil(brentq(lambda n: self._get_sample_size(n, f, k, alpha, power), 2 + self.k + 1e-10, 1e05))
         elif self.f is None:
-            self.f = bisect(self._get_effect_size, 1e-07, 1e07)
+            if self.n is None or self.k is None or self.alpha is None or self.power is None:
+                raise ValueError("n, k, alpha, and power must be provided to solve for f")
+            n, k, alpha, power = self.n, self.k, self.alpha, self.power
+            self.f = bisect(lambda f: self._get_effect_size(f, n, k, alpha, power), 1e-07, 1e07)
         else:
-            self.alpha = brentq(self._get_alpha, 1e-10, 1 - 1e-10)
+            if self.n is None or self.f is None or self.k is None or self.power is None:
+                raise ValueError("n, f, k, and power must be provided to solve for alpha")
+            n, f, k, power = self.n, self.f, self.k, self.power
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, f, k, power), 1e-10, 1 - 1e-10)
         return {
             "k": self.k,
             "n": self.n,
@@ -223,52 +237,66 @@ class WpAnovaBinaryClass:
         self.url = "http://psychstat.org/anovabinary"
         self.note = "n is the total sample size"
 
-    def _get_power(self) -> float:
-        chi = self.V**2 * self.n * (self.k - 1)
-        df = self.k - 1
-        crit_value = chi2.ppf(1 - self.alpha, df)
+    def _get_power(self, V: float, n: int, k: int, alpha: float) -> float:
+        chi = V**2 * n * (k - 1)
+        df = k - 1
+        crit_value = chi2.ppf(1 - alpha, df)
         power = ncx2.sf(crit_value, df, chi)
         return float(power)
 
-    def _get_groups(self, k: int) -> float:
-        chi = self.V**2 * self.n * (k - 1)
+    def _get_groups(self, k: float, V: float, n: int, alpha: float, power: float) -> float:
+        chi = V**2 * n * (k - 1)
         df = k - 1
-        crit_value = chi2.ppf(1 - self.alpha, df)
-        k = ncx2.sf(crit_value, df, chi) - self.power
-        return float(k)
-
-    def _get_sample_size(self, n: int) -> float:
-        chi = self.V**2 * n * (self.k - 1)
-        df = self.k - 1
-        crit_value = chi2.ppf(1 - self.alpha, df)
-        n = ncx2.sf(crit_value, df, chi) - self.power
-        return float(n)
-
-    def _get_effect_size(self, V: float) -> float:
-        chi = V**2 * self.n * (self.k - 1)
-        df = self.k - 1
-        crit_value = chi2.ppf(1 - self.alpha, df)
-        V = ncx2.sf(crit_value, df, chi) - self.power
-        return float(V)
-
-    def _get_alpha(self, alpha: float) -> float:
-        chi = self.V**2 * self.n * (self.k - 1)
-        df = self.k - 1
         crit_value = chi2.ppf(1 - alpha, df)
-        alpha = ncx2.sf(crit_value, df, chi) - self.power
-        return float(alpha)
+        result: float = ncx2.sf(crit_value, df, chi) - power
+        return float(result)
+
+    def _get_sample_size(self, n: float, V: float, k: int, alpha: float, power: float) -> float:
+        chi = V**2 * n * (k - 1)
+        df = k - 1
+        crit_value = chi2.ppf(1 - alpha, df)
+        result: float = ncx2.sf(crit_value, df, chi) - power
+        return float(result)
+
+    def _get_effect_size(self, V: float, n: int, k: int, alpha: float, power: float) -> float:
+        chi = V**2 * n * (k - 1)
+        df = k - 1
+        crit_value = chi2.ppf(1 - alpha, df)
+        result: float = ncx2.sf(crit_value, df, chi) - power
+        return float(result)
+
+    def _get_alpha(self, alpha: float, V: float, n: int, k: int, power: float) -> float:
+        chi = V**2 * n * (k - 1)
+        df = k - 1
+        crit_value = chi2.ppf(1 - alpha, df)
+        result: float = ncx2.sf(crit_value, df, chi) - power
+        return float(result)
 
     def pwr_test(self) -> dict:
         if self.power is None:
-            self.power = self._get_power()
+            if self.V is None or self.n is None or self.k is None or self.alpha is None:
+                raise ValueError("V, n, k, and alpha must be provided to compute power")
+            self.power = self._get_power(self.V, self.n, self.k, self.alpha)
         elif self.k is None:
-            self.k = ceil(bisect(self._get_groups, 2 + 1e-10, 100))
+            if self.V is None or self.n is None or self.alpha is None or self.power is None:
+                raise ValueError("V, n, alpha, and power must be provided to solve for k")
+            V, n, alpha, power = self.V, self.n, self.alpha, self.power
+            self.k = ceil(bisect(lambda k: self._get_groups(k, V, n, alpha, power), 2 + 1e-10, 100))
         elif self.n is None:
-            self.n = ceil(brentq(self._get_sample_size, 2 + self.k + 1e-10, 1e05))
+            if self.V is None or self.k is None or self.alpha is None or self.power is None:
+                raise ValueError("V, k, alpha, and power must be provided to solve for n")
+            V, k, alpha, power = self.V, self.k, self.alpha, self.power
+            self.n = ceil(brentq(lambda n: self._get_sample_size(n, V, k, alpha, power), 2 + self.k + 1e-10, 1e05))
         elif self.V is None:
-            self.V = bisect(self._get_effect_size, 1e-07, 1e07)
+            if self.n is None or self.k is None or self.alpha is None or self.power is None:
+                raise ValueError("n, k, alpha, and power must be provided to solve for V")
+            n, k, alpha, power = self.n, self.k, self.alpha, self.power
+            self.V = bisect(lambda V: self._get_effect_size(V, n, k, alpha, power), 1e-07, 1e07)
         else:
-            self.alpha = brentq(self._get_alpha, 1e-10, 1 - 1e-10)
+            if self.V is None or self.n is None or self.k is None or self.power is None:
+                raise ValueError("V, n, k, and power must be provided to solve for alpha")
+            V, n, k, power = self.V, self.n, self.k, self.power
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, V, n, k, power), 1e-10, 1 - 1e-10)
         return {
             "k": self.k,
             "n": self.n,
@@ -316,56 +344,77 @@ class WpKAnovaClass:
         self.url = "http://psychstat.org/kanova"
         self.note = "Sample size is the total sample size"
 
-    def _get_power(self) -> float:
-        lambda_ = self.f**2 * self.n
-        ddf = self.n - self.ng
-        power = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_)
+    def _get_power(self, f: float, n: int, ng: int, ndf: int, alpha: float) -> float:
+        lambda_ = f**2 * n
+        ddf = n - ng
+        power = ncf.sf(f_dist.isf(alpha, ndf, ddf), ndf, ddf, lambda_)
         return float(power)
 
-    def _get_sample_size(self, n: int) -> float:
-        lambda_ = self.f**2 * n
-        ddf = n - self.ng
-        n = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
-        return float(n)
+    def _get_sample_size(self, n: float, f: float, ng: int, ndf: int, alpha: float, power: float) -> float:
+        lambda_ = f**2 * n
+        ddf = n - ng
+        result: float = ncf.sf(f_dist.isf(alpha, ndf, ddf), ndf, ddf, lambda_) - power
+        return float(result)
 
-    def _get_numerator_df(self, ndf: int) -> float:
-        lambda_ = self.f**2 * self.n
-        ddf = self.n - self.ng
-        ndf = ncf.sf(f_dist.isf(self.alpha, ndf, ddf), ndf, ddf, lambda_) - self.power
-        return float(ndf)
+    def _get_numerator_df(self, ndf: float, f: float, n: int, ng: int, alpha: float, power: float) -> float:
+        lambda_ = f**2 * n
+        ddf = n - ng
+        result: float = ncf.sf(f_dist.isf(alpha, ndf, ddf), ndf, ddf, lambda_) - power
+        return float(result)
 
-    def _get_effect_size(self, f: float) -> float:
-        lambda_ = f**2 * self.n
-        ddf = self.n - self.ng
-        f = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
-        return float(f)
+    def _get_effect_size(self, f: float, n: int, ng: int, ndf: int, alpha: float, power: float) -> float:
+        lambda_ = f**2 * n
+        ddf = n - ng
+        result: float = ncf.sf(f_dist.isf(alpha, ndf, ddf), ndf, ddf, lambda_) - power
+        return float(result)
 
-    def _get_groups(self, ng: int) -> float:
-        lambda_ = self.f**2 * self.n
-        ddf = self.n - ng
-        ng = ncf.sf(f_dist.isf(self.alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
-        return float(ng)
+    def _get_groups(self, ng: float, f: float, n: int, ndf: int, alpha: float, power: float) -> float:
+        lambda_ = f**2 * n
+        ddf = n - ng
+        result: float = ncf.sf(f_dist.isf(alpha, ndf, ddf), ndf, ddf, lambda_) - power
+        return float(result)
 
-    def _get_alpha(self, alpha: float) -> float:
-        lambda_ = self.f**2 * self.n
-        ddf = self.n - self.ng
-        alpha = ncf.sf(f_dist.isf(alpha, self.ndf, ddf), self.ndf, ddf, lambda_) - self.power
-        return float(alpha)
+    def _get_alpha(self, alpha: float, f: float, n: int, ng: int, ndf: int, power: float) -> float:
+        lambda_ = f**2 * n
+        ddf = n - ng
+        result: float = ncf.sf(f_dist.isf(alpha, ndf, ddf), ndf, ddf, lambda_) - power
+        return float(result)
 
     def pwr_test(self) -> dict:
         if self.power is None:
-            self.power = self._get_power()
+            if self.f is None or self.n is None or self.ng is None or self.ndf is None or self.alpha is None:
+                raise ValueError("f, n, ng, ndf, and alpha must be provided to compute power")
+            self.power = self._get_power(self.f, self.n, self.ng, self.ndf, self.alpha)
         elif self.n is None:
-            self.n = ceil(brentq(self._get_sample_size, 1 + self.ng, 1e07))
+            if self.f is None or self.ng is None or self.ndf is None or self.alpha is None or self.power is None:
+                raise ValueError("f, ng, ndf, alpha, and power must be provided to solve for n")
+            f, ng, ndf, alpha, power = self.f, self.ng, self.ndf, self.alpha, self.power
+            self.n = ceil(brentq(lambda n: self._get_sample_size(n, f, ng, ndf, alpha, power), 1 + ng, 1e07))
         elif self.ndf is None:
-            self.ndf = ceil(bisect(self._get_numerator_df, 1 + 1e-10, 1e05))
+            if self.f is None or self.n is None or self.ng is None or self.alpha is None or self.power is None:
+                raise ValueError("f, n, ng, alpha, and power must be provided to solve for ndf")
+            f, n, ng, alpha, power = self.f, self.n, self.ng, self.alpha, self.power
+            self.ndf = ceil(bisect(lambda ndf: self._get_numerator_df(ndf, f, n, ng, alpha, power), 1 + 1e-10, 1e05))
         elif self.ng is None:
-            self.ng = ceil(brentq(self._get_groups, 1e-07, 1e07))
+            if self.f is None or self.n is None or self.ndf is None or self.alpha is None or self.power is None:
+                raise ValueError("f, n, ndf, alpha, and power must be provided to solve for ng")
+            f, n, ndf, alpha, power = self.f, self.n, self.ndf, self.alpha, self.power
+            self.ng = ceil(brentq(lambda ng: self._get_groups(ng, f, n, ndf, alpha, power), 1e-07, 1e07))
         elif self.f is None:
-            self.f = bisect(self._get_effect_size, 1e-07, 1e07)
+            if self.n is None or self.ng is None or self.ndf is None or self.alpha is None or self.power is None:
+                raise ValueError("n, ng, ndf, alpha, and power must be provided to solve for f")
+            n, ng, ndf, alpha, power = self.n, self.ng, self.ndf, self.alpha, self.power
+            self.f = bisect(lambda f: self._get_effect_size(f, n, ng, ndf, alpha, power), 1e-07, 1e07)
         else:
-            self.alpha = brentq(self._get_alpha, 1e-10, 1 - 1e-10)
-        ddf = ceil(self.n - self.ng)
+            if self.f is None or self.n is None or self.ng is None or self.ndf is None or self.power is None:
+                raise ValueError("f, n, ng, ndf, and power must be provided to solve for alpha")
+            f, n, ng, ndf, power = self.f, self.n, self.ng, self.ndf, self.power
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, f, n, ng, ndf, power), 1e-10, 1 - 1e-10)
+        n = self.n
+        ng = self.ng
+        if n is None or ng is None:
+            raise ValueError("n and ng must be set after pwr_test")
+        ddf = ceil(n - ng)
         return {
             "n": self.n,
             "ndf": self.ndf,
@@ -409,102 +458,119 @@ class WpRMAnovaClass:
         else:
             self.note = "Power analysis for interaction-effect test"
 
-    def _get_power(self) -> float:
-        if self.test_type == "between":
-            df_1 = self.ng - 1
-            df_2 = self.n - self.ng
-        elif self.test_type == "within":
-            df_1 = (self.nm - 1) * self.nscor
-            df_2 = (self.n - self.ng) * df_1
-        else:
-            df_1 = (self.ng - 1) * (self.nm - 1) * self.nscor
-            df_2 = (self.n - self.ng) * (self.nm - 1) * self.nscor
-        lambda_ = self.f**2 * self.n * self.nscor
-        power = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_)
-        return float(power)
-
-    def _get_groups(self, ng: int) -> float:
+    def _get_power(self, f: float, n: int, ng: int, nm: int, alpha: float) -> float:
         if self.test_type == "between":
             df_1 = ng - 1
-            df_2 = self.n - ng
+            df_2 = n - ng
         elif self.test_type == "within":
-            df_1 = (self.nm - 1) * self.nscor
-            df_2 = (self.n - ng) * df_1
+            df_1 = (nm - 1) * self.nscor
+            df_2 = (n - ng) * df_1
         else:
-            df_1 = (ng - 1) * (self.nm - 1) * self.nscor
-            df_2 = (self.n - ng) * (self.nm - 1) * self.nscor
-        lambda_ = self.f**2 * self.n * self.nscor
-        ng = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        return float(ng)
+            df_1 = (ng - 1) * (nm - 1) * self.nscor
+            df_2 = (n - ng) * (nm - 1) * self.nscor
+        lambda_ = f**2 * n * self.nscor
+        power = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_)
+        return float(power)
 
-    def _get_nm(self, nm: int) -> float:
+    def _get_groups(self, ng: float, f: float, n: int, nm: int, alpha: float, power: float) -> float:
+        if self.test_type == "between":
+            df_1 = ng - 1
+            df_2 = n - ng
+        elif self.test_type == "within":
+            df_1 = (nm - 1) * self.nscor
+            df_2 = (n - ng) * df_1
+        else:
+            df_1 = (ng - 1) * (nm - 1) * self.nscor
+            df_2 = (n - ng) * (nm - 1) * self.nscor
+        lambda_ = f**2 * n * self.nscor
+        result: float = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - power
+        return float(result)
+
+    def _get_nm(self, nm: float, f: float, n: int, ng: int, alpha: float, power: float) -> float:
         if self.test_type == "between":
             raise ValueError("nm is not defined for between-effects")
         elif self.test_type == "within":
             df_1 = (nm - 1) * self.nscor
-            df_2 = (self.n - self.ng) * df_1
+            df_2 = (n - ng) * df_1
         else:
-            df_1 = (self.ng - 1) * (nm - 1) * self.nscor
-            df_2 = (self.n - self.ng) * (nm - 1) * self.nscor
-        lambda_ = self.f**2 * self.n * self.nscor
-        nm = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        return float(nm)
+            df_1 = (ng - 1) * (nm - 1) * self.nscor
+            df_2 = (n - ng) * (nm - 1) * self.nscor
+        lambda_ = f**2 * n * self.nscor
+        result: float = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - power
+        return float(result)
 
-    def _get_sample_size(self, n: int) -> float:
+    def _get_sample_size(self, n: float, f: float, ng: int, nm: int, alpha: float, power: float) -> float:
         if self.test_type == "between":
-            df_1 = self.ng - 1
-            df_2 = n - self.ng
+            df_1 = ng - 1
+            df_2 = n - ng
         elif self.test_type == "within":
-            df_1 = (self.nm - 1) * self.nscor
-            df_2 = (n - self.ng) * df_1
+            df_1 = (nm - 1) * self.nscor
+            df_2 = (n - ng) * df_1
         else:
-            df_1 = (self.ng - 1) * (self.nm - 1) * self.nscor
-            df_2 = (n - self.ng) * (self.nm - 1) * self.nscor
-        lambda_ = self.f**2 * n * self.nscor
-        n = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        return float(n)
+            df_1 = (ng - 1) * (nm - 1) * self.nscor
+            df_2 = (n - ng) * (nm - 1) * self.nscor
+        lambda_ = f**2 * n * self.nscor
+        result: float = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - power
+        return float(result)
 
-    def _get_effect_size(self, f: float) -> float:
+    def _get_effect_size(self, f: float, n: int, ng: int, nm: int, alpha: float, power: float) -> float:
         if self.test_type == "between":
-            df_1 = self.ng - 1
-            df_2 = self.n - self.ng
+            df_1 = ng - 1
+            df_2 = n - ng
         elif self.test_type == "within":
-            df_1 = (self.nm - 1) * self.nscor
-            df_2 = (self.n - self.ng) * df_1
+            df_1 = (nm - 1) * self.nscor
+            df_2 = (n - ng) * df_1
         else:
-            df_1 = (self.ng - 1) * (self.nm - 1) * self.nscor
-            df_2 = (self.n - self.ng) * (self.nm - 1) * self.nscor
-        lambda_ = f**2 * self.n * self.nscor
-        f = ncf.sf(f_dist.isf(self.alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        return float(f)
+            df_1 = (ng - 1) * (nm - 1) * self.nscor
+            df_2 = (n - ng) * (nm - 1) * self.nscor
+        lambda_ = f**2 * n * self.nscor
+        result: float = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - power
+        return float(result)
 
-    def _get_alpha(self, alpha: float) -> float:
+    def _get_alpha(self, alpha: float, f: float, n: int, ng: int, nm: int, power: float) -> float:
         if self.test_type == "between":
-            df_1 = self.ng - 1
-            df_2 = self.n - self.ng
+            df_1 = ng - 1
+            df_2 = n - ng
         elif self.test_type == "within":
-            df_1 = (self.nm - 1) * self.nscor
-            df_2 = (self.n - self.ng) * df_1
+            df_1 = (nm - 1) * self.nscor
+            df_2 = (n - ng) * df_1
         else:
-            df_1 = (self.ng - 1) * (self.nm - 1) * self.nscor
-            df_2 = (self.n - self.ng) * (self.nm - 1) * self.nscor
-        lambda_ = self.f**2 * self.n * self.nscor
-        alpha = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - self.power
-        return float(alpha)
+            df_1 = (ng - 1) * (nm - 1) * self.nscor
+            df_2 = (n - ng) * (nm - 1) * self.nscor
+        lambda_ = f**2 * n * self.nscor
+        result: float = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - power
+        return float(result)
 
     def pwr_test(self) -> dict:
         if self.power is None:
-            self.power = self._get_power()
+            if self.f is None or self.n is None or self.ng is None or self.nm is None or self.alpha is None:
+                raise ValueError("f, n, ng, nm, and alpha must be provided to compute power")
+            self.power = self._get_power(self.f, self.n, self.ng, self.nm, self.alpha)
         elif self.n is None:
-            self.n = ceil(brentq(self._get_sample_size, 5, 1e07))
+            if self.f is None or self.ng is None or self.nm is None or self.alpha is None or self.power is None:
+                raise ValueError("f, ng, nm, alpha, and power must be provided to solve for n")
+            f, ng, nm, alpha, power = self.f, self.ng, self.nm, self.alpha, self.power
+            self.n = ceil(brentq(lambda n: self._get_sample_size(n, f, ng, nm, alpha, power), 5, 1e07))
         elif self.nm is None:
-            self.nm = ceil(bisect(self._get_nm, 1 + 1e-10, 1e05))
+            if self.f is None or self.n is None or self.ng is None or self.alpha is None or self.power is None:
+                raise ValueError("f, n, ng, alpha, and power must be provided to solve for nm")
+            f, n, ng, alpha, power = self.f, self.n, self.ng, self.alpha, self.power
+            self.nm = ceil(bisect(lambda nm: self._get_nm(nm, f, n, ng, alpha, power), 1 + 1e-10, 1e05))
         elif self.ng is None:
-            self.ng = ceil(bisect(self._get_groups, 1 + 1e-10, 1e05))
+            if self.f is None or self.n is None or self.nm is None or self.alpha is None or self.power is None:
+                raise ValueError("f, n, nm, alpha, and power must be provided to solve for ng")
+            f, n, nm, alpha, power = self.f, self.n, self.nm, self.alpha, self.power
+            self.ng = ceil(bisect(lambda ng: self._get_groups(ng, f, n, nm, alpha, power), 1 + 1e-10, 1e05))
         elif self.f is None:
-            self.f = bisect(self._get_effect_size, 1e-07, 1e07)
+            if self.n is None or self.ng is None or self.nm is None or self.alpha is None or self.power is None:
+                raise ValueError("n, ng, nm, alpha, and power must be provided to solve for f")
+            n, ng, nm, alpha, power = self.n, self.ng, self.nm, self.alpha, self.power
+            self.f = bisect(lambda f: self._get_effect_size(f, n, ng, nm, alpha, power), 1e-07, 1e07)
         else:
-            self.alpha = brentq(self._get_alpha, 1e-10, 1 - 1e-10)
+            if self.f is None or self.n is None or self.ng is None or self.nm is None or self.power is None:
+                raise ValueError("f, n, ng, nm, and power must be provided to solve for alpha")
+            f, n, ng, nm, power = self.f, self.n, self.ng, self.nm, self.power
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, f, n, ng, nm, power), 1e-10, 1 - 1e-10)
         return {
             "n": self.n,
             "nm": self.nm,

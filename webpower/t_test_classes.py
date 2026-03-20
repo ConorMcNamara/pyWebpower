@@ -35,100 +35,105 @@ class WpOneT:
             self.t_sample = 2
         self.url = "http://psychstat.org/ttest"
 
-    def _get_power(self) -> float:
-        nu = (self.n - 1) * self.t_sample
+    def _get_power(self, n: int, d: float, alpha: float) -> float:
+        nu = (n - 1) * self.t_sample
         if self.alternative == "two-sided":
-            qu = t_dist.isf(self.alpha / 2, nu)
-            power = nct.sf(qu, nu, sqrt(self.n / self.t_sample) * self.d) + nct.cdf(
-                -qu, nu, sqrt(self.n / self.t_sample) * self.d
-            )
+            qu = t_dist.isf(alpha / 2, nu)
+            power = nct.sf(qu, nu, sqrt(n / self.t_sample) * d) + nct.cdf(-qu, nu, sqrt(n / self.t_sample) * d)
         elif self.alternative == "greater":
             power = nct.sf(
-                t_dist.isf(self.alpha, nu),
+                t_dist.isf(alpha, nu),
                 nu,
-                sqrt(self.n / self.t_sample) * self.d,
+                sqrt(n / self.t_sample) * d,
             )
         else:
             power = nct.cdf(
-                t_dist.ppf(self.alpha, nu),
+                t_dist.ppf(alpha, nu),
                 nu,
-                sqrt(self.n / self.t_sample) * self.d,
+                sqrt(n / self.t_sample) * d,
             )
         return float(power)
 
-    def _get_effect_size(self, effect_size: float) -> float:
-        nu = (self.n - 1) * self.t_sample
-        if self.alternative == "two-sided":
-            qu = t_dist.isf(self.alpha / 2, nu)
-            effect_size = (
-                nct.sf(qu, nu, sqrt(self.n / self.t_sample) * effect_size)
-                + nct.cdf(-qu, nu, sqrt(self.n / self.t_sample) * effect_size)
-                - self.power
-            )
-        elif self.alternative == "greater":
-            effect_size = (
-                nct.sf(
-                    t_dist.isf(self.alpha, nu),
-                    nu,
-                    sqrt(self.n / self.t_sample) * effect_size,
-                )
-                - self.power
-            )
-        else:
-            effect_size = (
-                nct.cdf(
-                    t_dist.ppf(self.alpha, nu),
-                    nu,
-                    sqrt(self.n / self.t_sample) * effect_size,
-                )
-                - self.power
-            )
-        return float(effect_size)
-
-    def _get_n(self, n: int) -> float:
+    def _get_effect_size(self, effect_size: float, n: int, alpha: float, power: float) -> float:
         nu = (n - 1) * self.t_sample
         if self.alternative == "two-sided":
-            qu = t_dist.isf(self.alpha / 2, nu)
-            n = (
-                nct.sf(qu, nu, sqrt(n / self.t_sample) * self.d)
-                + nct.cdf(-qu, nu, sqrt(n / self.t_sample) * self.d)
-                - self.power
+            qu = t_dist.isf(alpha / 2, nu)
+            result: float = (
+                nct.sf(qu, nu, sqrt(n / self.t_sample) * effect_size)
+                + nct.cdf(-qu, nu, sqrt(n / self.t_sample) * effect_size)
+                - power
             )
         elif self.alternative == "greater":
-            n = nct.sf(t_dist.isf(self.alpha, nu), nu, sqrt(n / self.t_sample) * self.d) - self.power
+            result = (
+                nct.sf(
+                    t_dist.isf(alpha, nu),
+                    nu,
+                    sqrt(n / self.t_sample) * effect_size,
+                )
+                - power
+            )
         else:
-            n = nct.cdf(t_dist.ppf(self.alpha, nu), nu, sqrt(n / self.t_sample) * self.d) - self.power
-        return float(n)
+            result = (
+                nct.cdf(
+                    t_dist.ppf(alpha, nu),
+                    nu,
+                    sqrt(n / self.t_sample) * effect_size,
+                )
+                - power
+            )
+        return float(result)
 
-    def _get_alpha(self, alpha: float) -> float:
-        nu = (self.n - 1) * self.t_sample
+    def _get_n(self, n: float, d: float, alpha: float, power: float) -> float:
+        nu = (n - 1) * self.t_sample
         if self.alternative == "two-sided":
             qu = t_dist.isf(alpha / 2, nu)
-            alpha = (
-                nct.sf(qu, nu, sqrt(self.n / self.t_sample) * self.d)
-                + nct.cdf(-qu, nu, sqrt(self.n / self.t_sample) * self.d)
-                - self.power
+            result: float = (
+                nct.sf(qu, nu, sqrt(n / self.t_sample) * d) + nct.cdf(-qu, nu, sqrt(n / self.t_sample) * d) - power
             )
         elif self.alternative == "greater":
-            alpha = nct.sf(t_dist.isf(alpha, nu), nu, sqrt(self.n / self.t_sample) * self.d) - self.power
+            result = nct.sf(t_dist.isf(alpha, nu), nu, sqrt(n / self.t_sample) * d) - power
         else:
-            alpha = nct.cdf(t_dist.ppf(alpha, nu), nu, sqrt(self.n / self.t_sample) * self.d) - self.power
-        return float(alpha)
+            result = nct.cdf(t_dist.ppf(alpha, nu), nu, sqrt(n / self.t_sample) * d) - power
+        return float(result)
+
+    def _get_alpha(self, alpha: float, n: int, d: float, power: float) -> float:
+        nu = (n - 1) * self.t_sample
+        if self.alternative == "two-sided":
+            qu = t_dist.isf(alpha / 2, nu)
+            result: float = (
+                nct.sf(qu, nu, sqrt(n / self.t_sample) * d) + nct.cdf(-qu, nu, sqrt(n / self.t_sample) * d) - power
+            )
+        elif self.alternative == "greater":
+            result = nct.sf(t_dist.isf(alpha, nu), nu, sqrt(n / self.t_sample) * d) - power
+        else:
+            result = nct.cdf(t_dist.ppf(alpha, nu), nu, sqrt(n / self.t_sample) * d) - power
+        return float(result)
 
     def pwr_test(self) -> dict:
         if self.power is None:
-            self.power = self._get_power()
+            if self.n is None or self.d is None or self.alpha is None:
+                raise ValueError("n, d, and alpha must be provided to compute power")
+            self.power = self._get_power(self.n, self.d, self.alpha)
         elif self.d is None:
+            if self.n is None or self.alpha is None or self.power is None:
+                raise ValueError("n, alpha, and power must be provided to solve for d")
+            n, alpha, power = self.n, self.alpha, self.power
             if self.alternative == "two-sided":
-                self.d = brentq(self._get_effect_size, 1e-07, 10)
+                self.d = brentq(lambda d: self._get_effect_size(d, n, alpha, power), 1e-07, 10)
             elif self.alternative == "greater":
-                self.d = brentq(self._get_effect_size, -5, 10)
+                self.d = brentq(lambda d: self._get_effect_size(d, n, alpha, power), -5, 10)
             else:
-                self.d = brentq(self._get_effect_size, -10, 5)
+                self.d = brentq(lambda d: self._get_effect_size(d, n, alpha, power), -10, 5)
         elif self.n is None:
-            self.n = ceil(brentq(self._get_n, 2 + 1e-10, 1e09))
+            if self.d is None or self.alpha is None or self.power is None:
+                raise ValueError("d, alpha, and power must be provided to solve for n")
+            d, alpha, power = self.d, self.alpha, self.power
+            self.n = ceil(brentq(lambda n: self._get_n(n, d, alpha, power), 2 + 1e-10, 1e09))
         else:
-            self.alpha = brentq(self._get_alpha, 1e-10, 1 - 1e-10)
+            if self.n is None or self.d is None or self.power is None:
+                raise ValueError("n, d, and power must be provided to solve for alpha")
+            n, d, power = self.n, self.d, self.power
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, d, power), 1e-10, 1 - 1e-10)
         if self.note is not None:
             return {
                 "n": self.n,
@@ -172,159 +177,171 @@ class WpTwoT:
         self.method = "Unbalanced two-sample t-test"
         self.url = "http://psychstat.org/ttest2n"
 
-    def _get_power(self) -> float:
-        nu = self.n1 + self.n2 - 2
+    def _get_power(self, n1: int, n2: int, d: float, alpha: float) -> float:
+        nu = n1 + n2 - 2
         if self.alternative == "two-sided":
-            qu = t_dist.isf(self.alpha / 2, nu)
-            power = nct.sf(qu, nu, self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2))) + nct.cdf(
-                -qu, nu, self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2))
-            )
+            qu = t_dist.isf(alpha / 2, nu)
+            power = nct.sf(qu, nu, d * (1 / sqrt(1 / n1 + 1 / n2))) + nct.cdf(-qu, nu, d * (1 / sqrt(1 / n1 + 1 / n2)))
         elif self.alternative == "greater":
             power = nct.sf(
-                t_dist.isf(self.alpha, nu),
+                t_dist.isf(alpha, nu),
                 nu,
-                self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2)),
+                d * (1 / sqrt(1 / n1 + 1 / n2)),
             )
         else:
             power = nct.cdf(
-                t_dist.ppf(self.alpha, nu),
+                t_dist.ppf(alpha, nu),
                 nu,
-                self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2)),
+                d * (1 / sqrt(1 / n1 + 1 / n2)),
             )
         return float(power)
 
-    def _get_effect_size(self, effect_size: float) -> float:
-        nu = self.n1 + self.n2 - 2
-        if self.alternative == "two-sided":
-            qu = t_dist.isf(self.alpha / 2, nu)
-            effect_size = (
-                nct.sf(qu, nu, effect_size * (1 / sqrt(1 / self.n1 + 1 / self.n2)))
-                + nct.cdf(-qu, nu, effect_size * (1 / sqrt(1 / self.n1 + 1 / self.n2)))
-                - self.power
-            )
-        elif self.alternative == "greater":
-            effect_size = (
-                nct.sf(
-                    t_dist.isf(self.alpha, nu),
-                    nu,
-                    effect_size * (1 / sqrt(1 / self.n1 + 1 / self.n2)),
-                )
-                - self.power
-            )
-        else:
-            effect_size = (
-                nct.cdf(
-                    t_dist.ppf(self.alpha, nu),
-                    nu,
-                    effect_size * (1 / sqrt(1 / self.n1 + 1 / self.n2)),
-                )
-                - self.power
-            )
-        return float(effect_size)
-
-    def _get_n1(self, n1: int) -> float:
-        nu = n1 + self.n2 - 2
-        if self.alternative == "two-sided":
-            qu = t_dist.isf(self.alpha / 2, nu)
-            n1 = (
-                nct.sf(qu, nu, self.d * (1 / sqrt(1 / n1 + 1 / self.n2)))
-                + nct.cdf(-qu, nu, self.d * (1 / sqrt(1 / n1 + 1 / self.n2)))
-                - self.power
-            )
-        elif self.alternative == "greater":
-            n1 = (
-                nct.sf(
-                    t_dist.isf(self.alpha, nu),
-                    nu,
-                    self.d * (1 / sqrt(1 / n1 + 1 / self.n2)),
-                )
-                - self.power
-            )
-        else:
-            n1 = (
-                nct.cdf(
-                    t_dist.ppf(self.alpha, nu),
-                    nu,
-                    self.d * (1 / sqrt(1 / n1 + 1 / self.n2)),
-                )
-                - self.power
-            )
-        return float(n1)
-
-    def _get_n2(self, n2: int) -> float:
-        nu = self.n1 + n2 - 2
-        if self.alternative == "two-sided":
-            qu = t_dist.isf(self.alpha / 2, nu)
-            n2 = (
-                nct.sf(qu, nu, self.d * (1 / sqrt(1 / self.n1 + 1 / n2)))
-                + nct.cdf(-qu, nu, self.d * (1 / sqrt(1 / self.n1 + 1 / n2)))
-                - self.power
-            )
-        elif self.alternative == "greater":
-            n2 = (
-                nct.sf(
-                    t_dist.isf(self.alpha, nu),
-                    nu,
-                    self.d * (1 / sqrt(1 / self.n1 + 1 / n2)),
-                )
-                - self.power
-            )
-        else:
-            n2 = (
-                nct.cdf(
-                    t_dist.ppf(self.alpha, nu),
-                    nu,
-                    self.d * (1 / sqrt(1 / self.n1 + 1 / n2)),
-                )
-                - self.power
-            )
-        return float(n2)
-
-    def _get_alpha(self, alpha: float) -> float:
-        nu = self.n1 + self.n2 - 2
+    def _get_effect_size(self, effect_size: float, n1: int, n2: int, alpha: float, power: float) -> float:
+        nu = n1 + n2 - 2
         if self.alternative == "two-sided":
             qu = t_dist.isf(alpha / 2, nu)
-            alpha = (
-                nct.sf(qu, nu, self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2)))
-                + nct.cdf(-qu, nu, self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2)))
-                - self.power
+            result: float = (
+                nct.sf(qu, nu, effect_size * (1 / sqrt(1 / n1 + 1 / n2)))
+                + nct.cdf(-qu, nu, effect_size * (1 / sqrt(1 / n1 + 1 / n2)))
+                - power
             )
         elif self.alternative == "greater":
-            alpha = (
+            result = (
                 nct.sf(
                     t_dist.isf(alpha, nu),
                     nu,
-                    self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2)),
+                    effect_size * (1 / sqrt(1 / n1 + 1 / n2)),
                 )
-                - self.power
+                - power
             )
         else:
-            alpha = (
+            result = (
                 nct.cdf(
                     t_dist.ppf(alpha, nu),
                     nu,
-                    self.d * (1 / sqrt(1 / self.n1 + 1 / self.n2)),
+                    effect_size * (1 / sqrt(1 / n1 + 1 / n2)),
                 )
-                - self.power
+                - power
             )
-        return float(alpha)
+        return float(result)
+
+    def _get_n1(self, n1: float, n2: int, d: float, alpha: float, power: float) -> float:
+        nu = n1 + n2 - 2
+        if self.alternative == "two-sided":
+            qu = t_dist.isf(alpha / 2, nu)
+            result: float = (
+                nct.sf(qu, nu, d * (1 / sqrt(1 / n1 + 1 / n2)))
+                + nct.cdf(-qu, nu, d * (1 / sqrt(1 / n1 + 1 / n2)))
+                - power
+            )
+        elif self.alternative == "greater":
+            result = (
+                nct.sf(
+                    t_dist.isf(alpha, nu),
+                    nu,
+                    d * (1 / sqrt(1 / n1 + 1 / n2)),
+                )
+                - power
+            )
+        else:
+            result = (
+                nct.cdf(
+                    t_dist.ppf(alpha, nu),
+                    nu,
+                    d * (1 / sqrt(1 / n1 + 1 / n2)),
+                )
+                - power
+            )
+        return float(result)
+
+    def _get_n2(self, n2: float, n1: int, d: float, alpha: float, power: float) -> float:
+        nu = n1 + n2 - 2
+        if self.alternative == "two-sided":
+            qu = t_dist.isf(alpha / 2, nu)
+            result: float = (
+                nct.sf(qu, nu, d * (1 / sqrt(1 / n1 + 1 / n2)))
+                + nct.cdf(-qu, nu, d * (1 / sqrt(1 / n1 + 1 / n2)))
+                - power
+            )
+        elif self.alternative == "greater":
+            result = (
+                nct.sf(
+                    t_dist.isf(alpha, nu),
+                    nu,
+                    d * (1 / sqrt(1 / n1 + 1 / n2)),
+                )
+                - power
+            )
+        else:
+            result = (
+                nct.cdf(
+                    t_dist.ppf(alpha, nu),
+                    nu,
+                    d * (1 / sqrt(1 / n1 + 1 / n2)),
+                )
+                - power
+            )
+        return float(result)
+
+    def _get_alpha(self, alpha: float, n1: int, n2: int, d: float, power: float) -> float:
+        nu = n1 + n2 - 2
+        if self.alternative == "two-sided":
+            qu = t_dist.isf(alpha / 2, nu)
+            result: float = (
+                nct.sf(qu, nu, d * (1 / sqrt(1 / n1 + 1 / n2)))
+                + nct.cdf(-qu, nu, d * (1 / sqrt(1 / n1 + 1 / n2)))
+                - power
+            )
+        elif self.alternative == "greater":
+            result = (
+                nct.sf(
+                    t_dist.isf(alpha, nu),
+                    nu,
+                    d * (1 / sqrt(1 / n1 + 1 / n2)),
+                )
+                - power
+            )
+        else:
+            result = (
+                nct.cdf(
+                    t_dist.ppf(alpha, nu),
+                    nu,
+                    d * (1 / sqrt(1 / n1 + 1 / n2)),
+                )
+                - power
+            )
+        return float(result)
 
     def pwr_test(self) -> dict:
         if self.power is None:
-            self.power = self._get_power()
+            if self.n1 is None or self.n2 is None or self.d is None or self.alpha is None:
+                raise ValueError("n1, n2, d, and alpha must be provided to compute power")
+            self.power = self._get_power(self.n1, self.n2, self.d, self.alpha)
         elif self.d is None:
+            if self.n1 is None or self.n2 is None or self.alpha is None or self.power is None:
+                raise ValueError("n1, n2, alpha, and power must be provided to solve for d")
+            n1, n2, alpha, power = self.n1, self.n2, self.alpha, self.power
             if self.alternative == "two-sided":
-                self.d = brentq(self._get_effect_size, 1e-10, 10)
+                self.d = brentq(lambda d: self._get_effect_size(d, n1, n2, alpha, power), 1e-10, 10)
             elif self.alternative == "greater":
-                self.d = brentq(self._get_effect_size, -5, 10)
+                self.d = brentq(lambda d: self._get_effect_size(d, n1, n2, alpha, power), -5, 10)
             else:
-                self.d = brentq(self._get_effect_size, -10, 5)
+                self.d = brentq(lambda d: self._get_effect_size(d, n1, n2, alpha, power), -10, 5)
         elif self.n1 is None:
-            self.n1 = ceil(brentq(self._get_n1, 2 + 1e-10, 1e09))
+            if self.n2 is None or self.d is None or self.alpha is None or self.power is None:
+                raise ValueError("n2, d, alpha, and power must be provided to solve for n1")
+            n2, d, alpha, power = self.n2, self.d, self.alpha, self.power
+            self.n1 = ceil(brentq(lambda n1: self._get_n1(n1, n2, d, alpha, power), 2 + 1e-10, 1e09))
         elif self.n2 is None:
-            self.n2 = ceil(brentq(self._get_n2, 2 + 1e-10, 1e09))
+            if self.n1 is None or self.d is None or self.alpha is None or self.power is None:
+                raise ValueError("n1, d, alpha, and power must be provided to solve for n2")
+            n1, d, alpha, power = self.n1, self.d, self.alpha, self.power
+            self.n2 = ceil(brentq(lambda n2: self._get_n2(n2, n1, d, alpha, power), 2 + 1e-10, 1e09))
         else:
-            self.alpha = brentq(self._get_alpha, 1e-10, 1 - 1e-10)
+            if self.n1 is None or self.n2 is None or self.d is None or self.power is None:
+                raise ValueError("n1, n2, d, and power must be provided to solve for alpha")
+            n1, n2, d, power = self.n1, self.n2, self.d, self.power
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n1, n2, d, power), 1e-10, 1 - 1e-10)
         return {
             "effect_size": self.d,
             "n1": self.n1,

@@ -660,6 +660,7 @@ def wp_two_prop_two_n_test(
     if alternative not in ["two-sided", "greater", "less"]:
         raise ValueError(f"{alternative} not supported for alternative")
     if alternative.casefold() == "alternative":
+        assert h is not None
         h = abs(h)
     test = WpTwoPropTwoN(h, n1, n2, alpha, power, alternative).pwr_test()
     if print_pretty:
