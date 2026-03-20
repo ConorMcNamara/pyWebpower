@@ -1,11 +1,10 @@
 from math import ceil, sqrt
 
-from scipy.optimize import bisect
 from scipy.stats import chi2, ncf, nct, ncx2
 from scipy.stats import f as f_dist
 from scipy.stats import t as t_dist
 
-from webpower.utils import brentq
+from webpower.utils import bisect, brentq
 
 
 class WpAnovaClass:

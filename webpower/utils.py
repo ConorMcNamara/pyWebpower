@@ -1,8 +1,12 @@
 from collections.abc import Callable
 
 import numpy as np
-from scipy.optimize import bisect
+from scipy.optimize import bisect as _scipy_bisect
 from scipy.optimize import brentq as _scipy_brentq
+
+
+def bisect(f: Callable[[float], float], a: float, b: float) -> float:
+    return _scipy_bisect(f, a, b)  # type: ignore[return-value]
 
 
 def brentq(f: Callable[[float], float], a: float, b: float) -> float:
