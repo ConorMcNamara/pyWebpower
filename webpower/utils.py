@@ -2,6 +2,11 @@ from collections.abc import Callable
 
 import numpy as np
 from scipy.optimize import bisect
+from scipy.optimize import brentq as _scipy_brentq
+
+
+def brentq(f: Callable[[float], float], a: float, b: float) -> float:
+    return _scipy_brentq(f, a, b)  # type: ignore[return-value]
 
 
 def nuniroot(f: Callable[[float], float], low_val: float = 0, high_val: float = 1, max_length: int = 100) -> float:

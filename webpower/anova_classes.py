@@ -1,9 +1,11 @@
 from math import ceil, sqrt
 
-from scipy.optimize import bisect, brentq
+from scipy.optimize import bisect
 from scipy.stats import chi2, ncf, nct, ncx2
 from scipy.stats import f as f_dist
 from scipy.stats import t as t_dist
+
+from webpower.utils import brentq
 
 
 class WpAnovaClass:
@@ -196,8 +198,7 @@ class WpAnovaClass:
             if self.k is None or self.f is None or self.alpha is None or self.power is None:
                 raise ValueError("k, f, alpha, and power must be provided to solve for n")
             k, f, alpha, power = self.k, self.f, self.alpha, self.power
-            root = brentq(lambda n: self._get_sample_size(n, f, k, alpha, power), 2 + self.k + 1e-10, 1e05)
-            self.n = ceil(float(root))
+            self.n = ceil(brentq(lambda n: self._get_sample_size(n, f, k, alpha, power), 2 + self.k + 1e-10, 1e05))
         elif self.f is None:
             if self.n is None or self.k is None or self.alpha is None or self.power is None:
                 raise ValueError("n, k, alpha, and power must be provided to solve for f")
@@ -207,7 +208,7 @@ class WpAnovaClass:
             if self.n is None or self.f is None or self.k is None or self.power is None:
                 raise ValueError("n, f, k, and power must be provided to solve for alpha")
             n, f, k, power = self.n, self.f, self.k, self.power
-            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, n, f, k, power), 1e-10, 1 - 1e-10))
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, f, k, power), 1e-10, 1 - 1e-10)
         return {
             "k": self.k,
             "n": self.n,
@@ -287,8 +288,7 @@ class WpAnovaBinaryClass:
             if self.V is None or self.k is None or self.alpha is None or self.power is None:
                 raise ValueError("V, k, alpha, and power must be provided to solve for n")
             V, k, alpha, power = self.V, self.k, self.alpha, self.power
-            root = brentq(lambda n: self._get_sample_size(n, V, k, alpha, power), 2 + self.k + 1e-10, 1e05)
-            self.n = ceil(float(root))
+            self.n = ceil(brentq(lambda n: self._get_sample_size(n, V, k, alpha, power), 2 + self.k + 1e-10, 1e05))
         elif self.V is None:
             if self.n is None or self.k is None or self.alpha is None or self.power is None:
                 raise ValueError("n, k, alpha, and power must be provided to solve for V")
@@ -298,7 +298,7 @@ class WpAnovaBinaryClass:
             if self.V is None or self.n is None or self.k is None or self.power is None:
                 raise ValueError("V, n, k, and power must be provided to solve for alpha")
             V, n, k, power = self.V, self.n, self.k, self.power
-            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, V, n, k, power), 1e-10, 1 - 1e-10))
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, V, n, k, power), 1e-10, 1 - 1e-10)
         return {
             "k": self.k,
             "n": self.n,
@@ -391,7 +391,7 @@ class WpKAnovaClass:
             if self.f is None or self.ng is None or self.ndf is None or self.alpha is None or self.power is None:
                 raise ValueError("f, ng, ndf, alpha, and power must be provided to solve for n")
             f, ng, ndf, alpha, power = self.f, self.ng, self.ndf, self.alpha, self.power
-            self.n = ceil(float(brentq(lambda n: self._get_sample_size(n, f, ng, ndf, alpha, power), 1 + ng, 1e07)))
+            self.n = ceil(brentq(lambda n: self._get_sample_size(n, f, ng, ndf, alpha, power), 1 + ng, 1e07))
         elif self.ndf is None:
             if self.f is None or self.n is None or self.ng is None or self.alpha is None or self.power is None:
                 raise ValueError("f, n, ng, alpha, and power must be provided to solve for ndf")
@@ -401,7 +401,7 @@ class WpKAnovaClass:
             if self.f is None or self.n is None or self.ndf is None or self.alpha is None or self.power is None:
                 raise ValueError("f, n, ndf, alpha, and power must be provided to solve for ng")
             f, n, ndf, alpha, power = self.f, self.n, self.ndf, self.alpha, self.power
-            self.ng = ceil(float(brentq(lambda ng: self._get_groups(ng, f, n, ndf, alpha, power), 1e-07, 1e07)))
+            self.ng = ceil(brentq(lambda ng: self._get_groups(ng, f, n, ndf, alpha, power), 1e-07, 1e07))
         elif self.f is None:
             if self.n is None or self.ng is None or self.ndf is None or self.alpha is None or self.power is None:
                 raise ValueError("n, ng, ndf, alpha, and power must be provided to solve for f")
@@ -411,7 +411,7 @@ class WpKAnovaClass:
             if self.f is None or self.n is None or self.ng is None or self.ndf is None or self.power is None:
                 raise ValueError("f, n, ng, ndf, and power must be provided to solve for alpha")
             f, n, ng, ndf, power = self.f, self.n, self.ng, self.ndf, self.power
-            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, f, n, ng, ndf, power), 1e-10, 1 - 1e-10))
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, f, n, ng, ndf, power), 1e-10, 1 - 1e-10)
         n = self.n
         ng = self.ng
         if n is None or ng is None:
@@ -552,7 +552,7 @@ class WpRMAnovaClass:
             if self.f is None or self.ng is None or self.nm is None or self.alpha is None or self.power is None:
                 raise ValueError("f, ng, nm, alpha, and power must be provided to solve for n")
             f, ng, nm, alpha, power = self.f, self.ng, self.nm, self.alpha, self.power
-            self.n = ceil(float(brentq(lambda n: self._get_sample_size(n, f, ng, nm, alpha, power), 5, 1e07)))
+            self.n = ceil(brentq(lambda n: self._get_sample_size(n, f, ng, nm, alpha, power), 5, 1e07))
         elif self.nm is None:
             if self.f is None or self.n is None or self.ng is None or self.alpha is None or self.power is None:
                 raise ValueError("f, n, ng, alpha, and power must be provided to solve for nm")
@@ -572,7 +572,7 @@ class WpRMAnovaClass:
             if self.f is None or self.n is None or self.ng is None or self.nm is None or self.power is None:
                 raise ValueError("f, n, ng, nm, and power must be provided to solve for alpha")
             f, n, ng, nm, power = self.f, self.n, self.ng, self.nm, self.power
-            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, f, n, ng, nm, power), 1e-10, 1 - 1e-10))
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, f, n, ng, nm, power), 1e-10, 1 - 1e-10)
         return {
             "n": self.n,
             "nm": self.nm,

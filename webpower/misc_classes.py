@@ -1,9 +1,8 @@
 from math import ceil, log, sqrt
 
-from scipy.optimize import brentq
 from scipy.stats import norm
 
-from webpower.utils import nuniroot
+from webpower.utils import brentq, nuniroot
 
 
 class WpMediation:
@@ -104,7 +103,7 @@ class WpMediation:
             if self.a is None or self.b is None or self.var_y is None or self.alpha is None or self.power is None:
                 raise ValueError("a, b, var_y, alpha, and power must be provided to solve for n")
             a, b, var_y, alpha, power = self.a, self.b, self.var_y, self.alpha, self.power
-            self.n = ceil(float(brentq(lambda n: self._get_n(n, a, b, var_y, alpha, power), 2 + 1e-10, 1e09)))
+            self.n = ceil(brentq(lambda n: self._get_n(n, a, b, var_y, alpha, power), 2 + 1e-10, 1e09))
         elif self.var_y is None:
             if self.n is None or self.a is None or self.b is None or self.alpha is None or self.power is None:
                 raise ValueError("n, a, b, alpha, and power must be provided to solve for var_y")
@@ -275,20 +274,20 @@ class WpCorrelation:
             if self.r is None or self.alpha is None or self.power is None:
                 raise ValueError("r, alpha, and power must be provided to solve for n")
             r, alpha, power = self.r, self.alpha, self.power
-            self.n = ceil(float(brentq(lambda n: self._get_n(n, r, alpha, power), 4 + self.p + 1e-10, 1e07)))
+            self.n = ceil(brentq(lambda n: self._get_n(n, r, alpha, power), 4 + self.p + 1e-10, 1e07))
         elif self.r is None:
             if self.n is None or self.alpha is None or self.power is None:
                 raise ValueError("n, alpha, and power must be provided to solve for r")
             n, alpha, power = self.n, self.alpha, self.power
             if self.alternative == "two-sided":
-                self.r = float(brentq(lambda r: self._get_effect_size(r, n, alpha, power), 1e-10, 1 - 1e-10))
+                self.r = brentq(lambda r: self._get_effect_size(r, n, alpha, power), 1e-10, 1 - 1e-10)
             else:
-                self.r = float(brentq(lambda r: self._get_effect_size(r, n, alpha, power), -1 + 1e-10, 1 - 1e-10))
+                self.r = brentq(lambda r: self._get_effect_size(r, n, alpha, power), -1 + 1e-10, 1 - 1e-10)
         else:
             if self.n is None or self.r is None or self.power is None:
                 raise ValueError("n, r, and power must be provided to solve for alpha")
             n, r, power = self.n, self.r, self.power
-            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, n, r, power), 1e-10, 1 - 1e-10))
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, r, power), 1e-10, 1 - 1e-10)
         return {
             "n": self.n,
             "effect_size": self.r,

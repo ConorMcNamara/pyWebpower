@@ -2,9 +2,10 @@ from math import ceil, exp, log, sqrt
 
 import numpy as np
 from scipy.integrate import quad
-from scipy.optimize import brentq
 from scipy.stats import expon, lognorm, ncf, norm, poisson
 from scipy.stats import f as f_dist
+
+from webpower.utils import brentq
 
 
 class WPRegression:
@@ -74,17 +75,17 @@ class WPRegression:
             if self.f2 is None or self.alpha is None or self.power is None:
                 raise ValueError("f2, alpha, and power must be provided to solve for n")
             f2, alpha, power = self.f2, self.alpha, self.power
-            self.n = ceil(float(brentq(lambda n: self._get_n(n, f2, alpha, power), 5 + self.p1 + 1e-10, 1e05)))
+            self.n = ceil(brentq(lambda n: self._get_n(n, f2, alpha, power), 5 + self.p1 + 1e-10, 1e05))
         elif self.f2 is None:
             if self.n is None or self.alpha is None or self.power is None:
                 raise ValueError("n, alpha, and power must be provided to solve for f2")
             n, alpha, power = self.n, self.alpha, self.power
-            self.f2 = float(brentq(lambda f2: self._get_effect_size(f2, n, alpha, power), 1e-07, 1e07))
+            self.f2 = brentq(lambda f2: self._get_effect_size(f2, n, alpha, power), 1e-07, 1e07)
         else:
             if self.n is None or self.f2 is None or self.power is None:
                 raise ValueError("n, f2, and power must be provided to solve for alpha")
             n, f2, power = self.n, self.f2, self.power
-            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, n, f2, power), 1e-10, 1 - 1e-10))
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, f2, power), 1e-10, 1 - 1e-10)
         return {
             "effect_size": self.f2,
             "n": self.n,
@@ -261,12 +262,12 @@ class WpPoisson:
             if self.alpha is None or self.power is None:
                 raise ValueError("alpha and power must be provided to solve for n")
             alpha, power = self.alpha, self.power
-            self.n = ceil(float(brentq(lambda n: self._get_n(n, alpha, power), 2 + 1e-10, 1e07)))
+            self.n = ceil(brentq(lambda n: self._get_n(n, alpha, power), 2 + 1e-10, 1e07))
         else:
             if self.n is None or self.power is None:
                 raise ValueError("n and power must be provided to solve for alpha")
             n, power = self.n, self.power
-            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, n, power), 1e-10, 1 - 1e-10))
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, power), 1e-10, 1 - 1e-10)
         return {
             "n": self.n,
             "power": self.power,
@@ -624,12 +625,12 @@ class WpLogistic:
             if self.alpha is None or self.power is None:
                 raise ValueError("alpha and power must be provided to solve for n")
             alpha, power = self.alpha, self.power
-            self.n = ceil(float(brentq(lambda n: self._get_n(n, alpha, power), 2 + 1e-10, 1e07)))
+            self.n = ceil(brentq(lambda n: self._get_n(n, alpha, power), 2 + 1e-10, 1e07))
         else:
             if self.n is None or self.power is None:
                 raise ValueError("n and power must be provided to solve for alpha")
             n, power = self.n, self.power
-            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, n, power), 1e-10, 1 - 1e-10))
+            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, power), 1e-10, 1 - 1e-10)
         return {
             "n": self.n,
             "power": self.power,
