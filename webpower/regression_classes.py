@@ -44,7 +44,7 @@ class WPRegression:
             lambda_ = f2 * (self.u + v + 1)
         else:
             lambda_ = f2 * n
-        result: float = ncf.sf(f_dist.isf(alpha, self.u, v), self.u, v, lambda_) - power
+        result = ncf.sf(f_dist.isf(alpha, self.u, v), self.u, v, lambda_) - power
         return float(result)
 
     def _get_n(self, n: float, f2: float, alpha: float, power: float) -> float:
@@ -53,7 +53,7 @@ class WPRegression:
             lambda_ = f2 * (self.u + v + 1)
         else:
             lambda_ = f2 * n
-        result: float = ncf.sf(f_dist.isf(alpha, self.u, v), self.u, v, lambda_) - power
+        result = ncf.sf(f_dist.isf(alpha, self.u, v), self.u, v, lambda_) - power
         return float(result)
 
     def _get_alpha(self, alpha: float, n: int, f2: float, power: float) -> float:
@@ -62,7 +62,7 @@ class WPRegression:
             lambda_ = f2 * (self.u + v + 1)
         else:
             lambda_ = f2 * n
-        result: float = ncf.sf(f_dist.isf(alpha, self.u, v), self.u, v, lambda_) - power
+        result = ncf.sf(f_dist.isf(alpha, self.u, v), self.u, v, lambda_) - power
         return float(result)
 
     def pwr_test(self) -> dict:
@@ -74,17 +74,17 @@ class WPRegression:
             if self.f2 is None or self.alpha is None or self.power is None:
                 raise ValueError("f2, alpha, and power must be provided to solve for n")
             f2, alpha, power = self.f2, self.alpha, self.power
-            self.n = ceil(brentq(lambda n: self._get_n(n, f2, alpha, power), 5 + self.p1 + 1e-10, 1e05))
+            self.n = ceil(float(brentq(lambda n: self._get_n(n, f2, alpha, power), 5 + self.p1 + 1e-10, 1e05)))
         elif self.f2 is None:
             if self.n is None or self.alpha is None or self.power is None:
                 raise ValueError("n, alpha, and power must be provided to solve for f2")
             n, alpha, power = self.n, self.alpha, self.power
-            self.f2 = brentq(lambda f2: self._get_effect_size(f2, n, alpha, power), 1e-07, 1e07)
+            self.f2 = float(brentq(lambda f2: self._get_effect_size(f2, n, alpha, power), 1e-07, 1e07))
         else:
             if self.n is None or self.f2 is None or self.power is None:
                 raise ValueError("n, f2, and power must be provided to solve for alpha")
             n, f2, power = self.n, self.f2, self.power
-            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, f2, power), 1e-10, 1 - 1e-10)
+            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, n, f2, power), 1e-10, 1 - 1e-10))
         return {
             "effect_size": self.f2,
             "n": self.n,
@@ -236,7 +236,7 @@ class WpPoisson:
 
     def _get_n(self, n: float, alpha: float, power: float) -> float:
         s, t, v1, beta1 = self._get_values()
-        result: float = (
+        result = (
             s * norm.cdf(-norm.ppf(1 - alpha) - sqrt(n) / sqrt(v1) * beta1)
             + t * norm.cdf(-norm.ppf(1 - alpha) + sqrt(n) / sqrt(v1) * beta1)
             - power
@@ -245,7 +245,7 @@ class WpPoisson:
 
     def _get_alpha(self, alpha: float, n: int, power: float) -> float:
         s, t, v1, beta1 = self._get_values()
-        result: float = (
+        result = (
             s * norm.cdf(-norm.ppf(1 - alpha) - sqrt(n) / sqrt(v1) * beta1)
             + t * norm.cdf(-norm.ppf(1 - alpha) + sqrt(n) / sqrt(v1) * beta1)
             - power
@@ -261,12 +261,12 @@ class WpPoisson:
             if self.alpha is None or self.power is None:
                 raise ValueError("alpha and power must be provided to solve for n")
             alpha, power = self.alpha, self.power
-            self.n = ceil(brentq(lambda n: self._get_n(n, alpha, power), 2 + 1e-10, 1e07))
+            self.n = ceil(float(brentq(lambda n: self._get_n(n, alpha, power), 2 + 1e-10, 1e07)))
         else:
             if self.n is None or self.power is None:
                 raise ValueError("n and power must be provided to solve for alpha")
             n, power = self.n, self.power
-            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, power), 1e-10, 1 - 1e-10)
+            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, n, power), 1e-10, 1 - 1e-10))
         return {
             "n": self.n,
             "power": self.power,
@@ -599,7 +599,7 @@ class WpLogistic:
 
     def _get_n(self, n: float, alpha: float, power: float) -> float:
         s, t, g, v0, v1 = self._get_values()
-        result: float = (
+        result = (
             s * norm.cdf(-norm.ppf(1 - alpha) - sqrt(n) / sqrt(g * v0 + (1 - g) * v1) * self.beta1)
             + t * norm.cdf(-norm.ppf(1 - alpha) + sqrt(n) / sqrt(g * v0 + (1 - g) * v1) * self.beta1)
             - power
@@ -608,7 +608,7 @@ class WpLogistic:
 
     def _get_alpha(self, alpha: float, n: int, power: float) -> float:
         s, t, g, v0, v1 = self._get_values()
-        result: float = (
+        result = (
             s * norm.cdf(-norm.ppf(1 - alpha) - sqrt(n) / sqrt(g * v0 + (1 - g) * v1) * self.beta1)
             + t * norm.cdf(-norm.ppf(1 - alpha) + sqrt(n) / sqrt(g * v0 + (1 - g) * v1) * self.beta1)
             - power
@@ -624,12 +624,12 @@ class WpLogistic:
             if self.alpha is None or self.power is None:
                 raise ValueError("alpha and power must be provided to solve for n")
             alpha, power = self.alpha, self.power
-            self.n = ceil(brentq(lambda n: self._get_n(n, alpha, power), 2 + 1e-10, 1e07))
+            self.n = ceil(float(brentq(lambda n: self._get_n(n, alpha, power), 2 + 1e-10, 1e07)))
         else:
             if self.n is None or self.power is None:
                 raise ValueError("n and power must be provided to solve for alpha")
             n, power = self.n, self.power
-            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, power), 1e-10, 1 - 1e-10)
+            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, n, power), 1e-10, 1 - 1e-10))
         return {
             "n": self.n,
             "power": self.power,

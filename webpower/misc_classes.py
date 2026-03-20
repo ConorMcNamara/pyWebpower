@@ -48,7 +48,7 @@ class WpMediation:
         delta = numerator / denominator
         alpha2 = alpha / 2
         za2 = norm.ppf(1 - alpha2)
-        result: float = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - power
+        result = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - power
         return float(result)
 
     def _get_var_y(self, var_y: float, n: int, a: float, b: float, alpha: float, power: float) -> float:
@@ -59,7 +59,7 @@ class WpMediation:
         delta = numerator / denominator
         alpha2 = alpha / 2
         za2 = norm.ppf(1 - alpha2)
-        result: float = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - power
+        result = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - power
         return float(result)
 
     def _get_a(self, a: float, n: int, b: float, var_y: float, alpha: float, power: float) -> float:
@@ -70,7 +70,7 @@ class WpMediation:
         delta = numerator / denominator
         alpha2 = alpha / 2
         za2 = norm.ppf(1 - alpha2)
-        result: float = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - power
+        result = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - power
         return float(result)
 
     def _get_b(self, b: float, n: int, a: float, var_y: float, alpha: float, power: float) -> float:
@@ -81,7 +81,7 @@ class WpMediation:
         delta = numerator / denominator
         alpha2 = alpha / 2
         za2 = norm.ppf(1 - alpha2)
-        result: float = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - power
+        result = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - power
         return float(result)
 
     def _get_alpha(self, alpha: float, n: int, a: float, b: float, var_y: float, power: float) -> float:
@@ -92,7 +92,7 @@ class WpMediation:
         delta = numerator / denominator
         alpha2 = alpha / 2
         za2 = norm.ppf(1 - alpha2)
-        result: float = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - power
+        result = norm.sf(za2 - delta) + norm.cdf(-za2 - delta) - power
         return float(result)
 
     def pwr_test(self) -> dict:
@@ -104,7 +104,7 @@ class WpMediation:
             if self.a is None or self.b is None or self.var_y is None or self.alpha is None or self.power is None:
                 raise ValueError("a, b, var_y, alpha, and power must be provided to solve for n")
             a, b, var_y, alpha, power = self.a, self.b, self.var_y, self.alpha, self.power
-            self.n = ceil(brentq(lambda n: self._get_n(n, a, b, var_y, alpha, power), 2 + 1e-10, 1e09))
+            self.n = ceil(float(brentq(lambda n: self._get_n(n, a, b, var_y, alpha, power), 2 + 1e-10, 1e09)))
         elif self.var_y is None:
             if self.n is None or self.a is None or self.b is None or self.alpha is None or self.power is None:
                 raise ValueError("n, a, b, alpha, and power must be provided to solve for var_y")
@@ -206,14 +206,11 @@ class WpCorrelation:
         )
         if self.alternative == "two-sided":
             z_alpha = norm.ppf(1 - alpha / 2)
-            result: float = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf((-delta - z_alpha) / sqrt(v)) - power
-        else:
-            z_alpha = norm.ppf(1 - alpha)
-            if self.alternative == "greater":
-                result = norm.cdf((delta - z_alpha) / sqrt(v)) - power
-            else:
-                result = norm.cdf((-delta - z_alpha) / sqrt(v)) - power
-        return float(result)
+            return float(norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf((-delta - z_alpha) / sqrt(v)) - power)
+        z_alpha = norm.ppf(1 - alpha)
+        if self.alternative == "greater":
+            return float(norm.cdf((delta - z_alpha) / sqrt(v)) - power)
+        return float(norm.cdf((-delta - z_alpha) / sqrt(v)) - power)
 
     def _get_effect_size(self, effect_size: float, n: int, alpha: float, power: float) -> float:
         delta = sqrt(n - 3 - self.p) * (
@@ -240,14 +237,11 @@ class WpCorrelation:
         )
         if self.alternative == "two-sided":
             z_alpha = norm.ppf(1 - alpha / 2)
-            result: float = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf((-delta - z_alpha) / sqrt(v)) - power
-        else:
-            z_alpha = norm.ppf(1 - alpha)
-            if self.alternative == "greater":
-                result = norm.cdf((delta - z_alpha) / sqrt(v)) - power
-            else:
-                result = norm.cdf((-delta - z_alpha) / sqrt(v)) - power
-        return float(result)
+            return float(norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf((-delta - z_alpha) / sqrt(v)) - power)
+        z_alpha = norm.ppf(1 - alpha)
+        if self.alternative == "greater":
+            return float(norm.cdf((delta - z_alpha) / sqrt(v)) - power)
+        return float(norm.cdf((-delta - z_alpha) / sqrt(v)) - power)
 
     def _get_alpha(self, alpha: float, n: int, r: float, power: float) -> float:
         delta = sqrt(n - 3 - self.p) * (
@@ -266,14 +260,11 @@ class WpCorrelation:
         )
         if self.alternative == "two-sided":
             z_alpha = norm.ppf(1 - alpha / 2)
-            result: float = norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf((-delta - z_alpha) / sqrt(v)) - power
-        else:
-            z_alpha = norm.ppf(1 - alpha)
-            if self.alternative == "greater":
-                result = norm.cdf((delta - z_alpha) / sqrt(v)) - power
-            else:
-                result = norm.cdf((-delta - z_alpha) / sqrt(v)) - power
-        return float(result)
+            return float(norm.cdf((delta - z_alpha) / sqrt(v)) + norm.cdf((-delta - z_alpha) / sqrt(v)) - power)
+        z_alpha = norm.ppf(1 - alpha)
+        if self.alternative == "greater":
+            return float(norm.cdf((delta - z_alpha) / sqrt(v)) - power)
+        return float(norm.cdf((-delta - z_alpha) / sqrt(v)) - power)
 
     def pwr_test(self) -> dict:
         if self.power is None:
@@ -284,20 +275,20 @@ class WpCorrelation:
             if self.r is None or self.alpha is None or self.power is None:
                 raise ValueError("r, alpha, and power must be provided to solve for n")
             r, alpha, power = self.r, self.alpha, self.power
-            self.n = ceil(brentq(lambda n: self._get_n(n, r, alpha, power), 4 + self.p + 1e-10, 1e07))
+            self.n = ceil(float(brentq(lambda n: self._get_n(n, r, alpha, power), 4 + self.p + 1e-10, 1e07)))
         elif self.r is None:
             if self.n is None or self.alpha is None or self.power is None:
                 raise ValueError("n, alpha, and power must be provided to solve for r")
             n, alpha, power = self.n, self.alpha, self.power
             if self.alternative == "two-sided":
-                self.r = brentq(lambda r: self._get_effect_size(r, n, alpha, power), 1e-10, 1 - 1e-10)
+                self.r = float(brentq(lambda r: self._get_effect_size(r, n, alpha, power), 1e-10, 1 - 1e-10))
             else:
-                self.r = brentq(lambda r: self._get_effect_size(r, n, alpha, power), -1 + 1e-10, 1 - 1e-10)
+                self.r = float(brentq(lambda r: self._get_effect_size(r, n, alpha, power), -1 + 1e-10, 1 - 1e-10))
         else:
             if self.n is None or self.r is None or self.power is None:
                 raise ValueError("n, r, and power must be provided to solve for alpha")
             n, r, power = self.n, self.r, self.power
-            self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, r, power), 1e-10, 1 - 1e-10)
+            self.alpha = float(brentq(lambda alpha: self._get_alpha(alpha, n, r, power), 1e-10, 1 - 1e-10))
         return {
             "n": self.n,
             "effect_size": self.r,
