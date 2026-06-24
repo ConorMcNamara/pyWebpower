@@ -1,3 +1,5 @@
+"""Power-analysis classes for structural equation modeling (SEM)."""
+
 from math import ceil
 
 from scipy.stats import chi2, ncx2
@@ -6,6 +8,29 @@ from webpower.utils import brentq
 
 
 class WPSEMChisq:
+    """Power analysis for structural equation modeling (SEM) based on the chi-squared test.
+
+    Structural equation modeling (SEM) is a multivariate technique used to analyze relationships among observed and
+    latent variables. This class implements SEM power analysis based on the likelihood ratio test proposed by Satorra
+    and Saris (1985).
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size
+    df : int, default=None
+        The degrees of freedom for our test, based on the Chi-Squared Test.
+    effect : float, default=None
+        Effect size. It specifies the population misfit of a SEM model, which is the difference between two SEM models:
+        a full model (Mf) and a reduced model (Mr). A convienient way to get the effect size is to fit the reduced model
+        using SEM software such R package 'lavaan' (Rossel, 2012). Then the effect size is calculated as the
+        chi-squared statistics dividing by the sample size.
+    alpha : float, default=None
+        Significance level chosen for the test.
+    power : float, default=None
+        Statistical power.
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -53,6 +78,12 @@ class WPSEMChisq:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing n, df, effect_size, alpha, power, and the method and url metadata of the test.
+        """
         if self.power is None:
             if self.n is None or self.effect is None or self.df is None or self.alpha is None:
                 raise ValueError("n, effect, df, and alpha must be provided to compute power")
@@ -89,6 +120,29 @@ class WPSEMChisq:
 
 
 class WPSEMRMSEA:
+    """Power analysis for structural equation modeling (SEM) based on RMSEA.
+
+    Structural equation modeling (SEM) is a multivariate technique used to analyze relationships among observed and
+    latent variables. This class implements SEM power analysis based on RMSEA proposed by MacCallum et al. (1996).
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size
+    df : int, default=None
+        The degrees of freedom for our test, based on the Chi-Squared Test.
+    rmsea0 : float, default=None
+        The RMSE for H0. It usually equals 0.
+    rmsea1 : float, default=None
+        The RMSE for H1
+    power : float, default=None
+        Statistical power.
+    alpha : float, default=None
+        Significance level chosen for the test.
+    test_type : {'close', 'notclose'}, default='close'
+        Close fit or not-close fit.
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -170,6 +224,12 @@ class WPSEMRMSEA:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing n, df, rmsea0, rmsea1, alpha, power, and the method and url metadata of the test.
+        """
         if self.power is None:
             if self.n is None or self.df is None or self.rmsea0 is None or self.rmsea1 is None or self.alpha is None:
                 raise ValueError("n, df, rmsea0, rmsea1, and alpha must be provided to compute power")

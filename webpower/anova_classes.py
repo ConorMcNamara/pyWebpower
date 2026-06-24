@@ -1,3 +1,5 @@
+"""Power-analysis classes for ANOVA designs."""
+
 from math import ceil, sqrt
 
 from scipy.stats import chi2, ncf, nct, ncx2
@@ -8,6 +10,29 @@ from webpower.utils import bisect, brentq
 
 
 class WpAnovaClass:
+    """Power analysis for one-way ANOVA.
+
+    One-way analysis of variance (one-way ANOVA) is a technique used to compare means of two or more groups. The
+    ANOVA tests the null hypothesis that samples in two or more groups are drawn from populations with the same mean
+    values, typically producing an F-statistic, the ratio of the between-group variance to the within-group variance.
+
+    Parameters
+    ----------
+    k : int, default=None
+        Number of groups
+    n : int, default=None
+        Sample size
+    f : float, default=None
+        Effect size
+    alpha : float, default=None
+        Significance level of the test
+    power : float, default=None
+        Statistical power
+    test_type : {'overall', 'two-sided', 'greater', 'less'}, default='overall'
+        The option "overall" is for the overall test of anova; "two-sided" is for a contrast anova; "greater" is
+        testing the between-group variance greater than the within-group, while "less" is vice versa.
+    """
+
     def __init__(
         self,
         k: int | None = None,
@@ -184,6 +209,12 @@ class WpAnovaClass:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing k, n, the effect size, alpha, power, and metadata (method, note, url).
+        """
         if self.power is None:
             if self.n is None or self.f is None or self.k is None or self.alpha is None:
                 raise ValueError("n, f, k, and alpha must be provided to compute power")
@@ -221,6 +252,26 @@ class WpAnovaClass:
 
 
 class WpAnovaBinaryClass:
+    """Power analysis for one-way ANOVA with binary data.
+
+    The power analysis procedure for one-way ANOVA with binary data is introduced by Mai and Zhang (2017). One-way
+    ANOVA with binary data is used for comparing means of three or more groups of binary data. Its outcome variable
+    is supposed to follow Bernoulli distribution, and its overall test uses a likelihood ratio test statistic.
+
+    Parameters
+    ----------
+    k : int, default=None
+        Number of groups
+    n : int, default=None
+        Sample size
+    V : float, default=None
+        Effect size
+    alpha : float, default=None
+        Significance level of the test
+    power : float, default=None
+        Statistical power
+    """
+
     def __init__(
         self,
         k: int | None = None,
@@ -274,6 +325,12 @@ class WpAnovaBinaryClass:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing k, n, the effect size, alpha, power, and metadata (method, note, url).
+        """
         if self.power is None:
             if self.V is None or self.n is None or self.k is None or self.alpha is None:
                 raise ValueError("V, n, k, and alpha must be provided to compute power")
@@ -311,6 +368,26 @@ class WpAnovaBinaryClass:
 
 
 class WpAnovaCountClass(WpAnovaBinaryClass):
+    """Power analysis for one-way ANOVA with count data.
+
+    The power analysis procedure for one-way ANOVA with count data is introduced by Mai and Zhang (2017). One-way
+    ANOVA with count data is used for comparing means of three or more groups of count data. Its outcome variable is
+    supposed to follow Poisson distribution, and its overall test uses a likelihood ratio test statistic.
+
+    Parameters
+    ----------
+    k : int, default=None
+        Number of groups
+    n : int, default=None
+        Sample size
+    V : float, default=None
+        Effect size
+    alpha : float, default=None
+        Significance level of the test
+    power : float, default=None
+        Statistical power
+    """
+
     def __init__(
         self,
         k: int | None = None,
@@ -326,6 +403,24 @@ class WpAnovaCountClass(WpAnovaBinaryClass):
 
 
 class WpKAnovaClass:
+    """Power analysis for k-way ANOVA.
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size
+    ndf : int, default=None
+        Numerator degrees of freedom
+    f : float, default=None
+        Effect size
+    ng : int, default=None
+        Number of groups
+    alpha : float, default=None
+        Significance level of the test
+    power : float, default=None
+        Statistical power
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -382,6 +477,12 @@ class WpKAnovaClass:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing n, ndf, ddf, the effect size, ng, alpha, power, and metadata (method, note, url).
+        """
         if self.power is None:
             if self.f is None or self.n is None or self.ng is None or self.ndf is None or self.alpha is None:
                 raise ValueError("f, n, ng, ndf, and alpha must be provided to compute power")
@@ -431,6 +532,39 @@ class WpKAnovaClass:
 
 
 class WpRMAnovaClass:
+    """Power analysis for repeated-measures ANOVA.
+
+    Repeated-measures ANOVA can be used to compare the means of a sequence of measurements. In a repeated-measures
+    design, every subject is exposed to all different treatments, or more commonly measured across different time
+    points. Power analysis is available for the within-effect test about the mean difference among measurements, the
+    between-effect test about mean difference among groups, and the interaction effect test of measurements and groups.
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size
+    ng : int, default=None
+        Number of groups
+    nm : int, default=None
+        Number of measurements
+    f : float, default=None
+        Effect size. We use the statistic f as the measure of effect size for repeated measures ANOVA
+        as in Cohen (1988, p.275).
+    nscor : float, default=1
+        Nonsphericity correction coefficient. The nonsphericity correction coefficient is a measure of the degree of
+        sphericity in the population. A coefficient of 1 means sphericity is met, while a coefficient less than 1 means
+        not met. The smaller value of the coefficient means the further departure from sphericity. The lowest value of
+        the coefficient is 1/(nm-1) where nm is the total number of measurements. Two viable approaches for computing
+        the empirical nonsphericity correction coefficient are suggested. One is by Greenhouse and Geisser (1959),
+        the other is by Huynh and Feldt (1976).
+    alpha : float, default=None
+        Significance level of the test
+    power : float, default=None
+        Statistical power
+    test_type : {'between', 'within', 'interaction'}, default='between'
+        Type of analysis.
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -543,6 +677,12 @@ class WpRMAnovaClass:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing n, nm, the effect size, nscor, ng, alpha, power, and metadata (method, note, url).
+        """
         if self.power is None:
             if self.f is None or self.n is None or self.ng is None or self.nm is None or self.alpha is None:
                 raise ValueError("f, n, ng, nm, and alpha must be provided to compute power")

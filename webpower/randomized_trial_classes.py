@@ -1,3 +1,5 @@
+"""Power-analysis classes for cluster- and multisite-randomized trials."""
+
 from math import ceil, sqrt
 
 from scipy.stats import f as f_dist
@@ -8,6 +10,44 @@ from webpower.utils import nuniroot
 
 
 class WpMRT2Arm:
+    """Power analysis for two-arm multisite randomized trials (MRT).
+
+    Multisite randomized trials (MRT) are a type of multilevel design for the situation when the entire cluster is
+    randomly assigned to either a treatment arm or a control arm (Liu, 2013). This class is for designs with 2 arms
+    (i.e., a treatment and a control). Three types of tests are considered: the "main" type tests treatment main
+    effect; the "site" type tests the variance of cluster/site means; and the "variance" type tests variance of
+    treatment effects.
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size. It is the number of individuals within each cluster.
+    f : float, default=None
+        Effect size. It specifies the main effect of treatment, the mean difference between the treatment
+        clusters/sites and the control clusters/sites. Effect size must be positive.
+    J : int, default=None
+        Number of clusters / sites. It tells how many clusters are considered in the study design. At least two
+        clusters are required.
+    tau00 : float, default=1.0
+        Variance of cluster/site means. It is one of the residual variances in the second level. Its value must be
+        positive.
+    tau11 : float, default=1.0
+        Variance of treatment effects across sites. It is one of the residual variances in the second level. Its value
+        must be positive.
+    sg2 : float, default=1.0
+        Level-one error Variance. The residual variance in the first level.
+    power : float, default=None
+        Statistical power
+    alpha : float, default=0.05
+        Significance level chosen for the test.
+    alternative : str, default='two-sided'
+        Type of alternative hypothesis. The option 'one-sided' can be either 'less' or 'greater'
+    test_type : str, default='main'
+        Type of effect. The type "main" tests treatment main effect, no tau00 needed; Type "site" tests the variance of
+        cluster/site means, no tau11 or f needed; and Type "variance" tests variance of treatment effects, no tau00 or
+        f needed.
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -107,6 +147,12 @@ class WpMRT2Arm:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing J, n, the effect size, tau00, tau11, sg2, power, alpha and test metadata.
+        """
         if self.power is None:
             if self.J is None or self.n is None:
                 raise ValueError("J and n must be provided to compute power")
@@ -145,6 +191,41 @@ class WpMRT2Arm:
 
 
 class WpMRT3Arm:
+    """Power analysis for three-arm multisite randomized trials (MRT).
+
+    Multisite randomized trials (MRT) are a type of multilevel design for the situation when the entire cluster is
+    randomly assigned to either a treatment arm or a control arm (Liu, 2013). This class is for designs with 3 arms
+    (i.e., two treatments and a control). Three types of tests are considered: the "main" type tests treatment main
+    effect; the "treatment" type tests the difference between the two treatments; and the "omnibus" type tests whether
+    the three arms are all equivalent.
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size. It is the number of individuals within each cluster.
+    f1 : float, default=None
+        Effect size for treatment main effect. Effect size must be positive.
+    f2 : float, default=0.0
+        Effect size for the difference between two treatments. Effect size must be positive.
+    J : int, default=None
+        Number of clusters / sites. It tells how many clusters are considered in the study design. At least two
+        clusters are required.
+    tau : float, default=1.0
+        Variance of treatment effects across sites/clusters.
+    sg2 : float, default=1.0
+        Level-one error Variance. The residual variance in the first level.
+    power : float, default=None
+        Statistical power
+    alpha : float, default=0.05
+        Significance level chosen for the test. It equals 0.05 by default.
+    alternative : str, default='two-sided'
+        Type of the alternative hypothesis. The option "one-sided" can be either "less" or "greater"
+    test_type : str, default='main'
+        The type "main" tests the difference between the average treatment arms and the control arm; Type "treatment"
+        tests the difference between the two treatment arms; and Type "omnibus" tests whether the three arms are all
+        equivalent.
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -279,6 +360,12 @@ class WpMRT3Arm:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing power, J, n, f1, f2, alpha, tau, sg2 and test metadata.
+        """
         if self.power is None:
             if self.J is None or self.n is None or self.f1 is None:
                 raise ValueError("J, n, and f1 must be provided to compute power")
@@ -314,6 +401,34 @@ class WpMRT3Arm:
 
 
 class WpCRT2Arm:
+    """Power analysis for two-arm cluster randomized trials (CRT).
+
+    Cluster randomized trials (CRT) are a type of multilevel design for the situation when the entire cluster is
+    randomly assigned to either a treatment arm or a control arm (Liu, 2013). This class is for designs with 2 arms
+    (i.e., a treatment and a control). Details leading to power calculation can be found in Raudenbush (1997) and Liu
+    (2013).
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size. It is the number of individuals within each cluster
+    f : float, default=None
+        Effect size. It specifies either the main effect of treatment, or the mean difference between the treatment
+        clusters and the control clusters.
+    J : int, default=None
+        Number of clusters / sides. It tells how many clusters are considered in the study design. At least 2 clusters
+        are required.
+    icc : float, default=None
+        Intra-class correlation. ICC is calculated as the ratio of betwee-cluster variance to the total variance. It
+        quantifies the degree to which two randomly drawn observations within a cluster are correlated.
+    power : float, default=None
+        Statistical power
+    alpha : float, default=None
+        Significance level chosen for the test.
+    alternative : str, default='two-sided'
+        Type of alternative hypothesis. The option "one-sided" can be either "less" or "greater"
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -402,6 +517,12 @@ class WpCRT2Arm:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing J, n, the effect size, icc, power, alpha, the alternative hypothesis and metadata.
+        """
         if self.power is None:
             if self.J is None or self.f is None or self.icc is None or self.n is None or self.alpha is None:
                 raise ValueError("J, f, icc, n, and alpha must be provided to compute power")
@@ -446,6 +567,38 @@ class WpCRT2Arm:
 
 
 class WpCRT3Arm:
+    """Power analysis for three-arm cluster randomized trials (CRT).
+
+    Cluster randomized trials (CRT) are a type of multilevel design for the situation when the entire cluster is
+    randomly assigned to either a treatment arm or a control arm (Liu, 2013). This class is for designs with 3 arms
+    (i.e., two treatments and a control). Details leading to power calculation can be found in Raudenbush (1997) and Liu
+    (2013).
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size. It is the number of individuals within each cluster
+    f : float, default=None
+        Effect size. It specifies either the main effect of treatment, or the mean difference between the treatment
+        clusters and the control clusters.
+    J : int, default=None
+        Number of clusters / sides. It tells how many clusters are considered in the study design. At least 2 clusters
+        are required.
+    icc : float, default=None
+        Intra-class correlation. ICC is calculated as the ratio of betwee-cluster variance to the total variance. It
+        quantifies the degree to which two randomly drawn observations within a cluster are correlated.
+    power : float, default=None
+        Statistical power
+    alpha : float, default=None
+        Significance level chosen for the test.
+    alternative : str, default='two-sided'
+        Type of alternative hypothesis. The option "one-sided" can be either "less" or "greater"
+    test_type : str, default='main'
+        Type of effect. "main" tests the difference between the average treatment arms and the control arm; "treatment"
+        tests the difference between the two treatment arms; and "omnibus" tests whether the three arms are all
+        equivalent.
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -620,6 +773,12 @@ class WpCRT3Arm:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing J, n, the effect size, icc, power, alpha and test metadata.
+        """
         if self.power is None:
             if self.J is None or self.f is None or self.icc is None or self.n is None or self.alpha is None:
                 raise ValueError("J, f, icc, n, and alpha must be provided to compute power")
