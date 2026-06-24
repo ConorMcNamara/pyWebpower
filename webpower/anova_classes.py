@@ -701,7 +701,9 @@ class WpRMAnovaClass:
             if self.f is None or self.n is None or self.nm is None or self.alpha is None or self.power is None:
                 raise ValueError("f, n, nm, alpha, and power must be provided to solve for ng")
             f, n, nm, alpha, power = self.f, self.n, self.nm, self.alpha, self.power
-            self.ng = ceil(bisect(lambda ng: self._get_groups(ng, f, n, nm, alpha, power), 1 + 1e-10, 1e05))
+            # The number of groups must stay below the sample size so the denominator df (n - ng) stays
+            # positive; bracketing past it lands in the degenerate region where the F distribution is NaN.
+            self.ng = ceil(bisect(lambda ng: self._get_groups(ng, f, n, nm, alpha, power), 1 + 1e-10, n - 1))
         elif self.f is None:
             if self.n is None or self.ng is None or self.nm is None or self.alpha is None or self.power is None:
                 raise ValueError("n, ng, nm, alpha, and power must be provided to solve for f")

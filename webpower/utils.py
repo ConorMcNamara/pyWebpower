@@ -7,6 +7,23 @@ from scipy.optimize import bisect as _scipy_bisect
 from scipy.optimize import brentq as _scipy_brentq
 
 
+def _nan_safe(f: Callable[[float], float]) -> Callable[[float], float]:
+    """Wrap a power objective so NaN values from SciPy's noncentral distributions don't abort the solver.
+
+    The objectives passed to the root-finders are ``power(param) - target`` and are monotonic in
+    ``param``. For large noncentrality SciPy's noncentral distributions (``nct``, ``ncf``, ``ncx2``)
+    can return ``NaN`` even though the power has saturated at ~1. That ``NaN`` band always sits on the
+    high-power (positive-objective) side of the root, so substituting a positive sentinel keeps the
+    solver bracketing the true root instead of raising on ``NaN``.
+    """
+
+    def safe(x: float) -> float:
+        value = f(x)
+        return 1.0 if np.isnan(value) else value
+
+    return safe
+
+
 def bisect(f: Callable[[float], float], a: float, b: float) -> float:
     """Find a root of ``f`` on the bracketing interval ``[a, b]`` using bisection.
 
@@ -23,7 +40,7 @@ def bisect(f: Callable[[float], float], a: float, b: float) -> float:
     -------
     The root of ``f`` between ``a`` and ``b``
     """
-    return _scipy_bisect(f, a, b)  # type: ignore[return-value]
+    return _scipy_bisect(_nan_safe(f), a, b)  # type: ignore[return-value]
 
 
 def brentq(f: Callable[[float], float], a: float, b: float) -> float:
@@ -42,7 +59,7 @@ def brentq(f: Callable[[float], float], a: float, b: float) -> float:
     -------
     The root of ``f`` between ``a`` and ``b``
     """
-    return _scipy_brentq(f, a, b)  # type: ignore[return-value]
+    return _scipy_brentq(_nan_safe(f), a, b)  # type: ignore[return-value]
 
 
 def nuniroot(f: Callable[[float], float], low_val: float = 0, high_val: float = 1, max_length: int = 100) -> float:
