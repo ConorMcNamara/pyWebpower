@@ -40,7 +40,7 @@ def bisect(f: Callable[[float], float], a: float, b: float) -> float:
     -------
     The root of ``f`` between ``a`` and ``b``
     """
-    return _scipy_bisect(f, a, b)  # type: ignore[return-value]
+    return _scipy_bisect(_nan_safe(f), a, b)  # type: ignore[return-value]
 
 
 def brentq(f: Callable[[float], float], a: float, b: float) -> float:
@@ -59,7 +59,7 @@ def brentq(f: Callable[[float], float], a: float, b: float) -> float:
     -------
     The root of ``f`` between ``a`` and ``b``
     """
-    return _scipy_brentq(f, a, b)  # type: ignore[return-value]
+    return _scipy_brentq(_nan_safe(f), a, b)  # type: ignore[return-value]
 
 
 def nuniroot(f: Callable[[float], float], low_val: float = 0, high_val: float = 1, max_length: int = 100) -> float:
