@@ -1,3 +1,5 @@
+"""Power-analysis classes for correlation and mediation models."""
+
 from math import ceil, log, sqrt
 
 from scipy.stats import norm
@@ -6,6 +8,33 @@ from webpower.utils import brentq, nuniroot
 
 
 class WpMediation:
+    """Power analysis for simple mediation models.
+
+    Mediation models can be used to investigate the underlying mechanisms related to why an input variable x
+    influences an output variable y. The mediation effect is calculated as a*b, where a is the path coefficent from
+    the predictor x to the mediator m, and b is the path coefficent from the mediator m to the outcome variable y.
+    The Sobel test statistic is used to test whether the mediation effect is significantly different from zero.
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size
+    power : float, default=None
+        Statistical power
+    a : float, default=None
+        Coefficient from x to m
+    b : float, default=None
+        Coefficient from m to y
+    var_x : float, default=1
+        Variance of x
+    var_y : float, default=None
+        Variance of y
+    var_m : float, default=1
+        Variance of m
+    alpha : float, default=None
+        Significance level chosen for the test
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -95,6 +124,12 @@ class WpMediation:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing n, a, b, var_x, var_y, var_m, alpha, power and metadata for the test.
+        """
         if self.power is None:
             if self.n is None or self.a is None or self.b is None or self.var_y is None or self.alpha is None:
                 raise ValueError("n, a, b, var_y, and alpha must be provided to compute power")
@@ -142,6 +177,31 @@ class WpMediation:
 
 
 class WpCorrelation:
+    """Power analysis for correlation.
+
+    Correlation measures whether and how a pair of variables are related. The Pearson Product Moment correlation
+    coefficient (r) is adopted here. The power calculation for correlation is conducted based on Fisher's z
+    transformation of the Pearson correlation coefficient.
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size
+    r : float, default=None
+        Effect size or correlation. According to Cohen (1988), a correlation coefficient of 0.10, 0.30, and 0.50 are
+        considered as an effect size of "small", "medium", and "large", respectively.
+    power : float, default=None
+        Statistical power
+    p : int, default=0
+        Number of variables to partial out
+    rho0 : float, default=0.0
+        Null correlation coefficient
+    alpha : float, default=None
+        Significance level chosen for the test
+    alternative : {'two-sided', 'greater', 'less'}, default='two-sided'
+        Direction of the alternative hypothesis.
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -266,6 +326,12 @@ class WpCorrelation:
         return float(norm.cdf((-delta - z_alpha) / sqrt(v)) - power)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing n, effect_size, alpha, power, the alternative hypothesis and metadata for the test.
+        """
         if self.power is None:
             if self.n is None or self.r is None or self.alpha is None:
                 raise ValueError("n, r, and alpha must be provided to compute power")

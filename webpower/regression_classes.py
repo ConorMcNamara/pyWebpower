@@ -1,3 +1,5 @@
+"""Power-analysis classes for regression models."""
+
 from math import ceil, exp, log, sqrt
 
 import numpy as np
@@ -9,6 +11,35 @@ from webpower.utils import brentq
 
 
 class WPRegression:
+    """Power analysis for linear regression models.
+
+    Regression is a statistical technique for examining the relationship between one or more independent variables
+    (or predictors) and one dependent variable (or the outcome). Regression provides an F-statistic that can be
+    formulated using the ratio between variation in the outcome variable that is explained by the predictors and the
+    unexplained variation (Cohen, 1988). The test statistic can also be expressed in terms of comparison between Full
+    and Reduced models (Maxwell & Delaney, 2003).
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size.
+    p1 : int, default=1
+        Number of predictors in the full model.
+    p2 : int, default=0
+        Number of predictors in the reduced model, it is 0 by default. See the book by Maxwell and Delaney (2003)
+        for the definition of the reduced model.
+    f2 : float, default=None
+        Effect size. We use the statistic f2 as the measure of effect size for linear regression proposed by Cohen
+        (1988, p.410). Cohen discussed the effect size in three different cases. The calculation of f2 can be
+        generalized using the idea of a full model and a reduced model by Maxwell and Delaney (2003).
+    alpha : float, default=None
+        Significance level chosen for the test.
+    power : float, default=None
+        Statistical power.
+    test_type : str, default="regular"
+        If set to "cohen", the formula used in the Cohen's book will be used (not recommended).
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -67,6 +98,12 @@ class WPRegression:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing the effect size, n, p1, p2, alpha, power, and test metadata.
+        """
         if self.power is None:
             if self.n is None or self.f2 is None or self.alpha is None:
                 raise ValueError("n, f2, and alpha must be provided to compute power")
@@ -99,6 +136,38 @@ class WPRegression:
 
 
 class WpPoisson:
+    """Power analysis for Poisson regression models.
+
+    Poisson regression is a type of generalized linear models where the outcomes are usually count data. Here,
+    Maximum likelihood methods is used to estimate the model parameters. The estimated regression coefficient is
+    assumed to follow a normal distribution. A Wald test is used to test the mean difference between the estimated
+    parameter and the null parameter (typically the null hypothesis assumes it equals 0). The procedure introduced
+    by Demidenko (2007) is adopted here for computing the statistical power.
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size.
+    exp0 : float, default=1
+        The base rate under the null hypothesis. It always takes positive value. See the article by Demidenko (2007)
+        for details.
+    exp1 : float, default=0.5
+        The relative increase of the event rate. It is used for calculation of the effect size. See the article by
+        Demidenko (2007) for details.
+    alpha : float, default=None
+        Significance level of the test.
+    power : float, default=None
+        Statistical power.
+    alternative : str, default="two-sided"
+        Direction of the alternative hypothesis. One of "two-sided", "greater", or "less".
+    family : str, default="Bernoulli"
+        Distribution of the predictor. One of "bernoulli", "exponential", "lognormal", "normal", "poisson", or
+        "uniform".
+    parameter : int, float, list or tuple, default=None
+        Corresponding parameter for the predictor's distribution. The default is 0.5 for "bernoulli", 1 for
+        "exponential", (0,1) for "lognormal" or normal, 1 for "poisson", and (0,1) for "uniform".
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -254,6 +323,12 @@ class WpPoisson:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing n, power, alpha, exp0, exp1, beta0, beta1, and test metadata.
+        """
         if self.power is None:
             if self.n is None or self.alpha is None:
                 raise ValueError("n and alpha must be provided to compute power")
@@ -282,6 +357,36 @@ class WpPoisson:
 
 
 class WpLogistic:
+    """Power analysis for logistic regression models.
+
+    Logistic regression is a type of generalized linear models where the outcome variable follows Bernoulli
+    distribution. Here, Maximum likelihood methods is used to estimate the model parameters. The estimated
+    regression coefficient is assumed to follow a normal distribution. A Wald test is used to test the mean
+    difference between the estimated parameter and the null parameter (typically the null hypothesis assumes it
+    equals 0). The procedure introduced by Demidenko (2007) is adopted here for computing the statistical power.
+
+    Parameters
+    ----------
+    n : int, default=None
+        Sample size.
+    p0 : float, default=0.5
+        Prob(Y=1|X=0): the probability of observing 1 for the outcome variable Y when the predictor X equals 0.
+    p1 : float, default=0.5
+        Prob(Y=1|X=1): the probability of observing 1 for the outcome variable Y when the predictor X equals 1.
+    alpha : float, default=None
+        Significance level chosen for the test.
+    power : float, default=None
+        Statistical power.
+    alternative : str, default="two-sided"
+        Direction of the alternative hypothesis. One of "two-sided", "greater", or "less".
+    family : str, default="Bernoulli"
+        Distribution of the predictor. One of "bernoulli", "exponential", "lognormal", "normal", "poisson", or
+        "uniform".
+    parameter : int, float, list or tuple, default=None
+        Corresponding parameter for the predictor's distribution. The default is 0.5 for "bernoulli", 1 for
+        "exponential", (0,1) for "lognormal" or normal, 1 for "poisson", and (0,1) for "uniform".
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -617,6 +722,12 @@ class WpLogistic:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing n, power, alpha, p0, p1, beta0, beta1, and test metadata.
+        """
         if self.power is None:
             if self.n is None or self.alpha is None:
                 raise ValueError("n and alpha must be provided to compute power")

@@ -1,3 +1,5 @@
+"""Power-analysis classes for tests of proportions."""
+
 from math import ceil, sqrt
 
 from scipy.stats import norm
@@ -6,6 +8,26 @@ from webpower.utils import brentq
 
 
 class WpOneProp:
+    """Power analysis for a one-sample proportion test.
+
+    The one-sample test of proportion tests the null proportion of success, usually 0.5. The power calculation is
+    based on the arcsine transformation of the proportion (see Cohen, 1988, p.548).
+
+    Parameters
+    ----------
+    h : float, default=None
+        Effect size of the proportion comparison. Cohen (1992) suggested that effect size values of 0.2, 0.5, and 0.8
+        represent "small", "medium", and "large" effect sizes, respectively.
+    n : int, default=None
+        The sample size of the group.
+    alpha : float, default=None
+        Significance level of the test.
+    power : float, default=None
+        Statistical power.
+    alternative : {'two-sided', 'greater', 'less'}
+        Direction of the alternative hypothesis.
+    """
+
     def __init__(
         self,
         h: float | None,
@@ -60,6 +82,12 @@ class WpOneProp:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing the effect size, n, alpha, power, alternative hypothesis, and test metadata.
+        """
         if self.power is None:
             if self.h is None or self.n is None or self.alpha is None:
                 raise ValueError("h, n, and alpha must be provided to compute power")
@@ -97,6 +125,27 @@ class WpOneProp:
 
 
 class WpTwoPropOneN:
+    """Power analysis for a two-sample proportion test with equal sample sizes.
+
+    The two-sample test of proportions tests the null hypothesis that the two samples are drawn from populations with
+    the same proportion of success. The power calculation is based on the arcsine transformation of the proportion
+    (see Cohen, 1988, p.548).
+
+    Parameters
+    ----------
+    h : float, default=None
+        Effect size of the proportion comparison. Cohen (1992) suggested that effect size values of 0.2, 0.5, and 0.8
+        represent "small", "medium", and "large" effect sizes, respectively.
+    n : int, default=None
+        The sample size of the group.
+    alpha : float, default=None
+        Significance level of the test.
+    power : float, default=None
+        Statistical power.
+    alternative : {'two-sided', 'greater', 'less'}
+        Direction of the alternative hypothesis.
+    """
+
     def __init__(
         self,
         h: float | None,
@@ -157,6 +206,12 @@ class WpTwoPropOneN:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing the effect size, n, alpha, power, alternative hypothesis, and test metadata.
+        """
         if self.power is None:
             if self.h is None or self.n is None or self.alpha is None:
                 raise ValueError("h, n, and alpha must be provided to compute power")
@@ -194,6 +249,29 @@ class WpTwoPropOneN:
 
 
 class WpTwoPropTwoN:
+    """Power analysis for a two-sample proportion test with unequal sample sizes.
+
+    The two-sample test of proportions tests the null hypothesis that the two samples are drawn from populations with
+    the same proportion of success. The power calculation is based on the arcsine transformation of the proportion
+    (see Cohen, 1988, p.548).
+
+    Parameters
+    ----------
+    h : float, default=None
+        Effect size of the proportion comparison. Cohen (1992) suggested that effect size values of 0.2, 0.5, and 0.8
+        represent "small", "medium", and "large" effect sizes, respectively.
+    n1 : int, default=None
+        The sample size of the first group.
+    n2 : int, default=None
+        The sample size of the second group.
+    alpha : float, default=None
+        Significance level of the test.
+    power : float, default=None
+        Statistical power.
+    alternative : {'two-sided', 'greater', 'less'}
+        Direction of the alternative hypothesis.
+    """
+
     def __init__(
         self,
         h: float | None,
@@ -277,6 +355,12 @@ class WpTwoPropTwoN:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing the effect size, n1, n2, alpha, power, alternative hypothesis, and test metadata.
+        """
         if self.power is None:
             if self.h is None or self.n1 is None or self.n2 is None or self.alpha is None:
                 raise ValueError("h, n1, n2, and alpha must be provided to compute power")

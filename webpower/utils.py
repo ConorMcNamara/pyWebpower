@@ -1,3 +1,5 @@
+"""Numerical helper utilities used across the power-analysis classes."""
+
 from collections.abc import Callable
 
 import numpy as np
@@ -23,15 +25,45 @@ def _nan_safe(f: Callable[[float], float]) -> Callable[[float], float]:
 
 
 def bisect(f: Callable[[float], float], a: float, b: float) -> float:
-    return _scipy_bisect(_nan_safe(f), a, b)  # type: ignore[return-value]
+    """Find a root of ``f`` on the bracketing interval ``[a, b]`` using bisection.
+
+    Parameters
+    ----------
+    f : function
+        The function whose root we are solving for
+    a : float
+        The low end of the bracketing interval
+    b : float
+        The high end of the bracketing interval
+
+    Returns
+    -------
+    The root of ``f`` between ``a`` and ``b``
+    """
+    return _scipy_bisect(f, a, b)  # type: ignore[return-value]
 
 
 def brentq(f: Callable[[float], float], a: float, b: float) -> float:
-    return _scipy_brentq(_nan_safe(f), a, b)  # type: ignore[return-value]
+    """Find a root of ``f`` on the bracketing interval ``[a, b]`` using Brent's method.
+
+    Parameters
+    ----------
+    f : function
+        The function whose root we are solving for
+    a : float
+        The low end of the bracketing interval
+    b : float
+        The high end of the bracketing interval
+
+    Returns
+    -------
+    The root of ``f`` between ``a`` and ``b``
+    """
+    return _scipy_brentq(f, a, b)  # type: ignore[return-value]
 
 
 def nuniroot(f: Callable[[float], float], low_val: float = 0, high_val: float = 1, max_length: int = 100) -> float:
-    """Calculates the root of our function f given low_val and high_val.
+    """Calculate the root of our function f given low_val and high_val.
 
     Parameters
     ----------
