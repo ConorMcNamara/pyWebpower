@@ -33,7 +33,14 @@ line-length = 120
 indent-width = 4
 
 [tool.ruff.lint]
-select = ["E", "F", "UP", "I"]
+select = ["E", "F", "UP", "I", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+# Tests don't require docstrings.
+"test/*" = ["D100", "D101", "D102", "D103", "D104"]
 
 [tool.ruff.format]
 quote-style = "double"

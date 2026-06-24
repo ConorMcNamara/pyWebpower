@@ -1,3 +1,5 @@
+"""Public power-analysis functions wrapping the WebPower test classes."""
+
 from webpower.anova_classes import (
     WpAnovaBinaryClass,
     WpAnovaClass,
@@ -22,7 +24,9 @@ def wp_anova_test(
     test_type: str = "overall",
     print_pretty: bool = True,
 ) -> dict:
-    """One-way analysis of variance (one-way ANOVA) is a technique used to compare means of two or more groups (e.g.,
+    """Conduct power analysis for one-way ANOVA.
+
+    One-way analysis of variance (one-way ANOVA) is a technique used to compare means of two or more groups (e.g.,
     Maxwell & Delaney, 2003). The ANOVA tests the null hypothesis that samples in two or more groups are drawn from
     populations with the same mean values. The ANOVA analysis typically produces an F-statistic, the ratio of the
     between-group variance to the within-group variance.
@@ -109,7 +113,9 @@ def wp_anova_binary_test(
     power: float | None = None,
     print_pretty: bool = True,
 ) -> dict:
-    """The power analysis procedure for one-way ANOVA with binary data is introduced by Mai and Zhang (2017). One-way
+    """Conduct power analysis for one-way ANOVA with binary data.
+
+    The power analysis procedure for one-way ANOVA with binary data is introduced by Mai and Zhang (2017). One-way
     ANOVA with binary data is used for comparing means of three or more groups of binary data. Its outcome variable is
     supposed to follow Bernoulli distribution. And its overall test uses a likelihood ratio test statistics.
 
@@ -187,7 +193,9 @@ def wp_anova_count_test(
     power: float | None = None,
     print_pretty: bool = True,
 ) -> dict:
-    """The power analysis procedure for one-way ANOVA with count data is introduced by Mai and Zhang (2017). One-way
+    """Conduct power analysis for one-way ANOVA with count data.
+
+    The power analysis procedure for one-way ANOVA with count data is introduced by Mai and Zhang (2017). One-way
     ANOVA with count data is used for comparing means of three or more groups of binary data. Its outcome variable is
     supposed to follow Poisson distribution. And its overall test uses a likelihood ratio test statistics.
 
@@ -357,7 +365,9 @@ def wp_rmanova_test(
     test_type: str = "between",
     print_pretty: bool = True,
 ) -> dict:
-    """Repeated-measures ANOVA can be used to compare the means of a sequence of measurements(e.g., O’brien & Kaiser,
+    """Conduct power analysis for repeated-measures ANOVA.
+
+    Repeated-measures ANOVA can be used to compare the means of a sequence of measurements(e.g., O’brien & Kaiser,
     1985). In a repeated-measures design, every subject is exposed to all different treatments, or more commonly
     measured across different time points. Power analysis for (1)the within-effect test about the mean difference among
     measurements by default. If the subjects are from more than one group, the power analysis is also available for (2)
@@ -463,7 +473,9 @@ def wp_one_prop_test(
     alternative: str = "two-sided",
     print_pretty: bool = True,
 ) -> dict:
-    """Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
+    """Conduct power analysis for a one-sample proportion test.
+
+    Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
     The one-sample test of proportion tests the null proportion of success, usually 0.5. The power calculation is based
     on the arcsine transformation of the proportion (see Cohen, 1988, p.548).
 
@@ -539,7 +551,9 @@ def wp_two_prop_one_n_test(
     alternative: str = "two-sided",
     print_pretty: bool = True,
 ) -> dict:
-    """Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
+    """Conduct power analysis for a two-sample proportion test with equal sample sizes.
+
+    Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
     The two-sample test of proportions tests the null hypothesis that the two samples are drawn from populations with
     the same proportion of success. The power calculation is based on the arcsine transformation of the proportion (see
     Cohen, 1988, p.548).
@@ -617,7 +631,9 @@ def wp_two_prop_two_n_test(
     alternative: str = "two-sided",
     print_pretty: bool = True,
 ) -> dict:
-    """Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
+    """Conduct power analysis for a two-sample proportion test with unequal sample sizes.
+
+    Tests of proportions are a technique used to compare proportions of success or agreement in one or two samples.
     The two-sample test of proportions tests the null hypothesis that the two samples are drawn from populations with
     the same proportion of success. The power calculation is based on the arcsine transformation of the proportion (see
     Cohen, 1988, p.548).
@@ -706,7 +722,9 @@ def wp_t1_test(
     alternative: str = "two-sided",
     print_pretty: bool = True,
 ) -> dict:
-    """A t-test is a statistical hypothesis test in which the test statistic follows a Student’s t distribution if the
+    """Conduct power analysis for a one-sample or paired t-test.
+
+    A t-test is a statistical hypothesis test in which the test statistic follows a Student’s t distribution if the
     null hypothesis is true and follows a non-central t distribution if the alternative hypothesis is true. The t test
     can assess the statistical significance of (1) the difference between population mean and a specific value, (2) the
     difference between two independent population means, and (3) difference between means of matched pairs.
@@ -814,7 +832,9 @@ def wp_t2_test(
     alternative: str = "two-sided",
     print_pretty: bool = True,
 ) -> dict:
-    """A t-test is a statistical hypothesis test in which the test statistic follows a Student’s t distribution if the
+    """Conduct power analysis for a two-sample t-test.
+
+    A t-test is a statistical hypothesis test in which the test statistic follows a Student’s t distribution if the
     null hypothesis is true and follows a non-central t distribution if the alternative hypothesis is true. The t test
     can assess the statistical significance of (1) the difference between population mean and a specific value, (2) the
     difference between two independent population means, and (3) difference between means of matched pairs.
@@ -901,7 +921,9 @@ def wp_regression_test(
     test_type: str = "regular",
     print_pretty: bool = True,
 ) -> dict:
-    """This function is for power analysis for regression models. Regression is a statistical technique for examining
+    """Conduct power analysis for linear regression models.
+
+    This function is for power analysis for regression models. Regression is a statistical technique for examining
     the relationship between one or more independent variables (or predictors) and one dependent variable (or the
     outcome). Regression provides an F-statistic that can be formulated using the ratio between variation in the outcome
     variable that is explained by the predictors and the unexplained variation (Cohen, 1988)). The test statistic can
@@ -998,7 +1020,9 @@ def wp_poisson_test(
     parameter: int | float | list | tuple | None = None,
     print_pretty: bool = True,
 ) -> dict:
-    """This function is for Poisson regression models. Poisson regression is a type of generalized linear models where
+    """Conduct power analysis for Poisson regression models.
+
+    This function is for Poisson regression models. Poisson regression is a type of generalized linear models where
     the outcomes are usually count data. Here, Maximum likelihood methods is used to estimate the model parameters. The
     estimated regression coefficient is assumed to follow a normal distribution. A Wald test is used to test the mean
     difference between the estimated parameter and the null parameter (typically the null hypothesis assumes it equals
@@ -1096,7 +1120,9 @@ def wp_logistic_test(
     parameter: int | float | list | tuple | None = None,
     print_pretty: bool = True,
 ) -> dict:
-    """This function is for Logistic regression models. Logistic regression is a type of generalized linear models where
+    """Conduct power analysis for logistic regression models.
+
+    This function is for Logistic regression models. Logistic regression is a type of generalized linear models where
     the outcome variable follows Bernoulli distribution. Here, Maximum likelihood methods is used to estimate the model
     parameters. The estimated regression coefficient is assumed to follow a normal distribution. A Wald test is used to
     test the mean difference between the estimated parameter and the null parameter (typically the null hypothesis
@@ -1186,7 +1212,9 @@ def wp_sem_chisq_test(
     power: float | None = None,
     print_pretty: bool = True,
 ) -> dict:
-    """Structural equation modeling (SEM) is a multivariate technique used to analyze relationships among observed and
+    """Conduct power analysis for SEM based on the chi-squared test.
+
+    Structural equation modeling (SEM) is a multivariate technique used to analyze relationships among observed and
     latent variables. It can be viewed as a combination of factor analysis and multivariate regression analysis. Two
     methods are widely used in power analysis for SEM. One is based on the likelihood ratio test proposed by Satorra and
     Saris (1985). The other is based on RMSEA proposed by MacCallum et al. (1996). This function is for SEM power
@@ -1265,7 +1293,9 @@ def wp_sem_rmsea_test(
     test_type: str = "close",
     print_pretty: bool = True,
 ) -> dict:
-    """Structural equation modeling (SEM) is a multivariate technique used to analyze relationships among observed and
+    """Conduct power analysis for SEM based on RMSEA.
+
+    Structural equation modeling (SEM) is a multivariate technique used to analyze relationships among observed and
     latent variables. It can be viewed as a combination of factor analysis and multivariate regression analysis. Two
     methods are widely used in power analysis for SEM. One is based on the likelihood ratio test proposed by Satorra and
     Saris (1985). The other is based on RMSEA proposed by MacCallum et al. (1996). This function is for SEM power
@@ -1352,7 +1382,9 @@ def wp_mediation_test(
     alpha: float | None = None,
     print_pretty: bool = True,
 ) -> dict:
-    """This function is for mediation models. Mediation models can be used to investigate the underlying mechanisms
+    """Conduct power analysis for mediation models.
+
+    This function is for mediation models. Mediation models can be used to investigate the underlying mechanisms
     related to why an input variable x influences an output variable y (e.g., Hayes, 2013; MacKinnon, 2008). The
     mediation effect is calculated as a*b, where a is the path coefficent from the predictor x to the mediator m, and b
     is the path coefficent from the mediator m to the outcome variable y. Sobel test statistic (Sobel, 1982) is used to
@@ -1446,7 +1478,9 @@ def wp_correlation_test(
     alternative: str = "two-sided",
     print_pretty: bool = True,
 ) -> dict:
-    """This function is for power analysis for correlation. Correlation measures whether and how a pair of variables are
+    """Conduct power analysis for correlation.
+
+    This function is for power analysis for correlation. Correlation measures whether and how a pair of variables are
     related. The Pearson Product Moment correlation coefficient (r) is adopted here. The power calculation for
     correlation is conducted based on Fisher’s z transformation of Pearson correlation coefficient (Fisher, 1915, 1921).
 
@@ -1524,7 +1558,9 @@ def wp_mrt2arm_test(
     test_type: str = "main",
     print_pretty: bool = True,
 ) -> dict:
-    """Multisite randomized trials (MRT) are a type of multilevel design for the situation when the entire cluster is
+    """Conduct power analysis for two-arm multisite randomized trials (MRT).
+
+    Multisite randomized trials (MRT) are a type of multilevel design for the situation when the entire cluster is
     randomly assigned to either a treatment arm or a control arm (Liu, 2013). The data from MRT can be analyzed in a
     two-level hierarchical linear model, where the indicator variable for treatment assignment is included in first
     level. If a study contains multiple treatments, then multiple indicators will be used. This function is for designs
@@ -1600,7 +1636,9 @@ def wp_mrt3arm_test(
     test_type: str = "main",
     print_pretty: bool = True,
 ) -> dict:
-    """Multisite randomized trials (MRT) are a type of multilevel design for the situation when the entire cluster is
+    """Conduct power analysis for three-arm multisite randomized trials (MRT).
+
+    Multisite randomized trials (MRT) are a type of multilevel design for the situation when the entire cluster is
     randomly assigned to either a treatment arm or a control arm (Liu, 2013). The data from MRT can be analyzed in a
     two-level hierarchical linear model, where the indicator variable for treatment assignment is included in first
     level. If a study contains multiple treatments, then multiple indicators will be used. This function is for designs
@@ -1725,7 +1763,9 @@ def wp_crt2arm_test(
     alternative: str = "two-sided",
     print_pretty: bool = True,
 ) -> dict:
-    """Cluster randomized trials (CRT) are a type of multilevel design for the situation when the entire cluster is
+    """Conduct power analysis for two-arm cluster randomized trials (CRT).
+
+    Cluster randomized trials (CRT) are a type of multilevel design for the situation when the entire cluster is
     randomly assigned to either a treatment arm or a contral arm (Liu, 2013). The data from CRT can be analyzed in a
     two-level hierachical linear model, where the indicator variable for treatment assignment is included in second
     level. If a study contains multiple treatments, then mutiple indicators will be used. This function is for designs
@@ -1824,7 +1864,9 @@ def wp_crt3arm_test(
     test_type: str = "main",
     print_pretty: bool = True,
 ) -> dict:
-    """Cluster randomized trials (CRT) are a type of multilevel design for the situation when the entire cluster is
+    """Conduct power analysis for three-arm cluster randomized trials (CRT).
+
+    Cluster randomized trials (CRT) are a type of multilevel design for the situation when the entire cluster is
     randomly assigned to either a treatment arm or a contral arm (Liu, 2013). The data from CRT can be analyzed in a
     two-level hierachical linear model, where the indicator variable for treatment assignment is included in second
     level. If a study contains multiple treatments, then mutiple indicators will be used. This function is for designs

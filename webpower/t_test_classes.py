@@ -1,3 +1,5 @@
+"""Power-analysis classes for t-tests."""
+
 from math import ceil, sqrt
 
 from scipy.stats import nct
@@ -7,6 +9,29 @@ from webpower.utils import brentq
 
 
 class WpOneT:
+    """Power analysis for a one-sample or paired t-test.
+
+    A t-test is a statistical hypothesis test in which the test statistic follows a Student's t distribution if the
+    null hypothesis is true and follows a non-central t distribution if the alternative hypothesis is true. The t test
+    can assess the statistical significance of (1) the difference between population mean and a specific value, (2) the
+    difference between two independent population means, and (3) difference between means of matched pairs.
+
+    Parameters
+    ----------
+    n : int, default=None
+        If test_type='one-sample', then the sample size of our group; otherwise the sample size of both groups.
+    d : float, default=None
+        Effect size
+    alpha : float, default=None
+        Significance level of the test.
+    power : float, default=None
+        Statistical power.
+    test_type : {'two-sample', 'paired', 'one-sample'}, default='two-sample'
+        Whether our test is a two-sample test, a paired test or a one-sample test.
+    alternative : {'two-sided', 'greater', 'less'}, default='two-sided'
+        Direction of the alternative hypothesis.
+    """
+
     def __init__(
         self,
         n: int | None = None,
@@ -107,6 +132,12 @@ class WpOneT:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing n, effect_size, alpha, power, our alternative hypothesis and test metadata.
+        """
         if self.power is None:
             if self.n is None or self.d is None or self.alpha is None:
                 raise ValueError("n, d, and alpha must be provided to compute power")
@@ -155,6 +186,29 @@ class WpOneT:
 
 
 class WpTwoT:
+    """Power analysis for a two-sample t-test.
+
+    A t-test is a statistical hypothesis test in which the test statistic follows a Student's t distribution if the
+    null hypothesis is true and follows a non-central t distribution if the alternative hypothesis is true. The t test
+    can assess the statistical significance of (1) the difference between population mean and a specific value, (2) the
+    difference between two independent population means, and (3) difference between means of matched pairs.
+
+    Parameters
+    ----------
+    n1 : int, default=None
+        The sample size of our first group
+    n2 : int, default=None
+        The sample size of our second group
+    d : float, default=None
+        Effect size
+    alpha : float, default=None
+        Significance level of the test.
+    power : float, default=None
+        Statistical power.
+    alternative : {'two-sided', 'greater', 'less'}, default='two-sided'
+        Direction of the alternative hypothesis.
+    """
+
     def __init__(
         self,
         n1: int | None = None,
@@ -310,6 +364,12 @@ class WpTwoT:
         return float(result)
 
     def pwr_test(self) -> dict:
+        """Solve for the unspecified parameter and return the power-analysis results.
+
+        Returns
+        -------
+        A dictionary containing effect_size, n1, n2, alpha, power, our alternative hypothesis and test metadata.
+        """
         if self.power is None:
             if self.n1 is None or self.n2 is None or self.d is None or self.alpha is None:
                 raise ValueError("n1, n2, d, and alpha must be provided to compute power")
