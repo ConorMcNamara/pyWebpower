@@ -75,6 +75,7 @@ def fallback_versions(minimum: tuple[int, int]) -> list[tuple[int, int]]:
 
 
 def main() -> None:
+    """Resolve the supported versions and write the matrix to ``$GITHUB_OUTPUT``."""
     minimum = read_minimum_version()
     try:
         versions = fetch_supported_versions(minimum)
