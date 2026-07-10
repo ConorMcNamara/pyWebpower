@@ -6,7 +6,7 @@ authors = [
     {name = "ConorMcNamara",email = "conor.s.mcnamara@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 dependencies = [
     "scipy>=1.15.2,<2.0.0",
     "numpy>=2.2.4,<3.0.0",

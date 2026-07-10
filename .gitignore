@@ -232,6 +232,10 @@ rsconnect/
 pyvenv.cfg
 pip-selfcheck.json
 
+# The virtualenv `Scripts` pattern above must not swallow our CI scripts.
+!.github/scripts/
+!.github/scripts/**
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
