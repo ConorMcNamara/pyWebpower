@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ConorMcNamara/pyWebpower/actions/workflows/linter.yml/badge.svg)](https://github.com/ConorMcNamara/pyWebpower/actions/workflows/linter.yml)
 [![codecov](https://codecov.io/gh/ConorMcNamara/pyWebpower/branch/main/graph/badge.svg)](https://codecov.io/gh/ConorMcNamara/pyWebpower)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A Python implementation of the [WebPower](https://cran.r-project.org/web/packages/WebPower/index.html) R package — a library for calculating statistical power, sample size, and minimum detectable effect for a wide range of statistical tests.
@@ -13,6 +13,14 @@ A Python implementation of the [WebPower](https://cran.r-project.org/web/package
 
 ```bash
 pip install pywebpower
+```
+
+Or, from source with [uv](https://docs.astral.sh/uv/):
+
+```bash
+git clone https://github.com/ConorMcNamara/pyWebpower.git
+cd pyWebpower
+uv sync
 ```
 
 ## Quick Start
@@ -59,7 +67,7 @@ print(result["n"])  # 179
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.13+
 - NumPy
 - SciPy
 

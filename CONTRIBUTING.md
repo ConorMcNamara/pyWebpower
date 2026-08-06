@@ -15,8 +15,12 @@ Thank you for your interest in contributing! This document covers how to set up 
 
 2. **Install the package with dev dependencies:**
 
+   This project uses [uv](https://docs.astral.sh/uv/). `uv sync` creates a
+   virtual environment and installs the project together with the `dev`
+   dependency group:
+
    ```bash
-   pip install -e ".[dev]"
+   uv sync
    ```
 
 ## Running Checks
@@ -27,17 +31,17 @@ A `Makefile` is provided as a convenience wrapper. Run `make help` to see all ta
 make test      # run the test suite
 make lint      # ruff check + ruff format --check
 make fmt       # auto-format with ruff
-make typecheck # mypy
+make typecheck # zuban
 make check     # lint + typecheck + test
 ```
 
-You can also invoke the tools directly:
+You can also invoke the tools directly through uv:
 
 ```bash
-python3 -m pytest
-python3 -m ruff check .
-python3 -m ruff format .
-python3 -m mypy webpower --ignore-missing-imports
+uv run pytest
+uv run ruff check .
+uv run ruff format .
+uv run zuban check webpower
 ```
 
 ## Coding Guidelines

@@ -4,21 +4,21 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  %-12s %s\n", $$1, $$2}'
 
-install: ## Install package with dev dependencies
-	pip3 install -e ".[dev]"
+install: ## Sync the environment with project + dev dependencies
+	uv sync
 
 test: ## Run the test suite
-	python3 -m pytest
+	uv run pytest
 
 lint: ## Check code style and imports
-	python3 -m ruff check .
-	python3 -m ruff format --check .
+	uv run ruff check .
+	uv run ruff format --check .
 
 fmt: ## Auto-format code
-	python3 -m ruff format .
-	python3 -m ruff check --fix .
+	uv run ruff format .
+	uv run ruff check --fix .
 
-typecheck: ## Run mypy type checker
-	python3 -m mypy webpower --ignore-missing-imports
+typecheck: ## Run zuban type checker
+	uv run zuban check webpower
 
 check: lint typecheck test ## Run lint, typecheck, and tests

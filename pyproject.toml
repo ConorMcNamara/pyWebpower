@@ -1,29 +1,49 @@
 [project]
 name = "pywebpower"
 version = "0.1.0"
-description = "A Python implementation of the Webpower R library"
+description = "A Python implementation of the WebPower R library"
 authors = [
-    {name = "ConorMcNamara",email = "conor.s.mcnamara@gmail.com"}
+    { name = "ConorMcNamara", email = "conor.s.mcnamara@gmail.com" },
 ]
 readme = "README.md"
 requires-python = ">=3.13"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["statistics", "power-analysis", "sample-size", "webpower"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
 dependencies = [
     "scipy>=1.15.2,<2.0.0",
     "numpy>=2.2.4,<3.0.0",
 ]
 
-[project.optional-dependencies]
+[project.urls]
+Homepage = "https://github.com/ConorMcNamara/pyWebpower"
+Repository = "https://github.com/ConorMcNamara/pyWebpower"
+Issues = "https://github.com/ConorMcNamara/pyWebpower/issues"
+
+[dependency-groups]
 dev = [
     "pytest>=8.3.5,<9.0.0",
     "pytest-cov>=6.0.0",
+    "ruff",
+    "zuban",
 ]
 
-[tool.poetry]
-packages = [{include = "webpower"}]
-
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.10,<0.11"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+module-name = "webpower"
 
 [tool.pytest.ini_options]
 pythonpath = ["webpower", '.']
