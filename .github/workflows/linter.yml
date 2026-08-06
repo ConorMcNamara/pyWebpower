@@ -14,33 +14,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.13"
+          enable-cache: true
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - name: Set up Python
+        run: uv python install 3.13
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install ruff zuban
-          pip install -e ".[dev]"
+        run: uv sync
 
       - name: Run ruff format check
-        run: ruff format --check .
+        run: uv run ruff format --check .
 
       - name: Run ruff linting
-        run: ruff check .
+        run: uv run ruff check .
 
       - name: Run zuban type checking
-        run: zuban check webpower
+        run: uv run zuban check webpower
 
   matrix:
     name: Resolve supported Python versions
@@ -75,26 +67,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          enable-cache: true
 
       - name: Install package with dev dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install ".[dev]"
+        run: uv sync --python ${{ matrix.python-version }}
 
       - name: Run tests with coverage
-        run: pytest --cov=webpower --cov-report=xml --cov-report=term-missing
+        run: uv run pytest --cov=webpower --cov-report=xml --cov-report=term-missing
 
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == needs.matrix.outputs.python-latest
@@ -113,18 +95,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.13"
-
-      - name: Install build dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
+          enable-cache: true
 
       - name: Build package
-        run: python -m build
+        run: uv build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
