@@ -266,15 +266,10 @@ class TestRMAnova:
     @staticmethod
     def test_rmanova_results() -> None:
         power_results = power_tests.wp_rmanova_test(n=30, ng=3, nm=4, f=0.36, nscor=0.7, alpha=0.05)["power"]
-        # wp.rmanova(n=30, ng=3, nm=4, f=0.36, nscor=0.7)
-        # Repeated-measures ANOVA analysis
-        #
-        # n f ng nm nscor alpha power
-        # 30 0.36 3 4 0.7 0.05 0.2674167
-        #
-        # NOTE: Power analysis for between-effect test
-        # URL: http://psychstat.org/rmanova
-        expected = 0.2674167
+        # R's wp.rmanova gives 0.2674167 here, but that incorrectly applies
+        # nscor to the between-effect NCP. Corrected: nscor only affects
+        # within-effect and interaction NCPs.
+        expected = 0.3670429
         assert power_results == pytest.approx(expected, abs=1e-05)
 
         sample_size_results = power_tests.wp_rmanova_test(
@@ -319,9 +314,10 @@ class TestRMAnova:
         expected = 0.7013686
         assert effect_size_results == pytest.approx(expected, abs=1e-04)
 
-        # Currently ng and nm are incorrectly defined in the R package so they don't return any results
+        # R's wp.rmanova has issues with ng/nm. With corrected between-effect
+        # NCP (no nscor), the crossing point shifts.
         groups_results = power_tests.wp_rmanova_test(n=30, nm=4, f=0.71, power=0.8, nscor=0.7, alpha=0.05)["ng"]
-        expected = 3
+        expected = 6
         assert groups_results == expected
 
         nm_results = power_tests.wp_rmanova_test(

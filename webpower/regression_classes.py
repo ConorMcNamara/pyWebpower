@@ -343,10 +343,11 @@ class WpPoisson:
                 raise ValueError("n and power must be provided to solve for alpha")
             n, power = self.n, self.power
             self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, power), 1e-10, 1 - 1e-10)
+        alpha_out = self.alpha * 2 if self.alternative == "two-sided" else self.alpha
         return {
             "n": self.n,
             "power": self.power,
-            "alpha": self.alpha,
+            "alpha": alpha_out,
             "exp0": self.exp0,
             "exp1": self.exp1,
             "beta0": log(self.exp0),
@@ -445,7 +446,7 @@ class WpLogistic:
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
             b = param_scalar * a
-            v0 = b / (a * b - b**2)
+            v0 = a / (a * b - b**2)
         elif self.family == "exponential":
             assert isinstance(self.parameter, (int, float))
             param_scalar = self.parameter
@@ -494,8 +495,8 @@ class WpLogistic:
             i00 = log(mu1 / (1 - mu1))
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
-            b = 2 * param_scalar**-2 * pn * (1 - pn)
-            c = param_scalar**-1 * pn * (1 - pn)
+            b = 2 * param_scalar**2 * pn * (1 - pn)
+            c = param_scalar * pn * (1 - pn)
             v0 = a / (a * b - c**2)
         elif self.family == "lognormal":
             assert isinstance(self.parameter, (list, tuple))
@@ -547,7 +548,7 @@ class WpLogistic:
             i00 = log(mu1 / (1 - mu1))
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
-            b = (exp(sigma**2) - 1) * exp(2 * mu + sigma**2) * pn * (1 - pn)
+            b = exp(2 * mu + 2 * sigma**2) * pn * (1 - pn)
             c = exp(mu + 0.5 * sigma**2) * pn * (1 - pn)
             v0 = a / (a * b - c**2)
         elif self.family == "normal":
@@ -600,8 +601,8 @@ class WpLogistic:
             i00 = log(mu1 / (1 - mu1))
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
-            b = (exp(sigma**2) - 1) * exp(2 * mu + sigma**2) * pn * (1 - pn)
-            c = exp(mu + 0.5 * sigma**2) * pn * (1 - pn)
+            b = (mu**2 + sigma**2) * pn * (1 - pn)
+            c = mu * pn * (1 - pn)
             v0 = a / (a * b - c**2)
         elif self.family == "poisson":
             assert isinstance(self.parameter, (int, float))
@@ -613,14 +614,16 @@ class WpLogistic:
                 / (1 + np.exp(-self.beta0 - self.beta1 * val_range))
                 * poisson.pmf(val_range, param_scalar)
             )
-            e = val_range * np.sum(
-                (1 - 1 / (1 + np.exp(-self.beta0 - self.beta1 * val_range)))
+            e = np.sum(
+                val_range
+                * (1 - 1 / (1 + np.exp(-self.beta0 - self.beta1 * val_range)))
                 * 1
                 / (1 + np.exp(-self.beta0 - self.beta1 * val_range))
                 * poisson.pmf(val_range, param_scalar)
             )
-            f = np.square(val_range) * np.sum(
-                (1 - 1 / (1 + np.exp(-self.beta0 - self.beta1 * val_range)))
+            f = np.sum(
+                np.square(val_range)
+                * (1 - 1 / (1 + np.exp(-self.beta0 - self.beta1 * val_range)))
                 * 1
                 / (1 + np.exp(-self.beta0 - self.beta1 * val_range))
                 * poisson.pmf(val_range, param_scalar)
@@ -630,7 +633,7 @@ class WpLogistic:
             i00 = log(mu1 / (1 - mu1))
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
-            b = param_scalar * pn * (1 - pn)
+            b = (param_scalar + param_scalar**2) * pn * (1 - pn)
             c = param_scalar * pn * (1 - pn)
             v0 = a / (a * b - c**2)
         elif self.family == "uniform":
@@ -680,8 +683,8 @@ class WpLogistic:
             i00 = log(mu1 / (1 - mu1))
             pn = 1 / (1 + exp(-i00))
             a = pn * (1 - pn)
-            b = (R - L) ** 2 / 12 * pn * (1 - pn)
-            c = (R - L) ** 2 * pn * (1 - pn)
+            b = (L**2 + L * R + R**2) / 3 * pn * (1 - pn)
+            c = (L + R) / 2 * pn * (1 - pn)
             v0 = a / (a * b - c**2)
         else:
             raise ValueError(f"Do not recognize {self.family} for Logistic Regression")
@@ -742,10 +745,11 @@ class WpLogistic:
                 raise ValueError("n and power must be provided to solve for alpha")
             n, power = self.n, self.power
             self.alpha = brentq(lambda alpha: self._get_alpha(alpha, n, power), 1e-10, 1 - 1e-10)
+        alpha_out = self.alpha * 2 if self.alternative == "two-sided" else self.alpha
         return {
             "n": self.n,
             "power": self.power,
-            "alpha": self.alpha,
+            "alpha": alpha_out,
             "p0": self.p0,
             "p1": self.p1,
             "beta0": self.beta0,

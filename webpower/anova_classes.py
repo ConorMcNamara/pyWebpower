@@ -53,7 +53,7 @@ class WpAnovaClass:
             self.note = "n is the total sample size (overall)"
         elif self.test_type == "greater":
             self.note = "n is the total sample size (contrast, greater)"
-        elif self.test_type == "lower":
+        elif self.test_type == "less":
             self.note = "n is the total sample size (contrast, less)"
         else:
             self.note = "n is the total sample size (contrast, two-sided)"
@@ -71,7 +71,7 @@ class WpAnovaClass:
         elif self.test_type == "two-sided":
             lambda_ = n * f**2
             power = ncf.sf(
-                f_dist.isf(alpha, k - 1, n - k),
+                f_dist.isf(alpha, 1, n - k),
                 1,
                 n - k,
                 lambda_,
@@ -597,13 +597,15 @@ class WpRMAnovaClass:
         if self.test_type == "between":
             df_1 = ng - 1
             df_2 = n - ng
+            lambda_ = f**2 * n
         elif self.test_type == "within":
             df_1 = (nm - 1) * self.nscor
             df_2 = (n - ng) * df_1
+            lambda_ = f**2 * n * self.nscor
         else:
             df_1 = (ng - 1) * (nm - 1) * self.nscor
             df_2 = (n - ng) * (nm - 1) * self.nscor
-        lambda_ = f**2 * n * self.nscor
+            lambda_ = f**2 * n * self.nscor
         power = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_)
         return float(power)
 
@@ -611,13 +613,15 @@ class WpRMAnovaClass:
         if self.test_type == "between":
             df_1 = ng - 1
             df_2 = n - ng
+            lambda_ = f**2 * n
         elif self.test_type == "within":
             df_1 = (nm - 1) * self.nscor
             df_2 = (n - ng) * df_1
+            lambda_ = f**2 * n * self.nscor
         else:
             df_1 = (ng - 1) * (nm - 1) * self.nscor
             df_2 = (n - ng) * (nm - 1) * self.nscor
-        lambda_ = f**2 * n * self.nscor
+            lambda_ = f**2 * n * self.nscor
         result = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - power
         return float(result)
 
@@ -627,10 +631,11 @@ class WpRMAnovaClass:
         elif self.test_type == "within":
             df_1 = (nm - 1) * self.nscor
             df_2 = (n - ng) * df_1
+            lambda_ = f**2 * n * self.nscor
         else:
             df_1 = (ng - 1) * (nm - 1) * self.nscor
             df_2 = (n - ng) * (nm - 1) * self.nscor
-        lambda_ = f**2 * n * self.nscor
+            lambda_ = f**2 * n * self.nscor
         result = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - power
         return float(result)
 
@@ -638,13 +643,15 @@ class WpRMAnovaClass:
         if self.test_type == "between":
             df_1 = ng - 1
             df_2 = n - ng
+            lambda_ = f**2 * n
         elif self.test_type == "within":
             df_1 = (nm - 1) * self.nscor
             df_2 = (n - ng) * df_1
+            lambda_ = f**2 * n * self.nscor
         else:
             df_1 = (ng - 1) * (nm - 1) * self.nscor
             df_2 = (n - ng) * (nm - 1) * self.nscor
-        lambda_ = f**2 * n * self.nscor
+            lambda_ = f**2 * n * self.nscor
         result = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - power
         return float(result)
 
@@ -652,13 +659,15 @@ class WpRMAnovaClass:
         if self.test_type == "between":
             df_1 = ng - 1
             df_2 = n - ng
+            lambda_ = f**2 * n
         elif self.test_type == "within":
             df_1 = (nm - 1) * self.nscor
             df_2 = (n - ng) * df_1
+            lambda_ = f**2 * n * self.nscor
         else:
             df_1 = (ng - 1) * (nm - 1) * self.nscor
             df_2 = (n - ng) * (nm - 1) * self.nscor
-        lambda_ = f**2 * n * self.nscor
+            lambda_ = f**2 * n * self.nscor
         result = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - power
         return float(result)
 
@@ -666,13 +675,15 @@ class WpRMAnovaClass:
         if self.test_type == "between":
             df_1 = ng - 1
             df_2 = n - ng
+            lambda_ = f**2 * n
         elif self.test_type == "within":
             df_1 = (nm - 1) * self.nscor
             df_2 = (n - ng) * df_1
+            lambda_ = f**2 * n * self.nscor
         else:
             df_1 = (ng - 1) * (nm - 1) * self.nscor
             df_2 = (n - ng) * (nm - 1) * self.nscor
-        lambda_ = f**2 * n * self.nscor
+            lambda_ = f**2 * n * self.nscor
         result = ncf.sf(f_dist.isf(alpha, df_1, df_2), df_1, df_2, lambda_) - power
         return float(result)
 
